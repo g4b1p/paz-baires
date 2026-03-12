@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="images/paz-baires-logotipo-blanco-2.png" />
+    <link rel="icon" href="images/icons/paz-baires-logotipo-blanco-2.png" />
     <link rel="stylesheet" href="quiero-comprar.css" />
     <title>Paz Baires</title>
   </head>
@@ -11,30 +11,34 @@
     <header>
       <div class="top-bar">Compra minima para envios a partir de $50.000.</div>
       <div class="header">
+        <div class="bar-overlay" id="menuOverlay"></div>
+
         <input type="checkbox" id="nav-toggle" hidden />
         <label for="nav-toggle" class="menu-btn">&#9776;</label>
 
         <a href="home.html"
-          ><img class="logo" src="images/paz-baires-logotipo.png" alt=""
+          ><img class="logo" src="images/icons/paz-baires-logotipo.png" alt=""
         /></a>
 
         <nav class="nav-links">
-          <a href="carrito.php"
+          <a href="carrito.html" class="cart-container"
             ><img
               class="icon-social-header"
-              src="images/carrito-icon.png"
+              src="images/icons/carrito-icon.png"
               alt=""
-          /></a>
+            />
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
           <a href="https://www.instagram.com/pazbaires.ok/" target="_blank"
             ><img
               class="icon-social-header"
-              src="images/instagram-icon.png"
+              src="images/icons/instagram-icon.png"
               alt=""
           /></a>
           <a href="https://www.facebook.com/pazbaires" target="_blank"
             ><img
               class="icon-social-header"
-              src="images/facebook-icon.png"
+              src="images/icons/facebook-icon.png"
               alt=""
           /></a>
         </nav>
@@ -42,19 +46,22 @@
         <aside class="sidebar">
           <label for="nav-toggle" class="close-btn">✖</label>
           <ul>
-            <li><a href="home.php">INICIO</a></li>
+            <li><a href="home.html">INICIO</a></li>
             <li><a href="quiero-comprar.html">QUIERO COMPRAR</a></li>
             <li class="dropdown">
               <input type="checkbox" id="dropdown-toggle" hidden />
               <label for="dropdown-toggle" class="dropdown-label">
-                <a href="tienda.php">TIENDA</a>
+                <a href="tienda.html">TIENDA</a>
                 <span class="arrow"></span>
               </label>
               <ul class="dropdown-menu">
-                <li><a href="tienda.php">PIJAMAS</a></li>
-                <li><a href="tienda.php">ACCESORIOS</a></li>
-                <li><a href="tienda.php">BLANQUERIA</a></li>
-                <li><a href="tienda.php">OFERTAS</a></li>
+                <li>
+                  <a href="tienda.html?categoria=accesorios">ACCESORIOS</a>
+                </li>
+                <li>
+                  <a href="tienda.html?categoria=blanqueria">BLANQUERIA</a>
+                </li>
+                <li><a href="tienda.html?categoria=ofertas">OFERTAS</a></li>
               </ul>
             </li>
           </ul>
@@ -67,7 +74,7 @@
         </video>
         <div class="video-overlay">
           <img
-            src="images/carrito-icon.png"
+            src="images/icons/carrito-icon.png"
             class="quiero-comprar-icon"
             alt=""
           />
@@ -91,22 +98,22 @@
             class="btn-acordeon"
           />
           <label for="btn-acordeon1">
-            <img src="images/pregunta-icon.png" alt="" />
+            <img src="images/icons/pregunta-icon.png" alt="" />
             <b>¿Cómo comprar en la web?</b>
           </label>
           <div class="contenido-acordeon">
             <p>
               <b>✅ 1. Agrega productos a tu carrito</b>
               <br />
-              Explora nuestra <a href="">TIENDA</a> y elige lo que más te guste.
-              Selecciona el modelo, color y talle, y haz clic en
+              Explora nuestra <a href="tienda.html">TIENDA</a> y elige lo que
+              más te guste. Selecciona el modelo, color y talle, y haz clic en
               <b>"Agregar al carrito".</b> Puedes sumar todos los productos que
               quieras. <br /><br />
               <b>✅ 2. Revisa tu pedido</b>
               <br />
-              Entra a tu a <a href="">CARRITO</a> para ver el resumen de tu
-              compra y el total. Si todo está correcto, haz clic en el botón
-              <b>"PEDIR POR WHATSAPP".</b> <br /><br />
+              Entra a tu a <a href="carrito.html">CARRITO</a> para ver el
+              resumen de tu compra y el total. Si todo está correcto, haz clic
+              en el botón <b>"PEDIR POR WHATSAPP".</b> <br /><br />
               <b>✅ 3. Completa tus datos de entrega</b>
               <br />
               Se abrirá un breve formulario. Elige si prefieres
@@ -136,24 +143,20 @@
             class="btn-acordeon"
           />
           <label for="btn-acordeon2">
-            <img src="images/pregunta-icon.png" alt="" />
+            <img src="images/icons/pregunta-icon.png" alt="" />
             <b>Métodos de pago</b>
           </label>
           <div class="contenido-acordeon">
             <p>
-              <b>✅ Depósito o Transferencia Bancaria 🏦</b>
+              <b>✅ Depósito o Transferencia Bancaria (MercadoPago) 🏦</b>
               <br />
-              Te enviaremos los datos de nuestra cuenta bancaria por WhatsApp
-              una vez confirmado tu pedido.
+              Te enviaremos el CVU o Alias de nuestra cuenta para que puedas
+              realizar la transferencia.
               <br /><br />
               <b>✅ Efectivo 💵</b>
               <br />
               Puedes abonar en nuestro local al momento de retirar tu pedido.
-              <br /><br />
-              <b>✅ MercadoPago 📲</b>
               <br />
-              Te pasaremos el CVU o Alias de nuestra cuenta para que puedas
-              realizar la transferencia.
             </p>
           </div>
         </div>
@@ -166,7 +169,7 @@
             class="btn-acordeon"
           />
           <label for="btn-acordeon3">
-            <img src="images/pregunta-icon.png" alt="" />
+            <img src="images/icons/pregunta-icon.png" alt="" />
             <b>Envíos</b>
           </label>
           <div class="contenido-acordeon">
@@ -185,7 +188,7 @@
               Puedes elegir el transporte que prefieras. Algunas opciones son:
               Andreani, Correo Argentino, Buspack, Crucero Express, Vía Cargo,
               Integral Pack, SendBox, MD Cargas. El traslado desde nuestro local
-              hasta el transporte elegido tiene un recargo de $4000 para pagarle
+              hasta el transporte elegido tiene un recargo de $5000 para pagarle
               al cadete que despacha. El costo del envío depende del transporte
               y se abona al recibir el pedido.
               <br /><br />
@@ -202,8 +205,9 @@
         </div>
       </section>
       <section class="btn-comprar-section">
-        <a href="#productos" class="btn-comprar">Comenzar a comprar</a>
+        <a href="tienda.html" class="btn-comprar">Comenzar a comprar</a>
       </section>
+      
     </main>
     <footer class="footer">
       <div class="social-container">
@@ -215,7 +219,7 @@
             target="_blank"
             ><img
               class="icon-social-footer"
-              src="images/instagram-icon.png"
+              src="images/icons/instagram-icon.png"
               alt=""
             />pazbaires</a
           >
@@ -225,7 +229,7 @@
             target="_blank"
             ><img
               class="icon-social-footer"
-              src="images/facebook-icon.png"
+              src="images/icons/facebook-icon.png"
               alt=""
             />pazbaires</a
           >
@@ -236,7 +240,7 @@
           <p class="social">
             <img
               class="icon-social-footer"
-              src="images/telefono-icon.png"
+              src="images/icons/telefono-icon.png"
               alt=""
             />11 5601 8912
           </p>
@@ -244,7 +248,7 @@
           <p class="social">
             <img
               class="icon-social-footer"
-              src="images/correo-icon.png"
+              src="images/icons/correo-icon.png"
               alt=""
             />pazbaires.adm@gmail.com
           </p>
@@ -263,7 +267,7 @@
         <!-- Botón para abrir el chat -->
         <input type="checkbox" id="chat-toggle" class="chat-toggle" />
         <label for="chat-toggle" class="chat-button">
-          <img src="images/whatsapp-icon.png" alt="" />
+          <img src="images/icons/whatsapp-icon.png" alt="" />
           Haz click aquí para comunicarte
         </label>
 
@@ -271,7 +275,7 @@
         <div class="chat-container">
           <div class="chat-header">
             <img
-              src="images/paz-baires-logotipo-2.png"
+              src="images/icons/paz-baires-logotipo-2.png"
               alt="Lab Dental Congreso"
               class="chat-logo"
             />
@@ -297,53 +301,9 @@
             />
             <button class="send-btn" onclick="sendMessage()">➤</button>
           </div>
-          <script>
-            function sendMessage() {
-              // Obtener el valor del campo de texto
-              var message = document.getElementById("user-message").value;
-
-              // Codificar el mensaje para que sea seguro en la URL
-              var encodedMessage = encodeURIComponent(message);
-
-              // Construir el enlace de WhatsApp con el mensaje del usuario
-              var whatsappUrl =
-                "https://api.whatsapp.com/send?phone=%2B541128506874&text=" +
-                encodedMessage;
-
-              // Abrir el enlace en una nueva ventana
-              window.open(whatsappUrl, "_blank");
-
-              // Limpiar el campo de texto después de enviar el mensaje
-              document.getElementById("user-message").value = "";
-            }
-          </script>
         </div>
       </div>
     </footer>
-    <script>
-      window.scrollCarrusel = function (direction, idContenedor) {
-        // Ahora usamos 'idContenedor' en lugar de un nombre fijo
-        const contenedor = document.getElementById(idContenedor);
-
-        if (!contenedor) {
-          console.error(
-            "Error: No se encontró el elemento con ID: " + idContenedor,
-          );
-          return;
-        }
-
-        const primeraTarjeta = contenedor.querySelector(".producto-card");
-
-        if (primeraTarjeta) {
-          const anchoTarjeta = primeraTarjeta.offsetWidth;
-          const gap = 20;
-
-          contenedor.scrollBy({
-            left: direction * (anchoTarjeta + gap),
-            behavior: "smooth",
-          });
-        }
-      };
-    </script>
+    <script src="js/main.js"></script>
   </body>
 </html>

@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="images/paz-baires-logotipo-blanco-2.png" />
+    <link rel="stylesheet" href="info-producto.css" />
+    <title>Paz Baires</title>
+  </head>
+  <body>
+    <header>
+      <div class="top-bar">Compra minima para envios a partir de $50.000.</div>
+      <div class="header">
+        <div class="bar-overlay" id="menuOverlay"></div>
+
+        <input type="checkbox" id="nav-toggle" hidden />
+        <label for="nav-toggle" class="menu-btn">&#9776;</label>
+
+        <a href="home.html"
+          ><img class="logo" src="images/icons/paz-baires-logotipo.png" alt=""
+        /></a>
+
+        <nav class="nav-links">
+          <a href="carrito.html" class="cart-container"
+            ><img
+              class="icon-social-header"
+              src="images/icons/carrito-icon.png"
+              alt=""
+            />
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
+          <a href="https://www.instagram.com/pazbaires.ok/" target="_blank"
+            ><img
+              class="icon-social-header"
+              src="images/icons/instagram-icon.png"
+              alt=""
+          /></a>
+          <a href="https://www.facebook.com/pazbaires" target="_blank"
+            ><img
+              class="icon-social-header"
+              src="images/icons/facebook-icon.png"
+              alt=""
+          /></a>
+        </nav>
+
+        <aside class="sidebar">
+          <label for="nav-toggle" class="close-btn">✖</label>
+          <ul>
+            <li><a href="home.html">INICIO</a></li>
+            <li><a href="quiero-comprar.html">QUIERO COMPRAR</a></li>
+            <li class="dropdown">
+              <input type="checkbox" id="dropdown-toggle" hidden />
+              <label for="dropdown-toggle" class="dropdown-label">
+                <a href="tienda.html">TIENDA</a>
+                <span class="arrow"></span>
+              </label>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="tienda.html?categoria=accesorios">ACCESORIOS</a>
+                </li>
+                <li>
+                  <a href="tienda.html?categoria=blanqueria">BLANQUERIA</a>
+                </li>
+                <li><a href="tienda.html?categoria=ofertas">OFERTAS</a></li>
+              </ul>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </header>
+
+    <main>
+      <div class="product-container loading" id="productContainer">
+        <div class="product-gallery">
+          <div class="main-image-wrapper">
+            <img
+              src="images/icons/flecha-izq-lila.png"
+              class="nav-arrow prev-arrow"
+              id="prevBtn"
+              alt="Anterior"
+            />
+
+            <div class="main-image">
+              <img id="mainImg" src="" alt="Cargando..." />
+            </div>
+
+            <img
+              src="images/icons/flecha-der-lila.png"
+              class="nav-arrow next-arrow"
+              id="nextBtn"
+              alt="Siguiente"
+            />
+          </div>
+          <div class="thumbnails" id="thumbBar"></div>
+
+          <div class="product-description-container">
+            <h3 class="desc-title">Sobre este producto</h3>
+            <p id="productDesc" class="desc-content"></p>
+          </div>
+        </div>
+
+        <div class="product-info-panel">
+          <div class="product-header">
+            <span id="productBrand" class="brand-tag">PAZ BAIRES</span>
+            <h1 id="productName">Nombre del Producto</h1>
+          </div>
+
+          <div class="price-section">
+            <span id="oldPrice" class="old-price"></span>
+            <span id="currentPrice" class="current-price"></span>
+            <div class="transfer-box">
+              <strong id="transferPrice"></strong> con Transferencia (15% OFF)
+            </div>
+          </div>
+
+          <div id="variantSelector" class="selector-section"></div>
+
+          <div id="techDetails" class="details-grid"></div>
+
+          <div class="quantity-selector">
+            <p class="selector-label">Cantidad</p>
+            <div class="quantity-controls">
+              <button type="button" class="qty-btn" id="decreaseQty">−</button>
+              <input
+                type="number"
+                id="itemQuantity"
+                value="1"
+                min="1"
+                readonly
+              />
+              <button type="button" class="qty-btn" id="increaseQty">+</button>
+            </div>
+            <p
+              id="guia-seleccion"
+              style="
+                font-size: 0.85rem;
+                margin-top: 10px;
+                color: #fff;
+                font-weight: 300;
+              "
+            >
+              Seleccioná un color y la cantidad.
+            </p>
+          </div>
+
+          <button class="btn-add-cart" id="btn-agregar">
+            Añadir al carrito
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="social-container">
+        <div class="redes-sociales">
+          <h2 class="title-footer">Seguinos</h2>
+          <a
+            class="social"
+            href="https://www.instagram.com/pazbaires.ok/"
+            target="_blank"
+            ><img
+              class="icon-social-footer"
+              src="images/icons/instagram-icon.png"
+              alt=""
+            />pazbaires</a
+          >
+          <a
+            class="social"
+            href="https://www.facebook.com/pazbaires"
+            target="_blank"
+            ><img
+              class="icon-social-footer"
+              src="images/icons/facebook-icon.png"
+              alt=""
+            />pazbaires</a
+          >
+        </div>
+        <div class="contacto">
+          <h2 class="title-footer">Contacto</h2>
+
+          <p class="social">
+            <img
+              class="icon-social-footer"
+              src="images/icons/telefono-icon.png"
+              alt=""
+            />11 5601 8912
+          </p>
+
+          <p class="social">
+            <img
+              class="icon-social-footer"
+              src="images/icons/correo-icon.png"
+              alt=""
+            />pazbaires.adm@gmail.com
+          </p>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>Paz Baires © Copyright 2025. Todos los derechos reservados.</p>
+        <hr class="line-footer" />
+        <section class="firma">
+          <p>Created by</p>
+          <img src="/imagotipo-gabi-coder.png" alt="" />
+        </section>
+      </div>
+
+      <div class="chat-whatsapp">
+        <!-- Botón para abrir el chat -->
+        <input type="checkbox" id="chat-toggle" class="chat-toggle" />
+        <label for="chat-toggle" class="chat-button">
+          <img src="images/icons/whatsapp-icon.png" alt="" />
+          Haz click aquí para comunicarte
+        </label>
+
+        <!-- Contenedor del chat -->
+        <div class="chat-container">
+          <div class="chat-header">
+            <img
+              src="images/icons/paz-baires-logotipo-2.png"
+              alt="Lab Dental Congreso"
+              class="chat-logo"
+            />
+            <div>
+              <h3>Paz Baires</h3>
+              <span class="status">Online</span>
+            </div>
+            <label for="chat-toggle" class="close-chat">&times;</label>
+          </div>
+          <div class="chat-body">
+            <div class="chat-message">
+              <span class="emoji">📋</span> Hola <span class="emoji">👋</span>,
+              bienvenido a <b><i>Paz Baires</i></b
+              >.
+              <p>¿En qué podemos ayudarte?</p>
+            </div>
+          </div>
+          <div class="chat-footer">
+            <input
+              type="text"
+              id="user-message"
+              placeholder="Hola! Vengo de la página web..."
+            />
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="js/productos.js"></script>
+    <script src="js/info-producto.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

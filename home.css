@@ -22,47 +22,75 @@ body {
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    /* position: relative;
-    /* para que el logo y botón estén bien colocados */
+    justify-content: space-between; /* Reparte los 3 bloques */
     margin: 0 5%;
-    padding: 0 20px;
+    padding: 10px 20px;
     background-color: #ffffff;
     border-radius: 0 0 50px 50px;
     box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
-
     position: absolute;
-    /* Cambiado de relative a absolute */
     top: 29px;
     left: 0;
     right: 0;
     z-index: 1000;
-    /* Asegura que esté sobre el video */
 }
 
 .logo {
     width: 200px;
     height: auto;
-    margin: 10px 0;
 }
 
 .nav-links {
+    flex: 1; /* Ocupa 1/3 del espacio */
     display: flex;
+    justify-content: flex-end; /* Alinea los iconos a la derecha */
 }
 
 .icon-social-header {
-    width: 40px;
+    width: 40px; /* Un poco más estilizados */
     height: auto;
-    margin-right: 20px;
+    margin-left: 15px; /* Espacio entre ellos */
+    margin-right: 0;
+}
+
+.cart-container {
+    position: relative;
+    display: inline-block;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background-color: #b97cf2; /* El lila de tu marca */
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    /* Si el carrito está vacío, lo ocultamos con JS */
+    display: none; 
 }
 
 .menu-btn {
+    flex: 1; /* Ocupa 1/3 del espacio */
+    display: flex;
+    justify-content: flex-start; /* Alinea el icono a la izquierda */
     color: #623cdd;
-    margin-right: 200px;
     font-size: 30px;
     cursor: pointer;
-    z-index: 11;
-    /* asegura que esté por encima si hiciera falta */
+    margin-right: 0; /* ¡Borramos el 13%! */
+}
+
+.header > a { 
+    flex: 1; 
+    display: flex; 
+    justify-content: center; 
 }
 
 .sidebar {
@@ -73,12 +101,36 @@ body {
     /* oculta al inicio */
     width: 250px;
     height: 100vh;
-    background-color: #7454d9;
+    background: rgba(116, 84, 217, 0.9) !important;
     padding-top: 60px;
     transition: left 0.3s ease;
-    z-index: 999;
+    z-index: 2001 !important; /* SIEMPRE 1 punto más que el overlay */
     /* encima de todo */
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* El Overlay para el menú principal */
+.bar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px); /* Desenfoque suave al abrir el menú */
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 2000; /* Debe estar por encima del header pero debajo de la sidebar */
+    display: none; /* Se oculta por defecto */
+    pointer-events: none; /* No bloquea clics si está invisible */
+    transition: opacity 0.3s ease;
+}
+
+/* Mostrar overlay cuando el checkbox del menú esté activo */
+#nav-toggle:checked ~ .bar-overlay {
+    display: block;
+    pointer-events: auto;
 }
 
 .close-btn {
@@ -224,6 +276,15 @@ body {
         rgba(0, 0, 0, 0.4) 60%,  /* Mantiene la oscuridad hasta el 60% */
         #7454d9 100%             /* Funde hacia tu color al final */
     );
+}
+
+/* Aplica esto a los textos (h1, h2, p) que estén dentro del video */
+.video-overlay h1, 
+.video-overlay p {
+    width: 100%;        /* Ocupa el ancho disponible */
+    max-width: 800px;   /* Evita que las líneas sean infinitas en PC */
+    margin-bottom: 15px; /* Crea espacio real entre una línea y otra */
+    word-wrap: break-word; /* Rompe palabras si son muy largas */
 }
 
 .btn-comprar {
@@ -419,7 +480,6 @@ main {
 }
 
 .info-sobre-nosotras {
-
     display: flex;
     justify-content: space-between;
     align-items: start;
@@ -673,20 +733,28 @@ main {
     margin-left: 10px;
 }
 
-/*----------------RESONSIVE (Móviles)----------------*/
-@media (max-width: 768px) {
+/*----------------RESONSIVE----------------*/
 
-    /* Ajustamos el contenedor principal para que no tenga tanto margen */
+@media (max-width: 1400px) {
+    
     main {
         padding: 0 10%;
     }
+}
 
-    /* Reducimos el logo y quitamos márgenes excesivos en el header */
-    .header {
-        margin: 0;
-        border-radius: 0 0 20px 20px;
-        padding: 0 15px;
-        top: 28px;
+@media (max-width: 1100px) {
+
+    body {
+        font-size: 13px;
+    }
+
+    /*body h1 { y h2
+        font-size: 20px;
+    }*/
+
+    /* Ajustamos el contenedor principal para que no tenga tanto margen */
+    main {
+        padding: 0 8%;
     }
 
     .video-container {
@@ -694,13 +762,33 @@ main {
         /* Un poco más bajo en celulares */
     }
 
-    .logo {
-        width: 150px;
+    .header {
+        top: 26px;
     }
 
-    /* Ajuste del botón menú para que no esté tan desplazado */
-    .menu-btn {
-        margin-right: 0;
+}
+
+@media (max-width: 900px) {
+
+    .icon-social-header {
+        width: 35px;
+        height: auto;
+    }
+
+    .feature img {
+        width: 100px;
+        height: auto;
+    }
+
+    .icon-direccion,
+    .icon-horarios {
+        width: 50px;
+        height: auto;
+    }
+
+    .icon-social-footer {
+        width: 40px;
+        height: auto;
     }
 
     /* BARRA LATERAL FULL SCREEN */
@@ -721,11 +809,12 @@ main {
     /* Aumentar el tamaño de los enlaces para que sea fácil tocar con el dedo */
     .sidebar ul li a {
         padding: 20px;
-        font-size: 1.1rem;
+        font-size: 1rem;
         text-align: center;
         /* Opcional: centra el texto en el menú móvil */
     }
 
+    /* CARRUSEL PRODUCTOS */
     .producto-card {
         /* Calculamos para que entren 2 productos y 1 gap de 20px */
         flex: 0 0 calc((100% - 20px) / 2);
@@ -744,5 +833,146 @@ main {
     .flecha-carrusel {
         width: 30px;
         /* Un poco más chicas en móvil */
+    }
+}
+
+@media (max-width: 700px) {
+
+    body {
+        font-size: 12px;
+    }
+
+    .section-title, .section-title-inverse {
+        font-size: 20px;
+    }
+
+    .features {
+        flex-direction: column;
+        align-items: center;
+        margin: 50px 0;
+    }
+
+    .feature {
+        width: 100%;
+        height: auto;
+        margin-bottom: 30px;
+    }
+
+    .info-sobre-nosotras {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .direccion,
+    .horarios {
+        padding: 30px;
+
+        width: 100%;
+        height: auto;
+        margin-bottom: 30px;
+    }
+
+    .header {
+        top: 25px;
+        flex-wrap: wrap; 
+        flex-direction: column; /* Alinea todo en vertical */
+        align-items: center;    /* Centra todo horizontalmente */
+        padding: 15px 10px;
+        position: absolute; /* Asegúrate de que siga siendo absolute */
+    }
+
+    .menu-btn {
+        position: absolute; /* Sacamos al botón del flujo normal */
+        left: 20px;         /* Lo pegamos a la izquierda */
+        top: 25px;          /* Ajusta esto para que quede alineado a la altura del logo */
+        margin: 0;          /* Quitamos márgenes viejos */
+        order: 1; 
+    }
+
+    .logo {
+        width: 160px;
+        margin: 0;
+        order: 2;
+        /* El logo ahora se centrará gracias al justify-content del padre */
+    }
+
+    .nav-links {
+        order: 3; 
+        width: 100%; 
+        display: flex;         /* Aseguramos que sea flex para centrar */
+        justify-content: center; 
+        margin-top: 10px; 
+        padding-top: 10px;
+        border-top: 1px solid #f0f0f0; 
+    }
+
+    .icon-social-header {
+        width: 35px; 
+        margin: 0 10px; 
+    }
+
+    .video-overlay h1 {
+        font-size: 24px; /* Achicar la letra evita que se encimen las líneas */
+        line-height: 1.2; /* Da aire entre líneas */
+    }
+
+    .carrusel-wrapper {
+        padding: 0 40px; /* Espacio suficiente para las flechas de 30-40px */
+        display: flex;
+        justify-content: center;
+    }
+
+    .producto-card {
+        flex: 0 0 100%;
+        min-width: 100%;
+        /* Opcional: si lo quieres aún más chico, usa un % menor y margin auto */
+        /* flex: 0 0 90%; min-width: 90%; */
+    }
+
+    /* 3. Las flechas ahora las ubicamos en el padding que creamos */
+    .prev {
+        left: 1px;  /* Dentro del padding de 50px del wrapper */
+    }
+
+    .next {
+        right: 1px; /* Dentro del padding de 50px del wrapper */
+    }
+
+    .flecha-carrusel {
+        width: 35px;
+        position: absolute;
+        z-index: 10;
+        /* Si quieres que se vean más arriba/abajo, ajusta el top */
+        top: 40%; 
+    }
+
+    .social-container {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .redes-sociales {
+        margin-bottom: 25px;
+    }
+
+    .chat-container {
+        width: 330px;
+    }
+}
+
+@media (max-width: 400px) {
+    .chat-container {
+        width: 300px;
+    }
+
+    .chat-button {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .chat-button img {
+        width: 20px;
+        height: auto;
+        margin-right: 5px;
     }
 }

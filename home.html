@@ -11,30 +11,34 @@
     <header>
       <div class="top-bar">Compra minima para envios a partir de $50.000.</div>
       <div class="header">
+        <div class="bar-overlay" id="menuOverlay"></div>
+
         <input type="checkbox" id="nav-toggle" hidden />
         <label for="nav-toggle" class="menu-btn">&#9776;</label>
 
         <a href="home.html"
-          ><img class="logo" src="images/paz-baires-logotipo.png" alt=""
+          ><img class="logo" src="images/icons/paz-baires-logotipo.png" alt=""
         /></a>
 
         <nav class="nav-links">
-          <a href="carrito.php"
+          <a href="carrito.html" class="cart-container"
             ><img
               class="icon-social-header"
-              src="images/carrito-icon.png"
+              src="images/icons/carrito-icon.png"
               alt=""
-          /></a>
+            />
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
           <a href="https://www.instagram.com/pazbaires.ok/" target="_blank"
             ><img
               class="icon-social-header"
-              src="images/instagram-icon.png"
+              src="images/icons/instagram-icon.png"
               alt=""
           /></a>
           <a href="https://www.facebook.com/pazbaires" target="_blank"
             ><img
               class="icon-social-header"
-              src="images/facebook-icon.png"
+              src="images/icons/facebook-icon.png"
               alt=""
           /></a>
         </nav>
@@ -42,19 +46,22 @@
         <aside class="sidebar">
           <label for="nav-toggle" class="close-btn">✖</label>
           <ul>
-            <li><a href="home.php">INICIO</a></li>
+            <li><a href="home.html">INICIO</a></li>
             <li><a href="quiero-comprar.html">QUIERO COMPRAR</a></li>
             <li class="dropdown">
               <input type="checkbox" id="dropdown-toggle" hidden />
               <label for="dropdown-toggle" class="dropdown-label">
-                <a href="tienda.php">TIENDA</a>
+                <a href="tienda.html">TIENDA</a>
                 <span class="arrow"></span>
               </label>
               <ul class="dropdown-menu">
-                <li><a href="tienda.php">PIJAMAS</a></li>
-                <li><a href="tienda.php">ACCESORIOS</a></li>
-                <li><a href="tienda.php">BLANQUERIA</a></li>
-                <li><a href="tienda.php">OFERTAS</a></li>
+                <li>
+                  <a href="tienda.html?categoria=accesorios">ACCESORIOS</a>
+                </li>
+                <li>
+                  <a href="tienda.html?categoria=blanqueria">BLANQUERIA</a>
+                </li>
+                <li><a href="tienda.html?categoria=ofertas">OFERTAS</a></li>
               </ul>
             </li>
           </ul>
@@ -68,7 +75,7 @@
         <div class="video-overlay">
           <h1>Bienvenido a nuestra Tienda</h1>
           <p>Los mejores productos a un clic de distancia</p>
-          <a href="#productos" class="btn-comprar">Ver Catálogo</a>
+          <a href="tienda.html" class="btn-comprar">Ver Catálogo</a>
         </div>
       </section>
     </header>
@@ -76,17 +83,18 @@
     <main>
       <section class="features">
         <div class="feature">
-          <img src="images/transaccion-icon.png" alt="" />
-          <h2>Elegí tu método de pago</h2>
+          <img src="images/icons/transaccion-icon.png" alt="" />
+          <h2>Compra segura</h2>
           <p>
-            Aceptamos todas las opciones para que elijas la que más te convenga.
+            Una vez que realices tu pedido nos comunicamos para confirmarla y
+            proceder con el pago.
           </p>
         </div>
         <div class="feature">
-          <img src="images/envio-icon.png" alt="" />
-          <h2>Enviamos tu compra</h2>
+          <img src="images/icons/envio-icon.png" alt="" />
+          <h2>Envíos a todo el país</h2>
           <p>
-            Despachamos tu pedido por el transporte o expreso que vos prefieras.
+            Hacemos envíos a todo el país ya sea por expreso o por correo.
           </p>
         </div>
       </section>
@@ -96,7 +104,7 @@
 
         <div class="carrusel-wrapper">
           <img
-            src="images/flecha-izq.png"
+            src="images/icons/flecha-izq.png"
             class="flecha-carrusel prev"
             onclick="scrollCarrusel(-1, 'grid-destacados')"
           />
@@ -289,7 +297,7 @@
           </div>
 
           <img
-            src="images/flecha-der.png"
+            src="images/icons/flecha-der.png"
             class="flecha-carrusel next"
             onclick="scrollCarrusel(1, 'grid-destacados')"
           />
@@ -301,7 +309,7 @@
 
         <div class="carrusel-wrapper">
           <img
-            src="images/flecha-izq.png"
+            src="images/icons/flecha-izq.png"
             class="flecha-carrusel prev"
             onclick="scrollCarrusel(-1, 'grid-ofertas')"
           />
@@ -494,7 +502,7 @@
           </div>
 
           <img
-            src="images/flecha-der.png"
+            src="images/icons/flecha-der.png"
             class="flecha-carrusel next"
             onclick="scrollCarrusel(1, 'grid-ofertas')"
           />
@@ -517,7 +525,7 @@
           <div class="direccion">
             <img
               class="icon-direccion"
-              src="images/ubicacion-icon.png"
+              src="images/icons/ubicacion-icon.png"
               alt=""
             />
             <h2>Dirección</h2>
@@ -529,7 +537,11 @@
           </div>
 
           <div class="horarios">
-            <img class="icon-horarios" src="images/horario-icon.png" alt="" />
+            <img
+              class="icon-horarios"
+              src="images/icons/horario-icon.png"
+              alt=""
+            />
             <h2>Horarios del local</h2>
             <div class="semana">
               <div>
@@ -559,7 +571,7 @@
             target="_blank"
             ><img
               class="icon-social-footer"
-              src="images/instagram-icon.png"
+              src="images/icons/instagram-icon.png"
               alt=""
             />pazbaires</a
           >
@@ -569,7 +581,7 @@
             target="_blank"
             ><img
               class="icon-social-footer"
-              src="images/facebook-icon.png"
+              src="images/icons/facebook-icon.png"
               alt=""
             />pazbaires</a
           >
@@ -580,7 +592,7 @@
           <p class="social">
             <img
               class="icon-social-footer"
-              src="images/telefono-icon.png"
+              src="images/icons/telefono-icon.png"
               alt=""
             />11 5601 8912
           </p>
@@ -588,7 +600,7 @@
           <p class="social">
             <img
               class="icon-social-footer"
-              src="images/correo-icon.png"
+              src="images/icons/correo-icon.png"
               alt=""
             />pazbaires.adm@gmail.com
           </p>
@@ -607,7 +619,7 @@
         <!-- Botón para abrir el chat -->
         <input type="checkbox" id="chat-toggle" class="chat-toggle" />
         <label for="chat-toggle" class="chat-button">
-          <img src="images/whatsapp-icon.png" alt="" />
+          <img src="images/icons/whatsapp-icon.png" alt="" />
           Haz click aquí para comunicarte
         </label>
 
@@ -615,7 +627,7 @@
         <div class="chat-container">
           <div class="chat-header">
             <img
-              src="images/paz-baires-logotipo-2.png"
+              src="images/icons/paz-baires-logotipo-2.png"
               alt="Lab Dental Congreso"
               class="chat-logo"
             />
@@ -641,53 +653,10 @@
             />
             <button class="send-btn" onclick="sendMessage()">➤</button>
           </div>
-          <script>
-            function sendMessage() {
-              // Obtener el valor del campo de texto
-              var message = document.getElementById("user-message").value;
-
-              // Codificar el mensaje para que sea seguro en la URL
-              var encodedMessage = encodeURIComponent(message);
-
-              // Construir el enlace de WhatsApp con el mensaje del usuario
-              var whatsappUrl =
-                "https://api.whatsapp.com/send?phone=%2B541128506874&text=" +
-                encodedMessage;
-
-              // Abrir el enlace en una nueva ventana
-              window.open(whatsappUrl, "_blank");
-
-              // Limpiar el campo de texto después de enviar el mensaje
-              document.getElementById("user-message").value = "";
-            }
-          </script>
         </div>
       </div>
     </footer>
-    <script>
-      window.scrollCarrusel = function (direction, idContenedor) {
-        // Ahora usamos 'idContenedor' en lugar de un nombre fijo
-        const contenedor = document.getElementById(idContenedor);
-
-        if (!contenedor) {
-          console.error(
-            "Error: No se encontró el elemento con ID: " + idContenedor,
-          );
-          return;
-        }
-
-        const primeraTarjeta = contenedor.querySelector(".producto-card");
-
-        if (primeraTarjeta) {
-          const anchoTarjeta = primeraTarjeta.offsetWidth;
-          const gap = 20;
-
-          contenedor.scrollBy({
-            left: direction * (anchoTarjeta + gap),
-            behavior: "smooth",
-          });
-        }
-      };
-    </script>
+    <script src="js/productos.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>

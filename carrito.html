@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="images/paz-baires-logotipo-blanco-2.png" />
+    <link rel="stylesheet" href="carrito.css" />
+    <title>Paz Baires</title>
+  </head>
+  <body>
+    <header>
+      <div class="top-bar">Compra minima para envios a partir de $50.000.</div>
+      <div class="header">
+        <div class="bar-overlay" id="menuOverlay"></div>
+
+        <input type="checkbox" id="nav-toggle" hidden />
+        <label for="nav-toggle" class="menu-btn">&#9776;</label>
+
+        <a href="home.html"
+          ><img class="logo" src="images/icons/paz-baires-logotipo.png" alt=""
+        /></a>
+
+        <nav class="nav-links">
+          <a href="carrito.html" class="cart-container"
+            ><img
+              class="icon-social-header"
+              src="images/icons/carrito-icon.png"
+              alt=""
+            />
+            <span id="cart-count" class="cart-badge">0</span>
+          </a>
+          <a href="https://www.instagram.com/pazbaires.ok/" target="_blank"
+            ><img
+              class="icon-social-header"
+              src="images/icons/instagram-icon.png"
+              alt=""
+          /></a>
+          <a href="https://www.facebook.com/pazbaires" target="_blank"
+            ><img
+              class="icon-social-header"
+              src="images/icons/facebook-icon.png"
+              alt=""
+          /></a>
+        </nav>
+
+        <aside class="sidebar">
+          <label for="nav-toggle" class="close-btn">✖</label>
+          <ul>
+            <li><a href="home.html">INICIO</a></li>
+            <li><a href="quiero-comprar.html">QUIERO COMPRAR</a></li>
+            <li class="dropdown">
+              <input type="checkbox" id="dropdown-toggle" hidden />
+              <label for="dropdown-toggle" class="dropdown-label">
+                <a href="tienda.html">TIENDA</a>
+                <span class="arrow"></span>
+              </label>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="tienda.html?categoria=accesorios">ACCESORIOS</a>
+                </li>
+                <li>
+                  <a href="tienda.html?categoria=blanqueria">BLANQUERIA</a>
+                </li>
+                <li><a href="tienda.html?categoria=ofertas">OFERTAS</a></li>
+              </ul>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </header>
+
+    <main>
+      <div class="carrito-wrapper">
+        <section class="items-container">
+          <table class="carrito-tabla">
+            <thead>
+              <tr>
+                <th>PRODUCTO</th>
+                <th>PRECIO</th>
+                <th>CANTIDAD</th>
+                <th>SUBTOTAL</th>
+              </tr>
+            </thead>
+            <tbody id="carrito-body">
+              <tr class="carrito-item">
+                <td class="prod-detalles">
+                  <img src="images/ejemplo-producto.jpg" alt="Producto" />
+                  <div class="info-texto">
+                    <h3>Nombre del Producto</h3>
+                    <p class="variante-tag">Color: <span>Azul Francia</span></p>
+                    <p class="stock-tag">En stock</p>
+                  </div>
+                </td>
+                <td class="prod-precio">$ 5.800</td>
+                <td class="prod-qty">
+                  <div class="qty-selector">
+                    <button>-</button>
+                    <input type="number" value="1" readonly />
+                    <button>+</button>
+                  </div>
+                </td>
+                <td class="prod-subtotal"><strong>$ 5.800</strong></td>
+                <td class="prod-remove">
+                  <button class="btn-remove">×</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <a href="tienda.html" class="btn-seguir-comprando"
+            >SEGUIR COMPRANDO</a
+          >
+        </section>
+
+        <aside class="totales-container">
+          <div class="totales-card">
+
+            <div class="envio-section">
+              <p>Seleccione método de envío</p>
+              <div class="envio-options">
+                <label class="option-card">
+                  <input type="radio" name="envio" value="expreso" />
+                  <div class="option-info">
+                    <strong>Transporte o expreso</strong>
+                    <span>Puedes elegir el transporte que prefieras.</span>
+                  </div>
+                </label>
+
+                <label class="option-card">
+                  <input type="radio" name="envio" value="moto" />
+                  <div class="option-info">
+                    <strong>Envío en moto</strong>
+                    <span>Consulta el precio según la dirección.</span>
+                  </div>
+                </label>
+
+                <label class="option-card">
+                  <input type="radio" name="envio" value="local" />
+                  <div class="option-info">
+                    <strong>Retiro en el local</strong>
+                    <span>Sin costo. Te esperamos en nuestra sucursal.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="pago-section">
+              <p>Seleccione método de pago</p>
+              <div class="pago-options">
+                <label class="option-card">
+                  <input
+                    type="radio"
+                    name="pago"
+                    value="transferencia"
+                  />
+                  <div class="option-info">
+                    <strong>Transferencia (MP)</strong>
+                    <span>Te enviaremos el CVU/Alias</span>
+                  </div>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="pago" value="efectivo" />
+                  <div class="option-info">
+                    <strong>Efectivo</strong>
+                    <span>Abonás al retirar tu pedido</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="total-row">
+              <span>TOTAL</span>
+              <span class="total-price" id="total-general">$ 23.800</span>
+            </div>
+
+            <button class="btn-finalizar">FINALIZAR COMPRA</button>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="social-container">
+        <div class="redes-sociales">
+          <h2 class="title-footer">Seguinos</h2>
+          <a
+            class="social"
+            href="https://www.instagram.com/pazbaires.ok/"
+            target="_blank"
+            ><img
+              class="icon-social-footer"
+              src="images/icons/instagram-icon.png"
+              alt=""
+            />pazbaires</a
+          >
+          <a
+            class="social"
+            href="https://www.facebook.com/pazbaires"
+            target="_blank"
+            ><img
+              class="icon-social-footer"
+              src="images/icons/facebook-icon.png"
+              alt=""
+            />pazbaires</a
+          >
+        </div>
+        <div class="contacto">
+          <h2 class="title-footer">Contacto</h2>
+
+          <p class="social">
+            <img
+              class="icon-social-footer"
+              src="images/icons/telefono-icon.png"
+              alt=""
+            />11 5601 8912
+          </p>
+
+          <p class="social">
+            <img
+              class="icon-social-footer"
+              src="images/icons/correo-icon.png"
+              alt=""
+            />pazbaires.adm@gmail.com
+          </p>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>Paz Baires © Copyright 2025. Todos los derechos reservados.</p>
+        <hr class="line-footer" />
+        <section class="firma">
+          <p>Created by</p>
+          <img src="/imagotipo-gabi-coder.png" alt="" />
+        </section>
+      </div>
+
+      <div class="chat-whatsapp">
+        <!-- Botón para abrir el chat -->
+        <input type="checkbox" id="chat-toggle" class="chat-toggle" />
+        <label for="chat-toggle" class="chat-button">
+          <img src="images/icons/whatsapp-icon.png" alt="" />
+          Haz click aquí para comunicarte
+        </label>
+
+        <!-- Contenedor del chat -->
+        <div class="chat-container">
+          <div class="chat-header">
+            <img
+              src="images/icons/paz-baires-logotipo-2.png"
+              alt="Lab Dental Congreso"
+              class="chat-logo"
+            />
+            <div>
+              <h3>Paz Baires</h3>
+              <span class="status">Online</span>
+            </div>
+            <label for="chat-toggle" class="close-chat">&times;</label>
+          </div>
+          <div class="chat-body">
+            <div class="chat-message">
+              <span class="emoji">📋</span> Hola <span class="emoji">👋</span>,
+              bienvenido a <b><i>Paz Baires</i></b
+              >.
+              <p>¿En qué podemos ayudarte?</p>
+            </div>
+          </div>
+          <div class="chat-footer">
+            <input
+              type="text"
+              id="user-message"
+              placeholder="Hola! Vengo de la página web..."
+            />
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="js/carrito.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

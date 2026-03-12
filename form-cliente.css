@@ -1,0 +1,796 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    font-family: "Unbounded", sans-serif;
+    background-image: linear-gradient(to bottom, #7454d9, #8d61e1, #a36ee9, #b97cf2, #cd8bfa);
+}
+
+main {
+    padding: 0 15%;
+    padding-top: 120px;
+    display: flex;
+    justify-content: center;
+}
+
+.top-bar {
+    background-color: #8e6fe3;
+    color: #ffffff;
+    padding: 5px;
+    text-align: center;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Reparte los 3 bloques */
+    margin: 0 5%;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 0 0 50px 50px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 29px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.logo {
+    width: 200px;
+    height: auto;
+}
+
+.nav-links {
+    flex: 1;
+    /* Ocupa 1/3 del espacio */
+    display: flex;
+    justify-content: flex-end;
+    /* Alinea los iconos a la derecha */
+}
+
+.icon-social-header {
+    width: 40px;
+    /* Un poco más estilizados */
+    height: auto;
+    margin-left: 15px;
+    /* Espacio entre ellos */
+    margin-right: 0;
+}
+
+.cart-container {
+    position: relative;
+    display: flex;
+    /* Cambiado de inline-block a flex */
+    align-items: center;
+    width: fit-content;
+    /* Se ajusta solo al ancho del icono */
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    z-index: 10;
+    background-color: #b97cf2;
+    /* El lila de tu marca */
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Si el carrito está vacío, lo ocultamos con JS */
+    display: none;
+}
+
+.menu-btn {
+    flex: 1;
+    /* Ocupa 1/3 del espacio */
+    display: flex;
+    justify-content: flex-start;
+    /* Alinea el icono a la izquierda */
+    color: #623cdd;
+    font-size: 30px;
+    cursor: pointer;
+    margin-right: 0;
+    /* ¡Borramos el 13%! */
+}
+
+.header>a {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar {
+    position: fixed;
+    /* para que se quede quietita */
+    top: 0;
+    left: -250px;
+    /* oculta al inicio */
+    width: 250px;
+    height: 100vh;
+    background: rgba(116, 84, 217, 0.9) !important;
+    padding-top: 60px;
+    transition: left 0.3s ease;
+    z-index: 2001 !important;
+    /* SIEMPRE 1 punto más que el overlay */
+    /* encima de todo */
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* El Overlay para el menú principal */
+.bar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px);
+    /* Desenfoque suave al abrir el menú */
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 2000;
+    /* Debe estar por encima del header pero debajo de la sidebar */
+    display: none;
+    /* Se oculta por defecto */
+    pointer-events: none;
+    /* No bloquea clics si está invisible */
+    transition: opacity 0.3s ease;
+}
+
+/* Mostrar overlay cuando el checkbox del menú esté activo */
+#nav-toggle:checked~.bar-overlay {
+    display: block;
+    pointer-events: auto;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 25px;
+    cursor: pointer;
+    color: white;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0.5px;
+}
+
+.sidebar ul li a {
+    display: block;
+    padding: 15px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.sidebar ul li a:hover {
+    background: #623cdd;
+}
+
+/* CUANDO EL TOGGLE ESTÁ ACTIVADO */
+#nav-toggle:checked~.sidebar {
+    left: 0;
+}
+
+.dropdown-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+
+.arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-right: 10px;
+    margin-left: 10px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid white;
+    /* flecha apuntando hacia arriba inicialmente */
+    transition: transform 0.3s ease;
+}
+
+.dropdown-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    background-color: #7454d9;
+}
+
+.dropdown-menu li a {
+    padding: 15px 30px;
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.dropdown-menu li a:hover {
+    background: #623cdd;
+}
+
+/* cuando está activado el checkbox, se abre el menú */
+#dropdown-toggle:checked+.dropdown-label+.dropdown-menu {
+    max-height: 500px;
+    /* lo suficiente para mostrar todos los ítems */
+}
+
+/* flecha rotada hacia abajo */
+#dropdown-toggle:checked+.dropdown-label .arrow {
+    transform: rotate(180deg);
+}
+
+/* Variables de color para mantener la marca */
+:root {
+    --lila-base: #b97cf2;
+    --lila-oscuro: #7454d9;
+    --blanco-glass: rgba(255, 255, 255, 0.2);
+    --border-glass: rgba(255, 255, 255, 0.3);
+}
+
+/* Contenedor Principal */
+.compra-container {
+    padding: 120px 5% 50px;
+    /* Reduje un poco el padding lateral para móviles */
+    display: flex;
+    justify-content: center;
+    background-image: linear-gradient(to bottom, #7454d9, #cd8bfa);
+    min-height: 100vh;
+}
+
+/* Tarjeta Principal Glassmorphism */
+.checkout-card {
+    background: var(--blanco-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    border-radius: 30px;
+    padding: 40px;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    color: #ffffff;
+}
+
+/* Grilla del Formulario */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px 30px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Inputs, Selects y Textarea */
+.input-group input,
+.input-group select,
+textarea {
+    background: white;
+    border: 2px solid transparent;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    color: #555;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+textarea {
+    min-height: 80px;
+    resize: none;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--lila-base);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Select Personalizado */
+.select-custom-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.select-custom-wrapper::after {
+    content: '▼';
+    font-size: 0.7rem;
+    color: var(--lila-oscuro);
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Botón Finalizar */
+.btn-finalizar-checkout {
+    width: 100%;
+    margin-top: 40px;
+    background: var(--lila-base);
+    color: white;
+    border: none;
+    padding: 20px;
+    border-radius: 15px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-finalizar-checkout:hover {
+    background: var(--lila-oscuro);
+    transform: translateY(-3px);
+}
+
+/* --- MODAL RESPONSIVE --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    padding: 15px;
+}
+
+.modal-content {
+    background: white;
+    max-width: 500px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 25px;
+    text-align: center;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/*----------------footer----------------*/
+.footer {
+    background-color: #ffffff;
+    margin: 0 5%;
+    padding: 0 30px;
+    border-radius: 50px 50px 0 0;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 50px;
+}
+
+.social-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 50px 0;
+    color: #7454d9;
+}
+
+.icon-social-footer {
+    width: 50px;
+    height: auto;
+    margin: 10px 10px 0 0;
+}
+
+.title-footer {
+    color: #7454d9;
+}
+
+.social {
+    color: #7454d9;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.line-footer {
+    border: none;
+    border-top: 2px solid rgba(116, 84, 217, 0.3);
+}
+
+.copyright {
+    text-align: center;
+    padding: 10px 0;
+    color: #7454d9;
+}
+
+.copyright p {
+    text-align: end;
+}
+
+.firma p {
+    text-align: center;
+}
+
+.firma img {
+    width: 10vh;
+    height: auto;
+}
+
+/*----------------chat----------------*/
+/* Checkbox oculto */
+.chat-toggle {
+    display: none;
+}
+
+/* Estilos del botón flotante */
+.chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ffffff;
+    border: 3px solid #7454d9;
+    color: #7454d9;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    animation: slideInRight 1.5s ease-out;
+    z-index: 5;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chat-button img {
+    width: 30px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.chat-button:hover {
+    background: #f9f6ff;
+}
+
+/* Contenedor del chat */
+.chat-container {
+    width: 360px;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: white;
+    border-radius: 15px;
+    display: none;
+    flex-direction: column;
+    z-index: 5;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Mostrar chat cuando el checkbox está activo */
+.chat-toggle:checked~.chat-container {
+    display: flex;
+}
+
+/* Encabezado del chat */
+.chat-header {
+    background: #7454d9;
+    color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    /* Alinear verticalmente */
+    gap: 8px;
+    /* Espacio entre la imagen y el nombre */
+    border-radius: 15px 15px 0 0;
+    position: relative;
+    /* Necesario para mover la "X" */
+}
+
+.chat-header h3 {
+    margin: 0;
+    margin-top: 10px;
+}
+
+.chat-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-color: #ffffff;
+    padding: 5px;
+}
+
+.status {
+    font-size: 12px;
+    color: #d6c3ff;
+}
+
+/* Botón de cerrar el chat */
+.close-chat {
+    position: absolute;
+    top: 5px;
+    /* Mover más arriba */
+    right: 10px;
+    /* Ajustar la posición a la derecha */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* Ocultar chat cuando se cierra */
+.chat-toggle:not(:checked)~.chat-container {
+    display: none;
+}
+
+/* Cuerpo del chat */
+.chat-body {
+    background: #d6c3ff;
+    padding: 25px 15px;
+}
+
+.chat-message {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+/* Pie del chat */
+.chat-footer {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #f1f1f1;
+    border-radius: 0 0 15px 15px;
+}
+
+.chat-footer input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    color: gray;
+    background: #e0e0e0;
+    box-sizing: border-box;
+    font-family: "Unbounded", sans-serif;
+}
+
+.send-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+
+
+/*----------------RESONSIVE----------------*/
+
+@media (max-width: 1400px) {
+
+    main {
+        padding: 0 10%;
+        padding-top: 130px;
+    }
+}
+
+@media (max-width: 1100px) {
+
+    body {
+        font-size: 13px;
+    }
+
+    /*body h1 { y h2
+        font-size: 20px;
+    }*/
+
+    /* Ajustamos el contenedor principal para que no tenga tanto margen */
+    main {
+        padding: 0 8%;
+        padding-top: 140px;
+    }
+
+    .header {
+        top: 26px;
+    }
+
+}
+
+@media (max-width: 900px) {
+
+    .icon-social-header {
+        width: 35px;
+        height: auto;
+    }
+
+    .icon-social-footer {
+        width: 40px;
+        height: auto;
+    }
+
+    /* BARRA LATERAL FULL SCREEN */
+    .sidebar {
+        width: 100%;
+        /* Ocupa todo el ancho */
+        left: -100%;
+        /* Se oculta completamente a la izquierda */
+        padding-top: 80px;
+        /* Más espacio para el botón de cerrar */
+    }
+
+    /* Cuando el toggle está activado en móvil */
+    #nav-toggle:checked~.sidebar {
+        left: 0;
+    }
+
+    /* Aumentar el tamaño de los enlaces para que sea fácil tocar con el dedo */
+    .sidebar ul li a {
+        padding: 20px;
+        font-size: 1rem;
+        text-align: center;
+        /* Opcional: centra el texto en el menú móvil */
+    }
+
+    .compra-container {
+        padding-top: 100px;
+    }
+
+    .checkout-card {
+        padding: 25px 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 700px) {
+
+    body {
+        font-size: 12px;
+    }
+
+    main {
+        padding-top: 180px;
+    }
+
+
+    .header {
+        top: 25px;
+        flex-wrap: wrap;
+        flex-direction: column;
+        /* Alinea todo en vertical */
+        align-items: center;
+        /* Centra todo horizontalmente */
+        padding: 15px 10px;
+        position: absolute;
+        /* Asegúrate de que siga siendo absolute */
+    }
+
+    .menu-btn {
+        position: absolute;
+        /* Sacamos al botón del flujo normal */
+        left: 20px;
+        /* Lo pegamos a la izquierda */
+        top: 25px;
+        /* Ajusta esto para que quede alineado a la altura del logo */
+        margin: 0;
+        /* Quitamos márgenes viejos */
+        order: 1;
+    }
+
+    .logo {
+        width: 160px;
+        margin: 0;
+        order: 2;
+        /* El logo ahora se centrará gracias al justify-content del padre */
+    }
+
+    .nav-links {
+        order: 3;
+        width: 100%;
+        display: flex;
+        /* Aseguramos que sea flex para centrar */
+        justify-content: center;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .icon-social-header {
+        width: 35px;
+        margin: 0 10px;
+    }
+
+
+
+    .social-container {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .redes-sociales {
+        margin-bottom: 25px;
+    }
+
+    .chat-container {
+        width: 330px;
+    }
+}
+
+@media (max-width: 400px) {
+    .chat-container {
+        width: 300px;
+    }
+
+    .chat-button {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .chat-button img {
+        width: 20px;
+        height: auto;
+        margin-right: 5px;
+    }
+}
