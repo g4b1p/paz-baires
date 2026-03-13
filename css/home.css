@@ -1,0 +1,340 @@
+
+.features {
+    margin: 70px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.feature {
+    border: 4px solid #ffffff;
+    color: #ffffff;
+    border-radius: 50px;
+    padding: 30px;
+    width: 45%;
+    height: auto;
+    text-align: center;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.feature img {
+    width: 120px;
+    height: auto;
+}
+
+.section-title {
+    background-color: #ffffff;
+    color: #b591ef;
+    font-size: 30px;
+    padding: 15px;
+    border-radius: 20px;
+    text-align: center;
+    margin: 20px 0;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.section-title-inverse {
+    background-color: #b591ef;
+    color: #ffffff;
+    font-size: 30px;
+    padding: 15px;
+    border-radius: 20px;
+    text-align: center;
+    margin: 20px 0;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.carrusel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.grid-productos {
+    display: flex;
+    /* Mantenemos flex para que se pongan en línea */
+    gap: 20px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.producto-card {
+    /* ELIMINAMOS width: 100% */
+    background-color: #ffffff;
+    border-radius: 40px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+    /* Calculamos para que entren exactamente 3 considerando los 2 espacios (gap) de 20px */
+    flex: 0 0 calc((100% - 40px) / 3);
+    min-width: calc((100% - 40px) / 3);
+    margin: 0;
+}
+
+.producto-card img {
+    box-sizing: border-box;
+    /* Incluye el padding y el borde en el ancho total */
+    width: 100%;
+    border: 15px solid #ffffff;
+    border-radius: 40px;
+}
+
+.producto-info {
+    padding: 0 20px;
+}
+
+.producto-name {
+    margin: 0;
+}
+
+.colors {
+    display: flex;
+}
+
+.color-option {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.color-option input {
+    display: none;
+}
+
+.color {
+    width: 25px;
+    height: 25px;
+    border-radius: 100px;
+}
+
+.btn-ver-mas {
+    background-color: #b591ef;
+    font-weight: bold;
+    padding: 8px;
+    border-radius: 20px;
+    border: none;
+    font-family: "Unbounded", sans-serif;
+    margin: 20px 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    /* Centra horizontalmente */
+    align-items: center;
+    /* Centra verticalmente (opcional) */
+    width: 100%;
+}
+
+.btn-ver-mas a {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.producto-href {
+    text-decoration: none;
+    color: black;
+}
+
+.destacados,
+.ofertas {
+    margin-bottom: 100px;
+}
+
+.flecha-carrusel {
+    width: 40px;
+    /* Ajusta según el tamaño de tu imagen */
+    height: auto;
+    cursor: pointer;
+    position: absolute;
+    z-index: 10;
+    transition: transform 0.2s;
+}
+
+.flecha-carrusel:hover {
+    transform: scale(1.2);
+}
+
+.prev {
+    left: -50px;
+}
+
+.next {
+    right: -50px;
+}
+
+#grid-destacados,
+#grid-ofertas {
+    display: flex;
+    gap: 20px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    width: 100%;
+}
+
+.sobre-nosotras {
+    margin-bottom: 100px;
+
+}
+
+.info-sobre-nosotras {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+/*
+.direccion,
+.horarios {
+    background-color: #ffffff;
+    padding: 20px;
+    width: 45%;
+    text-align: center;
+    border-radius: 40px;
+    margin: 30px 0 0 0;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}*/
+
+.direccion,
+.horarios {
+    background-color: #ffffff;
+    color: #b591ef;
+    border-radius: 50px;
+    padding: 30px;
+    width: 48%;
+    height: auto;
+    text-align: center;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.icon-direccion,
+.icon-horarios {
+    width: 60px;
+    height: auto;
+}
+
+.sobre-nosotras iframe {
+    border-radius: 50px;
+    margin: 30px 0;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.semana {
+    display: flex;
+    justify-content: space-between;
+    text-align: start;
+}
+
+
+
+/*----------------RESONSIVE----------------*/
+
+@media (max-width: 1100px) {
+
+    .video-container {
+        height: 100vh;
+        /* Un poco más bajo en celulares */
+    }
+}
+
+@media (max-width: 900px) {
+
+    .feature img {
+        width: 100px;
+        height: auto;
+    }
+
+    .icon-direccion,
+    .icon-horarios {
+        width: 50px;
+        height: auto;
+    }
+
+    /* CARRUSEL PRODUCTOS */
+    .producto-card {
+        /* Calculamos para que entren 2 productos y 1 gap de 20px */
+        flex: 0 0 calc((100% - 20px) / 2);
+        min-width: calc((100% - 20px) / 2);
+    }
+
+    /* Opcional: Si las flechas estorban en móvil, puedes ponerlas sobre el producto */
+    .prev {
+        left: -40px;
+    }
+
+    .next {
+        right: -40px;
+    }
+
+    .flecha-carrusel {
+        width: 30px;
+        /* Un poco más chicas en móvil */
+    }
+}
+
+@media (max-width: 700px) {
+
+    .section-title, .section-title-inverse {
+        font-size: 20px;
+    }
+
+    .features {
+        flex-direction: column;
+        align-items: center;
+        margin: 50px 0;
+    }
+
+    .feature {
+        width: 100%;
+        height: auto;
+        margin-bottom: 30px;
+    }
+
+    .info-sobre-nosotras {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .direccion,
+    .horarios {
+        padding: 30px;
+
+        width: 100%;
+        height: auto;
+        margin-bottom: 30px;
+    }
+
+    .video-overlay h1 {
+        font-size: 24px; /* Achicar la letra evita que se encimen las líneas */
+        line-height: 1.2; /* Da aire entre líneas */
+    }
+
+    .carrusel-wrapper {
+        padding: 0 40px; /* Espacio suficiente para las flechas de 30-40px */
+        display: flex;
+        justify-content: center;
+    }
+
+    .producto-card {
+        flex: 0 0 100%;
+        min-width: 100%;
+        /* Opcional: si lo quieres aún más chico, usa un % menor y margin auto */
+        /* flex: 0 0 90%; min-width: 90%; */
+    }
+
+    /* 3. Las flechas ahora las ubicamos en el padding que creamos */
+    .prev {
+        left: 1px;  /* Dentro del padding de 50px del wrapper */
+    }
+
+    .next {
+        right: 1px; /* Dentro del padding de 50px del wrapper */
+    }
+
+    .flecha-carrusel {
+        width: 35px;
+        position: absolute;
+        z-index: 10;
+        /* Si quieres que se vean más arriba/abajo, ajusta el top */
+        top: 40%; 
+    }
+}

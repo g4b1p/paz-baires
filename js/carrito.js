@@ -49,7 +49,7 @@ function renderizarCarrito() {
             <div class="carrito-vacio-msj" style="text-align: center; width: 100%; padding: 100px 20px;">
                 <h2 style="color: white; margin-bottom: 20px;">Tu carrito está vacío</h2>
                 <p style="color: rgba(255,255,255,0.8); margin-bottom: 30px;">¡Parece que aún no has elegido nada!</p>
-                <a href="tienda.html" class="btn-finalizar" style="text-decoration: none; display: inline-block; width: auto; padding: 15px 40px;">
+                <a href="tienda.html" class="btn-finalizar-carrito-vacio" style="text-decoration: none; display: inline-block; width: auto; padding: 15px 40px;">
                     IR A LA TIENDA
                 </a>
             </div>

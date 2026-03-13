@@ -1,0 +1,99 @@
+.acordeon {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.acordeon-item img {
+    width: 40px;
+    height: auto;
+    margin: 0 5px;
+}
+
+.acordeon-item label {
+    padding: 15px;
+    font-size: 20px;
+    background: #ffffff;
+    color: #b591ef;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    transition: all 300ms ease;
+    display: flex;
+    align-items: center;
+    border-radius: 50px 50px 50px 50px;
+}
+
+.acordeon-item label:hover {
+    background: #b591ef;
+    color: #ffffff;
+}
+
+.contenido-acordeon {
+    max-height: 0px;
+    overflow: hidden;
+    transition: all 400ms ease;
+    line-height: 30px;
+    background-color: #d6c3ff;
+    border-radius: 40px 40px 40px 40px;
+    color: #7454d9;
+}
+
+.contenido-acordeon a {
+    color: #7454d9;
+    font-weight: bold;
+}
+
+.btn-acordeon:checked~.contenido-acordeon {
+    /* Un número lo suficientemente grande para que quepa todo */
+    max-height: 2000px;
+    padding: 20px;
+}
+
+.btn-acordeon {
+    display: none;
+}
+
+.btn-comprar-section {
+    display: flex;
+    justify-content: center;
+    /* Lo centra horizontalmente */
+    width: 100%;
+    margin: 40px 0;
+}
+
+.btn-comprar {
+    padding: 15px 20px;
+    background-color: #7454d9;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+/*----------------RESONSIVE----------------*/
+
+@media (max-width: 700px) {
+
+    .quiero-comprar-icon {
+        width: 80px;
+        height: auto;
+    }
+
+    .acordeon-item img {
+        width: 30px;
+        height: auto;
+    }
+
+    .acordeon-item label {
+        padding: 20px;
+        font-size: 16px;
+    }
+
+    .btn-comprar {
+        font-size: 16px;
+        background-color: #7454d9;
+        box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    }
+}

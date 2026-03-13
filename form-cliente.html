@@ -3,72 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="images/paz-baires-logotipo-blanco-2.png" />
-    <link rel="stylesheet" href="form-cliente.css" />
+    <link rel="icon" href="images/icons/paz-baires-logotipo-blanco-2.png" />
+    <link rel="stylesheet" href="css/estilos-comunes.css" />
+    <link rel="stylesheet" href="css/form-cliente.css" />
     <title>Paz Baires</title>
   </head>
   <body>
-    <header>
-      <div class="top-bar">Compra minima para envios a partir de $50.000.</div>
-      <div class="header">
-        <div class="bar-overlay" id="menuOverlay"></div>
-
-        <input type="checkbox" id="nav-toggle" hidden />
-        <label for="nav-toggle" class="menu-btn">&#9776;</label>
-
-        <a href="home.html"
-          ><img class="logo" src="images/icons/paz-baires-logotipo.png" alt=""
-        /></a>
-
-        <nav class="nav-links">
-          <a href="carrito.html" class="cart-container"
-            ><img
-              class="icon-social-header"
-              src="images/icons/carrito-icon.png"
-              alt=""
-            />
-            <span id="cart-count" class="cart-badge">0</span>
-          </a>
-          <a href="https://www.instagram.com/pazbaires.ok/" target="_blank"
-            ><img
-              class="icon-social-header"
-              src="images/icons/instagram-icon.png"
-              alt=""
-          /></a>
-          <a href="https://www.facebook.com/pazbaires" target="_blank"
-            ><img
-              class="icon-social-header"
-              src="images/icons/facebook-icon.png"
-              alt=""
-          /></a>
-        </nav>
-
-        <aside class="sidebar">
-          <label for="nav-toggle" class="close-btn">✖</label>
-          <ul>
-            <li><a href="home.html">INICIO</a></li>
-            <li><a href="quiero-comprar.html">QUIERO COMPRAR</a></li>
-            <li class="dropdown">
-              <input type="checkbox" id="dropdown-toggle" hidden />
-              <label for="dropdown-toggle" class="dropdown-label">
-                <a href="tienda.html">TIENDA</a>
-                <span class="arrow"></span>
-              </label>
-              <ul class="dropdown-menu">
-                <li>
-                  <a href="tienda.html?categoria=accesorios">ACCESORIOS</a>
-                </li>
-                <li>
-                  <a href="tienda.html?categoria=blanqueria">BLANQUERIA</a>
-                </li>
-                <li><a href="tienda.html?categoria=ofertas">OFERTAS</a></li>
-              </ul>
-            </li>
-          </ul>
-        </aside>
-      </div>
-    </header>
-
     <main>
       <section class="checkout-card">
         <h2 class="form-title">DATOS PARA FINALIZAR COMPRA</h2>
@@ -80,102 +20,7 @@
         </button>
       </section>
     </main>
-
-    <footer class="footer">
-      <div class="social-container">
-        <div class="redes-sociales">
-          <h2 class="title-footer">Seguinos</h2>
-          <a
-            class="social"
-            href="https://www.instagram.com/pazbaires.ok/"
-            target="_blank"
-            ><img
-              class="icon-social-footer"
-              src="images/icons/instagram-icon.png"
-              alt=""
-            />pazbaires</a
-          >
-          <a
-            class="social"
-            href="https://www.facebook.com/pazbaires"
-            target="_blank"
-            ><img
-              class="icon-social-footer"
-              src="images/icons/facebook-icon.png"
-              alt=""
-            />pazbaires</a
-          >
-        </div>
-        <div class="contacto">
-          <h2 class="title-footer">Contacto</h2>
-
-          <p class="social">
-            <img
-              class="icon-social-footer"
-              src="images/icons/telefono-icon.png"
-              alt=""
-            />11 5601 8912
-          </p>
-
-          <p class="social">
-            <img
-              class="icon-social-footer"
-              src="images/icons/correo-icon.png"
-              alt=""
-            />pazbaires.adm@gmail.com
-          </p>
-        </div>
-      </div>
-      <div class="copyright">
-        <p>Paz Baires © Copyright 2025. Todos los derechos reservados.</p>
-        <hr class="line-footer" />
-        <section class="firma">
-          <p>Created by</p>
-          <img src="/imagotipo-gabi-coder.png" alt="" />
-        </section>
-      </div>
-
-      <div class="chat-whatsapp">
-        <!-- Botón para abrir el chat -->
-        <input type="checkbox" id="chat-toggle" class="chat-toggle" />
-        <label for="chat-toggle" class="chat-button">
-          <img src="images/icons/whatsapp-icon.png" alt="" />
-          Haz click aquí para comunicarte
-        </label>
-
-        <!-- Contenedor del chat -->
-        <div class="chat-container">
-          <div class="chat-header">
-            <img
-              src="images/icons/paz-baires-logotipo-2.png"
-              alt="Lab Dental Congreso"
-              class="chat-logo"
-            />
-            <div>
-              <h3>Paz Baires</h3>
-              <span class="status">Online</span>
-            </div>
-            <label for="chat-toggle" class="close-chat">&times;</label>
-          </div>
-          <div class="chat-body">
-            <div class="chat-message">
-              <span class="emoji">📋</span> Hola <span class="emoji">👋</span>,
-              bienvenido a <b><i>Paz Baires</i></b
-              >.
-              <p>¿En qué podemos ayudarte?</p>
-            </div>
-          </div>
-          <div class="chat-footer">
-            <input
-              type="text"
-              id="user-message"
-              placeholder="Hola! Vengo de la página web..."
-            />
-            <button class="send-btn" onclick="sendMessage()">➤</button>
-          </div>
-        </div>
-      </div>
-    </footer>
+    <script src="js/componentes.js"></script>
     <script src="js/form-cliente.js"></script>
     <script src="js/main.js"></script>
   </body>

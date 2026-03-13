@@ -1,0 +1,435 @@
+main {
+    padding-top: 140px;
+}
+
+.carrito-wrapper {
+    display: flex;
+    gap: 30px;
+    max-width: 1200px;
+    width: 100%;
+    align-items: flex-start;
+    margin-bottom: 50px;
+}
+
+/* --- TABLA DE PRODUCTOS --- */
+.items-container {
+    flex: 2;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.4);
+    /* Más transparente */
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    /* El "brillo" del borde */
+    color: white;
+}
+
+.carrito-tabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.carrito-tabla th {
+    text-align: left;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+}
+
+/* Estilo de los textos de info */
+.info-texto h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: white;
+    max-width: 200px;
+}
+
+.variante-tag {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.stock-tag {
+    font-size: 0.7rem;
+    color: #b97cf2;
+    /* Un lila encendido para indicar que hay stock */
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.carrito-item td {
+    padding: 25px 0;
+    font-size: 0.8rem;
+    border-bottom: 1px solid #eee;
+}
+
+.prod-detalles {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.btn-remove {
+    background: none;
+    border: none;
+    font-size: 24px;
+    /* Un poco más grande para que se vea bien */
+    cursor: pointer;
+    color: #eee;
+    /* Gris suave */
+    transition: color 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-remove:hover {
+    color: #ff4d4d;
+    /* Se pone roja al pasar el mouse */
+    transform: scale(1.2);
+}
+
+/* Alineación de la celda de la X */
+.prod-remove {
+    text-align: right;
+    width: 40px;
+}
+
+/* Ajuste para que los detalles no se peguen a la imagen */
+.prod-detalles {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Quitamos el position relative si lo tenía */
+}
+
+.prod-detalles img {
+    width: 80px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.info-texto p {
+    font-size: 0.75rem;
+    margin: 2px 0;
+    color: #eee;
+}
+
+/* --- SELECTOR CANTIDAD --- */
+.qty-selector {
+    display: flex;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.qty-selector button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    color: white;
+    width: 30px;
+    height: 35px;
+    font-size: 1.2rem;
+    transition: background 0.2s;
+}
+
+.qty-selector button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.qty-selector input {
+    width: 25px;
+    font-family: 'Unbounded';
+    padding: 0;
+    border: 0;
+    margin: 0;
+    background: none;
+    color: white;
+    text-align: center;
+}
+
+/* Quita las flechitas por defecto del input number */
+.qty-selector input::-webkit-inner-spin-button,
+.qty-selector input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* --- BOTÓN SEGUIR COMPRANDO --- */
+.btn-seguir-comprando {
+    display: inline-block;
+    margin-top: 20px;
+    background: #b97cf2;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+/* --- PANEL LATERAL TOTALES --- */
+.totales-container {
+    flex: 1;
+}
+
+.totales-card {
+    background: rgba(255, 255, 255, 0.2);
+    /* Más transparente */
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    /* El "brillo" del borde */
+    padding: 30px;
+    border-radius: 20px;
+    color: white;
+}
+
+.totales-card h2 {
+    font-size: 1rem;
+    margin-top: 0;
+    text-align: center;
+}
+
+/* Contenedores generales */
+.pago-section {
+
+    border-bottom: 0;
+    padding-bottom: 15px;
+}
+
+.envio-section {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+
+.envio-section p,
+.pago-section p {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* Tarjeta de Opción (Envío y Pago) */
+.option-card {
+    display: flex;
+    align-items: flex-start;
+    background: rgba(255, 255, 255, 0.08);
+    /* Fondo sutil traslúcido */
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+}
+
+.option-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Estilo del Radio Button */
+.option-card input[type="radio"] {
+    margin-top: 4px;
+    margin-right: 12px;
+    accent-color: rgb(140, 93, 185);
+    /* Color lila de tu marca */
+    transform: scale(1.1);
+}
+
+/* Información interna */
+.option-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.option-info strong {
+    font-size: 0.85rem;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.option-info span {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    /* Texto secundario más suave */
+    line-height: 1.2;
+}
+
+/* Efecto visual al seleccionar */
+.option-card:has(input:checked) {
+    background: rgb(185, 124, 242);
+    /* Fondo lila suave al marcar */
+    border-color: rgb(255, 255, 255);
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding-top: 20px;
+    margin-bottom: 30px;
+}
+
+.total-price {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.btn-finalizar {
+    width: 100%;
+    background: #b97cf2;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 15px;
+    font-family: 'Unbounded';
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/*----------------RESONSIVE----------------*/
+
+@media (max-width: 900px) {
+
+    main {
+        padding-top: 180px;
+        /* Más espacio para el header responsive */
+    }
+
+    .carrito-wrapper {
+        flex-direction: column;
+        /* Apila la tabla y los totales */
+        align-items: stretch;
+    }
+
+    .totales-container {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    /* Convertimos la tabla en bloques */
+    .carrito-tabla,
+    .carrito-tabla thead,
+    .carrito-tabla tbody,
+    .carrito-tabla th,
+    .carrito-tabla td,
+    .carrito-tabla tr {
+        display: block;
+        width: 100%;
+    }
+
+    /* Ocultamos los encabezados de la tabla (Producto, Precio, etc.) */
+    .carrito-tabla thead {
+        display: none;
+    }
+
+    .carrito-item {
+        display: block;
+        position: relative;
+        /* Clave para que la X se posicione respecto a esto */
+        padding: 30px 10px 15px 10px;
+        /* Espacio extra arriba para la X */
+        margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        /* Un fondo sutil para separar productos */
+        border-radius: 15px;
+    }
+
+    .carrito-item td {
+        padding: 5px 0;
+        border: none;
+        text-align: left;
+    }
+
+    /* Ajuste de imagen y textos */
+    .prod-detalles {
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-right: 30px;
+    }
+
+    .prod-detalles img {
+        width: 80px;
+        height: auto;
+    }
+
+    /* Posicionamos la X de eliminar arriba a la derecha */
+    .prod-remove {
+        position: absolute;
+        top: 10px;
+        /* Distancia desde el borde superior */
+        right: 10px;
+        /* Distancia desde el borde derecho */
+        width: auto !important;
+        height: auto !important;
+        padding: 0 !important;
+        border: none !important;
+        z-index: 10;
+    }
+
+    /* Precios y Cantidad */
+    .prod-precio,
+    .prod-qty,
+    .prod-subtotal {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem !important;
+    }
+
+    /* Agregamos etiquetas con :before para que el usuario sepa qué es cada número */
+    .prod-precio:before {
+        content: "Precio:";
+        opacity: 0.7;
+        font-size: 0.7rem;
+    }
+
+    .prod-qty:before {
+        content: "Cantidad:";
+        opacity: 0.7;
+        font-size: 0.7rem;
+    }
+
+    .prod-subtotal:before {
+        content: "Subtotal:";
+        opacity: 0.7;
+        font-size: 0.7rem;
+    }
+
+    .qty-selector {
+        margin-left: auto;
+        /* Empuja el selector a la derecha */
+    }
+
+    .totales-card {
+        padding: 20px;
+    }
+
+    .total-price {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .total-price {
+        font-size: 1.1rem;
+    }
+}
