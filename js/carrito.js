@@ -125,3 +125,31 @@ function eliminarDelCarrito(index) {
   renderizarCarrito();
   actualizarContadorCarrito(); // <--- También actualizamos el badge aquí
 }
+
+function validarYLimpiarCarrito() {
+  // 1. Obtenemos lo que la clienta tenía guardado
+  let carritoGuardado = JSON.parse(localStorage.getItem("carrito")) || [];
+
+  if (carritoGuardado.length === 0) return;
+
+  // 2. Filtramos el carrito: solo se quedan los que están en 'productos' Y tienen stock
+  const carritoValidado = carritoGuardado.filter((itemCarrito) => {
+    // Buscamos el producto real en la lista que bajó de Google Sheets
+    const productoReal = productos.find((p) => p.id === itemCarrito.id);
+
+    // Si el producto ya no existe en el Excel o dice "Sin Stock", lo borramos
+    if (!productoReal || productoReal.estado === "Sin Stock") {
+      console.warn(
+        `Producto ${itemCarrito.nombre} eliminado por falta de stock.`,
+      );
+      return false;
+    }
+
+    // Si existe y hay stock, se queda
+    return true;
+  });
+
+  // 3. Guardamos el carrito limpio y actualizamos la vista
+  localStorage.setItem("carrito", JSON.stringify(carritoValidado));
+  actualizarInterfazCarrito();
+}

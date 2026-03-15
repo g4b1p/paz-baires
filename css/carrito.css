@@ -290,7 +290,7 @@ main {
     font-weight: bold;
 }
 
-.btn-finalizar {
+.btn-finalizar, .btn-finalizar-carrito-vacio {
     width: 100%;
     background: #b97cf2;
     color: white;

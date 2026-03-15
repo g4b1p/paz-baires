@@ -70,6 +70,11 @@ document.addEventListener("productosListos", () => {
   }
 
   configurarEscuchadores();
+
+  // ¡NUEVO! Validamos el carrito apenas llegan los datos frescos del Excel
+  if (typeof validarYLimpiarCarrito === "function") {
+    validarYLimpiarCarrito();
+  }
 });
 
 // MODIFICACIÓN EN LA FUNCIÓN DE RENDERIZADO
@@ -158,7 +163,7 @@ function aplicarFiltros() {
 
       matchOferta = enLinea || enNombre;
     }
-    
+
     return (
       matchCategoria &&
       matchPrecio &&

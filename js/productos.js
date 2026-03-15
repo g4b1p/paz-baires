@@ -33,6 +33,11 @@ async function cargarProductosDesdeSheet() {
           tipo: p.Tipo ? p.Tipo.toLowerCase() : "",
           nombre: p.Nombre,
           precio: parseFloat(p.Precio) || 0,
+          // --- AGREGÁ ESTO AQUÍ ---
+          etiqueta: p.Etiqueta ? p.Etiqueta.trim() : "Ninguno",
+          fechaIngreso: p["Fecha Ingreso"] || null,
+          // 👆 Si en el Excel se llama "Fecha Ingreso", JS lo lee así p["Fecha Ingreso"]
+          // -----------------------
           coleccion: p.Colección ? p.Colección.toLowerCase().trim() : "varios",
           ambiente: p.Ambiente
             ? p.Ambiente.split(",").map((s) => s.trim())
@@ -62,6 +67,12 @@ async function cargarProductosDesdeSheet() {
           detalles: { Tecnico: p["Detalles Técnicos"] || "" },
         };
       });
+
+    window.productos = nuevosProductos; // <--- ESTO ES VITAL
+    localStorage.setItem("productos_cache", JSON.stringify(window.productos));
+
+    console.log("✅ Datos actualizados y guardados en window.productos");
+    document.dispatchEvent(new CustomEvent("productosListos"));
 
     // 4. ACTUALIZACIÓN DE MEMORIA Y CACHÉ
     // Comparamos si lo nuevo es distinto a lo que teníamos para no refrescar innecesariamente

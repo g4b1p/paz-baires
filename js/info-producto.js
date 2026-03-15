@@ -23,8 +23,6 @@ document.addEventListener("productosListos", () => {
 });
 
 function cargarProducto() {
-
-  
   if (typeof productos === "undefined" || productos.length === 0) {
     const cache = localStorage.getItem("cache_productos");
     if (cache) {
@@ -199,9 +197,7 @@ function renderSeccionColores(container, prod) {
   container.innerHTML = `
         <span class="selector-title">Elegí el color:</span>
         <div class="color-grid"></div>
-        <p id="colorNameDisplay" style="font-size: 0.8rem; margin-top: 10px; opacity: 0.8">
-            Hacé click en un color
-        </p>
+        <p id="colorNameDisplay" style="font-size: 0.8rem; margin-top: 10px; opacity: 0.8"><i>Hacé click en un color</i></p>
     `;
   const grid = container.querySelector(".color-grid");
   prod.variantes.forEach((v) => {
@@ -223,12 +219,16 @@ function renderSeccionColores(container, prod) {
 }
 
 function renderSeccionEstampados(container, prod) {
+  // Forzamos a que sea null al inicio para que el alert funcione
+  varianteSeleccionada = null;
+
   container.innerHTML = `
         <div class="stamped-selected-text">
-            Estampado seleccionado: <strong id="stampedName">${prod.variantes[0].nombre}</strong>
+            Estampado: <strong id="stampedName">No seleccionado</strong>
         </div>
-        <p style="font-size:0.7rem; opacity:0.7">Cambiá la imagen para ver otros estampados</p>
+        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px; opacity: 0.8"><i>Seleccioná el diseño haciendo click en las fotos de la galería.</i></p>
     `;
+  actualizarGuia(); // Para que el texto de abajo también diga "Seleccioná una opción"
 }
 
 // Esperamos a que cargue el DOM
@@ -236,29 +236,43 @@ document.addEventListener("DOMContentLoaded", () => {
   const botonAgregar = document.getElementById("btn-agregar");
 
   if (botonAgregar) {
-    botonAgregar.addEventListener("click", () => {
-      // 1. Buscamos el producto actual de nuevo (igual que en cargarProducto)
+    botonAgregar.onclick = () => {
+      // Usamos .onclick para asegurar que sea el único evento
       const urlParams = new URLSearchParams(window.location.search);
       const productId = urlParams.get("id");
       const productoActual = productos.find((p) => p.id == productId);
 
       if (!productoActual) return;
 
-      // 2. CORRECCIÓN: El ID correcto de tu input es "itemQuantity" (según tu función cargarProducto)
-      const cantidad = document.getElementById("itemQuantity")?.value || 1;
+      // Limpiamos la variante de cualquier espacio o texto raro
+      const varianteLimpia = (varianteSeleccionada || "")
+        .toString()
+        .trim()
+        .toLowerCase();
 
-      // 3. Validación: Si no eligió color/estampado, avisar
-      if (!varianteSeleccionada) {
-        alert("Por favor, seleccioná un color o estampado antes de agregar.");
-        return;
+      console.log("DEBUG - Variante detectada:", `"${varianteLimpia}"`);
+
+      // VALIDACIÓN RADICAL:
+      // Si está vacía, es null, es "ninguno", o es el texto por defecto
+      if (
+        !varianteSeleccionada ||
+        varianteLimpia === "" ||
+        varianteLimpia === "ninguno" ||
+        varianteLimpia.includes("hace click")
+      ) {
+        alert(
+          "⚠️ Por favor, seleccioná un color o estampado específico antes de continuar.",
+        );
+        return; // BLOQUEO TOTAL
       }
 
-      // 4. Llamamos a la función con la variable global 'varianteSeleccionada' que ya manejas arriba
-      agregarAlCarrito(productoActual, cantidad, varianteSeleccionada);
+      const cantidad =
+        parseInt(document.getElementById("itemQuantity")?.value) || 1;
 
-      // 5. Redirigir al carrito
+      // Si pasó la validación, agregamos y redirigimos
+      agregarAlCarrito(productoActual, cantidad, varianteSeleccionada);
       window.location.href = "carrito.html";
-    });
+    };
   }
 });
 

@@ -313,7 +313,7 @@ body:has(#nav-toggle:checked) {
 }
 
 .btn-comprar {
-    padding: 20px;
+    padding: 10px 20px;
     background-color: #7454d9;
     color: white;
     text-decoration: none;
