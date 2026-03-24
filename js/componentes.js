@@ -7,7 +7,7 @@ function insertarHeader() {
   // Detectamos en qué página estamos
   const paginaActual = window.location.pathname;
   const esHome =
-    paginaActual.includes("home.html") ||
+    paginaActual.includes("index.html") ||
     paginaActual.includes("quiero-comprar.html") ||
     paginaActual.endsWith("/");
 
@@ -23,7 +23,7 @@ function insertarHeader() {
 
         <label for="nav-toggle" class="menu-btn">&#9776;</label>
 
-        <a href="home.html"
+        <a href="index.html"
           ><img class="logo" src="images/icons/paz-baires-logotipo.png" alt=""
         /></a>
 
@@ -53,7 +53,7 @@ function insertarHeader() {
         <aside class="sidebar">
           <label for="nav-toggle" class="close-btn">✖</label>
           <ul>
-            <li><a href="home.html">INICIO</a></li>
+            <li><a href="index.html">INICIO</a></li>
             <li><a href="quiero-comprar.html">QUIERO COMPRAR</a></li>
             <li class="dropdown">
               <input type="checkbox" id="dropdown-toggle" hidden />
