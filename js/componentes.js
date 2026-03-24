@@ -82,7 +82,7 @@ function insertarHeader() {
 
   // 2. Si es el Home o Quiero Comprar, LE SUMAMOS el video
   if (esHome) {
-    const videoUrl = `${pathBase}images/intro.mp4`;
+    const videoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
     console.log("🎥 Intentando cargar video desde:", videoUrl);
 
     headerHTML += `
