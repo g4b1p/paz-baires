@@ -3,6 +3,8 @@ let varianteSeleccionada = null;
 
 let usuarioYaInteractuo = false; // Nueva variable de control
 
+let indexImagenPazBaires = 0;
+
 // 1. INTENTO DE CARGA INSTANTÁNEA (Caché)
 const cache = localStorage.getItem("productos_cache");
 if (cache) {
@@ -21,7 +23,9 @@ document.addEventListener("productosListos", () => {
   console.log("🔄 Datos frescos de Google Sheets recibidos...");
   // SI EL USUARIO YA ELIGIÓ ALGO, NO RECARGAMOS LA PÁGINA
   if (usuarioYaInteractuo) {
-    console.log("⚠️ El usuario ya está eligiendo opciones, no se reinicia para no perder la selección.");
+    console.log(
+      "⚠️ El usuario ya está eligiendo opciones, no se reinicia para no perder la selección.",
+    );
     return;
   }
 
@@ -51,6 +55,13 @@ function cargarProducto() {
     return;
   }
 
+  // --- EL TRUCO ESTÁ ACÁ ---
+  // Si el usuario ya interactuó, NO reseteamos el índice a 0
+  if (!usuarioYaInteractuo) {
+    indexImagenPazBaires = 0;
+  }
+  // -------------------------
+
   // 1. Cargar Datos Básicos
   document.getElementById("productName").innerText = producto.nombre;
   document.getElementById("productBrand").innerText =
@@ -68,14 +79,15 @@ function cargarProducto() {
   const thumbBar = document.getElementById("thumbBar");
 
   if (producto.imagenes && producto.imagenes.length > 0) {
-    mainImg.src = producto.imagenes[0];
+    mainImg.src = producto.imagenes[indexImagenPazBaires];
     thumbBar.innerHTML = "";
     producto.imagenes.forEach((img, index) => {
       const thumb = document.createElement("img");
       thumb.src = img;
-      thumb.className = `thumb ${mainImg.src === img ? "active" : ""}`;
+      thumb.className = `thumb ${index === indexImagenPazBaires ? "active" : ""}`;
       thumb.onclick = function () {
         usuarioYaInteractuo = true; // <--- AGREGAR ESTO
+        indexImagenPazBaires = index;
         mainImg.src = this.src;
         document
           .querySelectorAll(".thumb")
@@ -219,10 +231,13 @@ function renderSeccionColores(container, prod) {
     dot.style.backgroundColor = v.valor;
     dot.onclick = function () {
       usuarioYaInteractuo = true;
-      document.querySelectorAll(".color-dot").forEach((d) => d.classList.remove("active"));
+      document
+        .querySelectorAll(".color-dot")
+        .forEach((d) => d.classList.remove("active"));
       this.classList.add("active");
       varianteSeleccionada = v.nombre;
-      document.querySelector("#colorNameDisplay").innerHTML = `Seleccionado: <strong>${v.nombre}</strong>`;
+      document.querySelector("#colorNameDisplay").innerHTML =
+        `Seleccionado: <strong>${v.nombre}</strong>`;
       actualizarGuia();
     };
     grid.appendChild(dot);
@@ -230,21 +245,29 @@ function renderSeccionColores(container, prod) {
 
   // Si ya había algo seleccionado (por caché), actualizamos el texto de abajo
   if (varianteSeleccionada) {
-    document.querySelector("#colorNameDisplay").innerHTML = `Seleccionado: <strong>${varianteSeleccionada}</strong>`;
+    document.querySelector("#colorNameDisplay").innerHTML =
+      `Seleccionado: <strong>${varianteSeleccionada}</strong>`;
   }
 }
 
 function renderSeccionEstampados(container, prod) {
-  // Forzamos a que sea null al inicio para que el alert funcione
-  varianteSeleccionada = null;
+  // --- BORRÁ ESTA LÍNEA: varianteSeleccionada = null; ---
+
+  // Si ya había una variante (porque el usuario ya clickeó antes de que Google Sheets actualice)
+  // la mantenemos, si no, ponemos "No seleccionado"
+  const nombreMostrar = varianteSeleccionada
+    ? varianteSeleccionada
+    : "No seleccionado";
 
   container.innerHTML = `
         <div class="stamped-selected-text">
-            Estampado: <strong id="stampedName">No seleccionado</strong>
+            Estampado: <strong id="stampedName">${nombreMostrar}</strong>
         </div>
-        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px; opacity: 0.8"><i>Seleccioná el diseño haciendo click en las fotos de la galería.</i></p>
+        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px; opacity: 0.8">
+            <i>Seleccioná el diseño haciendo click en las fotos de la galería.</i>
+        </p>
     `;
-  actualizarGuia(); // Para que el texto de abajo también diga "Seleccioná una opción"
+  actualizarGuia();
 }
 
 // Esperamos a que cargue el DOM
