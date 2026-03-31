@@ -180,24 +180,30 @@ function cargarProducto() {
   // 8. Inicializar Guía por primera vez
   actualizarGuia();
 
-  // AL FINAL DE LA FUNCIÓN:
+  // AL FINAL DE LA FUNCIÓN DE CARGA:
   const container = document.getElementById("productContainer");
   if (container) {
     container.classList.remove("loading");
   }
 
+  const btn = document.getElementById("btn-agregar");
+  const precioContainer = document.getElementById("currentPrice");
+
   if (producto.estado === "Sin Stock") {
-    const btn = document.getElementById("btn-agregar");
     if (btn) {
-      btn.disabled = true; // Deshabilita el botón
+      btn.disabled = true;
       btn.innerText = "SIN STOCK";
-      btn.style.background = "#555"; // Color gris
+      btn.style.background = "#555";
       btn.style.cursor = "not-allowed";
     }
-
-    // Opcional: Agregar un mensaje rojo cerca del precio
-    const precioContainer = document.getElementById("currentPrice");
-    precioContainer.innerHTML += ` <span style="color: #ba2e2e; font-size: 0.8rem; display: block;">Temporalmente sin stock</span>`;
+    if (precioContainer) {
+      precioContainer.innerHTML += ` <span style="color: #ba2e2e; font-size: 0.8rem; display: block;">Temporalmente sin stock</span>`;
+    }
+  } else if (producto.estado && producto.estado !== "Activo") {
+    // Para "Últimos Disponibles" u otros estados
+    if (precioContainer) {
+      precioContainer.innerHTML += ` <span style="color: #ff9800; font-size: 0.8rem; display: block;">¡Aprovechá! ${producto.estado}</span>`;
+    }
   }
 }
 

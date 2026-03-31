@@ -25,7 +25,13 @@ async function cargarProductosDesdeSheet() {
 
     // 3. TRANSFORMACIÓN DE DATOS
     const nuevosProductos = data
-      .filter((p) => p.Estado === "Activo" || p.Estado === "Sin Stock")
+      .filter((p) => {
+        // Normalizamos el estado para que no importen espacios ni mayúsculas
+        const est = p.Estado ? p.Estado.toString().trim().toLowerCase() : "";
+        // REGLA: Pasa todo menos lo que esté vacío o diga "oculto"
+        return est !== "oculto" && est !== "";
+      })
+
       .map((p) => {
         return {
           id: parseInt(p.ID),

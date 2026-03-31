@@ -68,7 +68,7 @@ function insertarHeader() {
                 <li>
                   <a href="tienda.html?categoria=blanqueria">BLANQUERIA</a>
                 </li>
-                <li><a href="tienda.html?categoria=ofertas">OFERTAS</a></li>
+                <li><a href="tienda.html?categoria=pijamas">PIJAMAS</a></li>
               </ul>
             </li>
           </ul>

@@ -123,7 +123,7 @@ function renderizarProductos(lista) {
   if (!contenedor) return;
 
   contenedor.innerHTML = "";
-  contenedor.classList.remove("loading"); // <-- IMPORTANTE
+  contenedor.classList.remove("loading");
 
   if (lista.length === 0) {
     contenedor.innerHTML = `<p class="no-results" style="color: #ffffff;">No se encontraron productos con esos filtros.</p>`;
@@ -131,19 +131,28 @@ function renderizarProductos(lista) {
   }
 
   lista.forEach((prod) => {
-    // IMPORTANTE: Usamos prod.imagenes[0] porque ahora es un array
     const imagenPortada =
       prod.imagenes && prod.imagenes.length > 0
         ? prod.imagenes[0]
         : "img/placeholder.jpg";
 
+    // Lógica dinámica de badges
+    let badgeHTML = "";
+    let claseExtra = "";
+
+    if (prod.estado === "Sin Stock") {
+      badgeHTML = `<span class="badge-sin-stock">SIN STOCK</span>`;
+      claseExtra = "sin-stock";
+    } else if (prod.estado && prod.estado !== "Activo") {
+      // Si dice "Últimos Disponibles", sale naranja con ese texto
+      badgeHTML = `<span class="badge-sin-stock badge-alerta">${prod.estado.toUpperCase()}</span>`;
+    }
+
     const card = `
-        <div class="producto-card ${prod.estado === "Sin Stock" ? "sin-stock" : ""}">
+        <div class="producto-card ${claseExtra}">
             <a href="info-producto.html?id=${prod.id}" class="producto-href">
-                ${prod.estado === "Sin Stock" ? '<span class="badge-sin-stock">SIN STOCK</span>' : ""}
-                
+                ${badgeHTML}
                 <img class="producto-img" src="${imagenPortada}" alt="${prod.nombre}" />
-                
                 <div class="producto-info">
                     <p class="producto-name">${prod.nombre}</p>
                     ${prod.variantes && prod.variantes.length > 1 ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>` : ""}
