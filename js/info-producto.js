@@ -1,8 +1,7 @@
 // Variable global para rastrear qué eligió el usuario
 let varianteSeleccionada = null;
-
+let talleSeleccionado = null; // Para rastrear el talle elegido
 let usuarioYaInteractuo = false; // Nueva variable de control
-
 let indexImagenPazBaires = 0;
 
 // 1. INTENTO DE CARGA INSTANTÁNEA (Caché)
@@ -134,9 +133,19 @@ function cargarProducto() {
     renderSeccionColores(variantSelector, producto);
   } else {
     renderSeccionEstampados(variantSelector, producto);
-    // Por defecto marcamos la primera en estampados
-    varianteSeleccionada = producto.variantes[0].nombre;
+    // Solo marcamos si existen variantes para evitar el error 'nombre' of undefined
+    if (
+      !usuarioYaInteractuo &&
+      producto.variantes &&
+      producto.variantes.length > 0
+    ) {
+      varianteSeleccionada = producto.variantes[0].nombre;
+    }
   }
+
+  // --- NUEVO: Sección de Talles ---
+  // Buscamos si el producto tiene la propiedad talles (asegurate que en productos.js se llame así)
+  renderSeccionTalles(variantSelector, producto);
 
   // 6. Lógica de Flechas Carrusel
   let indexImagenActual = 0;
@@ -208,18 +217,32 @@ function cargarProducto() {
 }
 
 // FUNCIONES DE APOYO (Fuera de cargarProducto para que sea más limpio)
-
+// --- FUNCION DE GUIA RENOVADA ---
 function actualizarGuia() {
   const guia = document.getElementById("guia-seleccion");
   const cantidad = document.getElementById("itemQuantity").value;
   if (!guia) return;
 
+  // 1. Manejar el estado del Talle (Útil para Pijamas o Toallas con talle)
+  let textoTalle = "";
+  if (talleSeleccionado) {
+    textoTalle = ` (Talle: <strong>${talleSeleccionado}</strong>)`;
+  }
+
+  // 2. Manejar el estado de la Variante (Color o Estampado)
   if (!varianteSeleccionada) {
-    guia.innerHTML = `Seleccioná una opción`;
-    guia.style.opacity = "0.7";
+    // Si no eligió color/estampado, solo mostramos la cantidad si ya es > 1
+    if (parseInt(cantidad) > 1) {
+      guia.innerHTML = `Elegí una opción para tus <strong>${cantidad}</strong> productos`;
+    } else {
+      guia.innerHTML = `Seleccioná una opción`;
+    }
+    guia.style.opacity = "0.7"; // Un poco transparente para avisar que falta algo
   } else {
-    guia.innerHTML = `Seleccionaste <strong>${cantidad}</strong> de <strong>${varianteSeleccionada}</strong>`;
-    guia.style.opacity = "1";
+    // --- ESTA ES LA LINEA MAGICA ---
+    // Combinamos todo: Cantidad + Variante + Talle (si existe)
+    guia.innerHTML = `Seleccionaste <strong>${cantidad}</strong> de <strong>${varianteSeleccionada}</strong>${textoTalle}`;
+    guia.style.opacity = "1"; // Totalmente opaco, está todo listo
   }
 }
 
@@ -276,6 +299,55 @@ function renderSeccionEstampados(container, prod) {
   actualizarGuia();
 }
 
+function renderSeccionTalles(container, prod) {
+  // Verificamos si hay talles. Si no hay o es un array vacío, no hacemos nada.
+  if (
+    !prod.talles ||
+    prod.talles.length === 0 ||
+    (prod.talles.length === 1 && prod.talles[0] === "")
+  ) {
+    return;
+  }
+
+  // Creamos el contenedor de talles si no existe
+  let talleDiv = document.getElementById("talleSelectorContainer");
+  if (!talleDiv) {
+    talleDiv = document.createElement("div");
+    talleDiv.id = "talleSelectorContainer";
+    talleDiv.className = "detalles-item";
+    talleDiv.innerHTML = `<span class="selector-title">Elegí tu talle:</span><div class="talles-grid"></div>`;
+    container.appendChild(talleDiv);
+  }
+
+  const grid = talleDiv.querySelector(".talles-grid");
+  grid.innerHTML = ""; // Limpiamos para no duplicar
+
+  prod.talles.forEach((t) => {
+    const btn = document.createElement("div");
+    btn.className = "talle-dot"; // Usaremos una clase similar a color-dot pero cuadrada
+    btn.innerText = t;
+
+    // Lógica para "Talle Único": Se selecciona solo
+    if (t.toLowerCase().includes("unico") || prod.talles.length === 1) {
+      talleSeleccionado = t;
+      btn.classList.add("active");
+    }
+
+    if (talleSeleccionado === t) btn.classList.add("active");
+
+    btn.onclick = function () {
+      usuarioYaInteractuo = true;
+      document
+        .querySelectorAll(".talle-dot")
+        .forEach((d) => d.classList.remove("active"));
+      this.classList.add("active");
+      talleSeleccionado = t;
+      actualizarGuia();
+    };
+    grid.appendChild(btn);
+  });
+}
+
 // Esperamos a que cargue el DOM
 document.addEventListener("DOMContentLoaded", () => {
   const botonAgregar = document.getElementById("btn-agregar");
@@ -297,6 +369,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log("DEBUG - Variante detectada:", `"${varianteLimpia}"`);
 
+      if (
+        productoActual.talles &&
+        productoActual.talles.length > 0 &&
+        !talleSeleccionado
+      ) {
+        alert("⚠️ Por favor, seleccioná un talle.");
+        return;
+      }
+
       // VALIDACIÓN RADICAL:
       // Si está vacía, es null, es "ninguno", o es el texto por defecto
       if (
@@ -315,13 +396,18 @@ document.addEventListener("DOMContentLoaded", () => {
         parseInt(document.getElementById("itemQuantity")?.value) || 1;
 
       // Si pasó la validación, agregamos y redirigimos
-      agregarAlCarrito(productoActual, cantidad, varianteSeleccionada);
+      agregarAlCarrito(
+        productoActual,
+        cantidad,
+        varianteSeleccionada,
+        talleSeleccionado,
+      );
       window.location.href = "carrito.html";
     };
   }
 });
 
-function agregarAlCarrito(producto, cantidad, varianteSeleccionada) {
+function agregarAlCarrito(producto, cantidad, varianteSeleccionada, talle) {
   let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
   const nuevoItem = {
@@ -333,7 +419,7 @@ function agregarAlCarrito(producto, cantidad, varianteSeleccionada) {
       producto.imagenes && producto.imagenes.length > 0
         ? producto.imagenes[0]
         : "default.jpg",
-    variante: varianteSeleccionada,
+    variante: talle ? `${variante} - Talle ${talle}` : variante, // Combinamos variante y talle
     cantidad: parseInt(cantidad),
     subtotal: producto.precio * parseInt(cantidad), // Aseguramos que cantidad sea número
   };

@@ -201,6 +201,64 @@ main {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
+/* --- Nuevo Selector de Talles Moderno --- */
+.talles-grid {
+    display: flex;
+    gap: 15px;
+    /* Más espacio entre talles */
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.talle-dot {
+    min-width: 50px;
+    /* Un poco más anchos para que sean fáciles de clickear */
+    height: 50px;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    /* Bordes semi-transparentes sobre el fondo violeta */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    /* REDONDOS, tipo color-dot, quedan más boutique */
+    font-weight: bold;
+    font-size: 1rem;
+    /* Un poco más grande la letra */
+    transition: all 0.3s ease;
+    background: transparent;
+    /* Transparentes para que se vea el fondo violeta */
+    color: white;
+    /* Letras blancas sobre el fondo violeta */
+}
+
+/* Efecto al pasar el mouse */
+.talle-dot:hover {
+    border-color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+    /* Efecto de 'pop' */
+}
+
+/* Estado SELECCIONADO: Fondo blanco, letras negras */
+.talle-dot.active {
+    background-color: white;
+    color: #a27ae3;
+    /* Color violeta oscuro (o el que uses de fondo) */
+    border-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* Sombrita para que resalte */
+}
+
+/* Ajuste del título "Elegí tu talle:" */
+.selector-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    /* Título blanco */
+    display: block;
+    margin-bottom: 5px;
+}
+
 .btn-add-cart {
     background: #7454d9;
     color: var(--primary-violet);
@@ -425,6 +483,7 @@ main {
     }
 
     .main-image-wrapper {
-    border-radius: 20px; /* Redondeado ideal para celulares */
-}
+        border-radius: 20px;
+        /* Redondeado ideal para celulares */
+    }
 }

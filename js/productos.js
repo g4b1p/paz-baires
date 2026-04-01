@@ -70,6 +70,11 @@ async function cargarProductosDesdeSheet() {
                 };
               })
             : [],
+          talles: p.Talles
+            ? p.Talles.toString()
+                .split(",")
+                .map((t) => t.trim())
+            : [],
           detalles: { Tecnico: p["Detalles Técnicos"] || "" },
         };
       });
