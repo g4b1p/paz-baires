@@ -86,6 +86,23 @@ function cargarProducto() {
       thumb.className = `thumb ${index === indexImagenPazBaires ? "active" : ""}`;
       thumb.onclick = function () {
         usuarioYaInteractuo = true; // <--- AGREGAR ESTO
+        // --- AGREGÁ ESTA VALIDACIÓN AQUÍ ---
+        if (
+          producto.tipo === "estampado" &&
+          talleSeleccionado &&
+          producto.stockMapa
+        ) {
+          const nombreEstampadoClick = producto.variantes[index].nombre;
+          const permitidos = producto.stockMapa[talleSeleccionado] || [];
+
+          if (!permitidos.includes(nombreEstampadoClick)) {
+            alert(
+              `⚠️ El diseño "${nombreEstampadoClick}" no está disponible en Talle ${talleSeleccionado}.`,
+            );
+            return; // Bloquea el cambio de imagen y la selección
+          }
+        }
+        // -----------------------------------
         indexImagenPazBaires = index;
         mainImg.src = this.src;
         document
@@ -128,42 +145,82 @@ function cargarProducto() {
   }
 
   // 5. Variantes (Colores o Estampados)
+  // BUSCÁ ESTO EN cargarProducto() y reemplazalo:
   const variantSelector = document.getElementById("variantSelector");
-  if (producto.tipo === "color") {
-    renderSeccionColores(variantSelector, producto);
-  } else {
-    renderSeccionEstampados(variantSelector, producto);
-    // Solo marcamos si existen variantes para evitar el error 'nombre' of undefined
-    if (
-      !usuarioYaInteractuo &&
-      producto.variantes &&
-      producto.variantes.length > 0
-    ) {
-      varianteSeleccionada = producto.variantes[0].nombre;
-    }
-  }
+  variantSelector.innerHTML = ""; // Limpiamos UNA SOLA VEZ al principio
 
-  // --- NUEVO: Sección de Talles ---
-  // Buscamos si el producto tiene la propiedad talles (asegurate que en productos.js se llame así)
-  renderSeccionTalles(variantSelector, producto);
+  // Creamos contenedores vacíos para que cada función escriba en su lugar
+  const divTalles = document.createElement("div");
+  divTalles.id = "talleSelectorContainer";
+  variantSelector.appendChild(divTalles);
+
+  // Contenedor para la opción (Color o Estampado)
+  const divOpciones = document.createElement("div");
+  divOpciones.id = "opcionesContainer";
+  variantSelector.appendChild(divOpciones);
+
+  // 1. Renderizamos talles si existen
+  renderSeccionTalles(divTalles, producto);
+
+  // 2. Lógica Inteligente: ¿Es color o es estampado?
+  if (producto.tipo === "color") {
+    // Si en el Excel dice "color", dibuja los circulitos
+    renderSeccionColores(divOpciones, producto);
+  } else {
+    // Si dice "estampado" (o cualquier otra cosa), usa la lógica de fotos
+    renderSeccionEstampados(divOpciones, producto);
+  }
 
   // 6. Lógica de Flechas Carrusel
   let indexImagenActual = 0;
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
 
-  function cambiarImagen(index) {
-    if (index < 0) index = producto.imagenes.length - 1;
-    if (index >= producto.imagenes.length) index = 0;
-    indexImagenActual = index;
-    mainImg.src = producto.imagenes[indexImagenActual];
+  function cambiarImagen(direccion) {
+    const totalImg = producto.imagenes.length;
+    let nuevoIndex = indexImagenPazBaires;
+
+    // Intentamos buscar la siguiente imagen válida
+    for (let i = 0; i < totalImg; i++) {
+      nuevoIndex = (nuevoIndex + direccion + totalImg) % totalImg;
+
+      // Si es tipo estampado y hay un talle elegido, verificamos si esta imagen es válida
+      if (producto.tipo === "estampado" && talleSeleccionado) {
+        const nombreEst = producto.variantes[nuevoIndex].nombre;
+        const permitidos = producto.stockMapa[talleSeleccionado] || [];
+
+        if (permitidos.includes(nombreEst)) {
+          // ¡Encontramos una válida! Cortamos el bucle
+          break;
+        }
+        // Si no es válida, el "for" seguirá buscando la siguiente
+      } else {
+        // Si no hay restricciones de talle, la primera que sigue ya nos sirve
+        break;
+      }
+    }
+
+    indexImagenPazBaires = nuevoIndex;
+    const mainImg = document.getElementById("mainImg");
+    mainImg.src = producto.imagenes[indexImagenPazBaires];
+
+    // Actualizamos miniaturas visualmente
     document.querySelectorAll(".thumb").forEach((t, idx) => {
-      t.classList.toggle("active", idx === indexImagenActual);
+      t.classList.toggle("active", idx === indexImagenPazBaires);
     });
+
+    // IMPORTANTE: Si es estampado, actualizamos la selección al mover la flecha
+    if (producto.tipo === "estampado") {
+      varianteSeleccionada = producto.variantes[indexImagenPazBaires].nombre;
+      const stampedDisplay = document.getElementById("stampedName");
+      if (stampedDisplay) stampedDisplay.innerText = varianteSeleccionada;
+      usuarioYaInteractuo = true;
+      actualizarGuia();
+    }
   }
 
-  prevBtn.onclick = () => cambiarImagen(indexImagenActual - 1);
-  nextBtn.onclick = () => cambiarImagen(indexImagenActual + 1);
+  prevBtn.onclick = () => cambiarImagen(-1);
+  nextBtn.onclick = () => cambiarImagen(1);
 
   // 7. Lógica de Cantidad
   const decreaseQty = document.getElementById("decreaseQty");
@@ -280,19 +337,26 @@ function renderSeccionColores(container, prod) {
 }
 
 function renderSeccionEstampados(container, prod) {
-  // --- BORRÁ ESTA LÍNEA: varianteSeleccionada = null; ---
+  // Buscamos o creamos el contenedor de texto de estampados
+  let estTextDiv = document.getElementById("stampedTextContainer");
+  if (!estTextDiv) {
+    estTextDiv = document.createElement("div");
+    estTextDiv.id = "stampedTextContainer";
+    estTextDiv.className = "detalles-item";
+    container.appendChild(estTextDiv);
+  }
 
-  // Si ya había una variante (porque el usuario ya clickeó antes de que Google Sheets actualice)
-  // la mantenemos, si no, ponemos "No seleccionado"
   const nombreMostrar = varianteSeleccionada
     ? varianteSeleccionada
     : "No seleccionado";
 
+  // MANTENEMOS TU LÓGICA: Solo mostramos el texto.
+  // La selección sigue siendo por el click en la galería de fotos.
   container.innerHTML = `
         <div class="stamped-selected-text">
             Estampado: <strong id="stampedName">${nombreMostrar}</strong>
         </div>
-        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px; opacity: 0.8">
+        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px;">
             <i>Seleccioná el diseño haciendo click en las fotos de la galería.</i>
         </p>
     `;
@@ -300,49 +364,45 @@ function renderSeccionEstampados(container, prod) {
 }
 
 function renderSeccionTalles(container, prod) {
-  // Verificamos si hay talles. Si no hay o es un array vacío, no hacemos nada.
-  if (
-    !prod.talles ||
-    prod.talles.length === 0 ||
-    (prod.talles.length === 1 && prod.talles[0] === "")
-  ) {
-    return;
-  }
+  const listaTalles = prod.tallesDisponibles || [];
+  if (listaTalles.length === 0) return;
 
-  // Creamos el contenedor de talles si no existe
-  let talleDiv = document.getElementById("talleSelectorContainer");
-  if (!talleDiv) {
-    talleDiv = document.createElement("div");
-    talleDiv.id = "talleSelectorContainer";
-    talleDiv.className = "detalles-item";
-    talleDiv.innerHTML = `<span class="selector-title">Elegí tu talle:</span><div class="talles-grid"></div>`;
-    container.appendChild(talleDiv);
-  }
+  container.innerHTML = `<span class="selector-title">Elegí tu talle:</span><div class="talles-grid"></div>`;
+  const grid = container.querySelector(".talles-grid");
 
-  const grid = talleDiv.querySelector(".talles-grid");
-  grid.innerHTML = ""; // Limpiamos para no duplicar
-
-  prod.talles.forEach((t) => {
+  listaTalles.forEach((t) => {
     const btn = document.createElement("div");
-    btn.className = "talle-dot"; // Usaremos una clase similar a color-dot pero cuadrada
+    btn.className = `talle-dot ${talleSeleccionado === t ? "active" : ""}`;
     btn.innerText = t;
-
-    // Lógica para "Talle Único": Se selecciona solo
-    if (t.toLowerCase().includes("unico") || prod.talles.length === 1) {
-      talleSeleccionado = t;
-      btn.classList.add("active");
-    }
-
-    if (talleSeleccionado === t) btn.classList.add("active");
 
     btn.onclick = function () {
       usuarioYaInteractuo = true;
+      talleSeleccionado = t;
+
+      // Actualizamos visualmente los botones de talle
       document
         .querySelectorAll(".talle-dot")
         .forEach((d) => d.classList.remove("active"));
       this.classList.add("active");
-      talleSeleccionado = t;
+
+      // --- AQUÍ ESTÁ EL CAMBIO ---
+      // Solo actualizamos la guía y el texto, NO borramos la pantalla
       actualizarGuia();
+
+      // Si querés que al cambiar talle se avise qué estampados hay (opcional)
+      console.log("Estampados para este talle:", prod.stockMapa[t]);
+
+      // Dentro de btn.onclick de los talles, al final:
+      if (prod.tipo === "estampado" && prod.stockMapa) {
+        const permitidos = prod.stockMapa[talleSeleccionado] || [];
+        document.querySelectorAll(".thumb").forEach((thumb, idx) => {
+          const nombreEst = prod.variantes[idx].nombre;
+          thumb.style.opacity = permitidos.includes(nombreEst) ? "1" : "0.3";
+          thumb.style.filter = permitidos.includes(nombreEst)
+            ? "none"
+            : "grayscale(100%)";
+        });
+      }
     };
     grid.appendChild(btn);
   });
@@ -361,13 +421,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!productoActual) return;
 
-      // Limpiamos la variante de cualquier espacio o texto raro
+      // 1. Validar Talle (Si el producto tiene talles)
+      const tieneTalles =
+        productoActual.tallesDisponibles &&
+        productoActual.tallesDisponibles.length > 0;
+      if (tieneTalles && !talleSeleccionado) {
+        alert("❌ Por favor, seleccioná un talle primero.");
+        // Opcional: scroll suave hacia los talles para que el usuario los vea
+        document
+          .getElementById("talleSelectorContainer")
+          .scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+
+      // 2. Validar Estampado/Variante
       const varianteLimpia = (varianteSeleccionada || "")
         .toString()
         .trim()
         .toLowerCase();
-
-      console.log("DEBUG - Variante detectada:", `"${varianteLimpia}"`);
+      if (
+        !varianteSeleccionada ||
+        varianteLimpia === "" ||
+        varianteLimpia === "no seleccionado"
+      ) {
+        alert("❌ Por favor, seleccioná un estampado o color.");
+        return;
+      }
 
       if (
         productoActual.talles &&
@@ -376,20 +455,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         alert("⚠️ Por favor, seleccioná un talle.");
         return;
-      }
-
-      // VALIDACIÓN RADICAL:
-      // Si está vacía, es null, es "ninguno", o es el texto por defecto
-      if (
-        !varianteSeleccionada ||
-        varianteLimpia === "" ||
-        varianteLimpia === "ninguno" ||
-        varianteLimpia.includes("hace click")
-      ) {
-        alert(
-          "⚠️ Por favor, seleccioná un color o estampado específico antes de continuar.",
-        );
-        return; // BLOQUEO TOTAL
       }
 
       const cantidad =
@@ -402,7 +467,11 @@ document.addEventListener("DOMContentLoaded", () => {
         varianteSeleccionada,
         talleSeleccionado,
       );
-      window.location.href = "carrito.html";
+      // Animación de éxito (opcional) antes de ir al carrito
+      botonAgregar.innerText = "¡Agregado!";
+      setTimeout(() => {
+        window.location.href = "carrito.html";
+      }, 500);
     };
   }
 });
@@ -410,18 +479,23 @@ document.addEventListener("DOMContentLoaded", () => {
 function agregarAlCarrito(producto, cantidad, varianteSeleccionada, talle) {
   let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
+  // Creamos el texto que se va a ver en el carrito
+  // Si hay talle: "Azul - Talle 85" | Si no hay talle: "Azul"
+  const textoVariante = talle
+    ? `${varianteSeleccionada} - Talle ${talle}`
+    : varianteSeleccionada;
+
   const nuevoItem = {
     id: producto.id,
     nombre: producto.nombre,
     precio: producto.precio,
-    // CAMBIO AQUÍ: Usamos una validación para la imagen por si el array viene vacío
     imagen:
       producto.imagenes && producto.imagenes.length > 0
         ? producto.imagenes[0]
         : "default.jpg",
-    variante: talle ? `${variante} - Talle ${talle}` : variante, // Combinamos variante y talle
+    variante: textoVariante, // <--- Ahora usamos la variable que creamos arriba
     cantidad: parseInt(cantidad),
-    subtotal: producto.precio * parseInt(cantidad), // Aseguramos que cantidad sea número
+    subtotal: producto.precio * parseInt(cantidad),
   };
 
   const existeIndex = carrito.findIndex(
@@ -438,8 +512,8 @@ function agregarAlCarrito(producto, cantidad, varianteSeleccionada, talle) {
 
   localStorage.setItem("carrito", JSON.stringify(carrito));
 
-  // Opcional: puedes quitar el alert si ya vas a redirigir
-  // para que la experiencia sea más fluida.
+  // Agregamos un console.log para que veas en la consola que funcionó
+  console.log("✅ Producto agregado con éxito:", nuevoItem);
 }
 
 // En lugar de "load", esperamos a que los productos de Google estén listos

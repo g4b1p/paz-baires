@@ -33,17 +33,50 @@ async function cargarProductosDesdeSheet() {
       })
 
       .map((p) => {
+        // 1. Extraemos las variantes del Excel
+        const variantesRaw = p.Variantes
+          ? p.Variantes.toString()
+              .split(",")
+              .map((v) => v.trim())
+          : [];
+
+        // 2. Creamos el Mapa de Stock (Talle:Nombre)
+        const stockMapa = variantesRaw.reduce((acc, item) => {
+          if (item.includes(":")) {
+            const [talle, nombre] = item.split(":").map((s) => s.trim());
+            if (!acc[talle]) acc[talle] = [];
+            acc[talle].push(nombre);
+          }
+          return acc;
+        }, {});
+
+        // 3. Obtenemos nombres únicos (para no repetir fotos si hay varios talles)
+        const nombresUnicos = [
+          ...new Set(
+            variantesRaw.map((v) =>
+              v.includes(":") ? v.split(":")[1].trim() : v.trim(),
+            ),
+          ),
+        ];
+
+        // 4. Procesamos si es Color (Rosa|#hex) o Estampado
+        const variantesProcesadas = nombresUnicos.map((n) => {
+          if (n.includes("|")) {
+            const [nombreColor, hex] = n.split("|").map((s) => s.trim());
+            return { nombre: nombreColor, valor: hex };
+          }
+          return { nombre: n, valor: n };
+        });
+
+        // 5. Retornamos el objeto producto final
         return {
           id: parseInt(p.ID),
           estado: p.Estado,
-          tipo: p.Tipo ? p.Tipo.toLowerCase() : "",
+          tipo: p.Tipo ? p.Tipo.toLowerCase().trim() : "",
           nombre: p.Nombre,
           precio: parseFloat(p.Precio) || 0,
-          // --- AGREGÁ ESTO AQUÍ ---
           etiqueta: p.Etiqueta ? p.Etiqueta.trim() : "Ninguno",
           fechaIngreso: p["Fecha Ingreso"] || null,
-          // 👆 Si en el Excel se llama "Fecha Ingreso", JS lo lee así p["Fecha Ingreso"]
-          // -----------------------
           coleccion: p.Colección ? p.Colección.toLowerCase().trim() : "varios",
           ambiente: p.Ambiente
             ? p.Ambiente.split(",").map((s) => s.trim())
@@ -61,20 +94,9 @@ async function cargarProductosDesdeSheet() {
                   : `images/productos/${p.Colección.toLowerCase().trim()}/${imgLimpia}`;
               })
             : [],
-          variantes: p.Variantes
-            ? p.Variantes.split(",").map((v) => {
-                const parts = v.split("|");
-                return {
-                  nombre: parts[0] ? parts[0].trim() : "",
-                  valor: parts[1] ? parts[1].trim() : parts[0].trim(),
-                };
-              })
-            : [],
-          talles: p.Talles
-            ? p.Talles.toString()
-                .split(",")
-                .map((t) => t.trim())
-            : [],
+          variantes: variantesProcesadas,
+          stockMapa: stockMapa,
+          tallesDisponibles: Object.keys(stockMapa),
           detalles: { Tecnico: p["Detalles Técnicos"] || "" },
         };
       });
@@ -89,13 +111,10 @@ async function cargarProductosDesdeSheet() {
     // Comparamos si lo nuevo es distinto a lo que teníamos para no refrescar innecesariamente
     if (JSON.stringify(nuevosProductos) !== JSON.stringify(productos)) {
       productos = nuevosProductos;
+      window.productos = nuevosProductos;
       localStorage.setItem("productos_cache", JSON.stringify(productos));
-      localStorage.setItem("productos_timestamp", Date.now());
-
-      console.log("✅ Datos actualizados desde Google Sheets");
-
-      // Avisamos que hay datos nuevos (por si cambiaron precios o stock)
       document.dispatchEvent(new CustomEvent("productosListos"));
+      console.log("✅ Productos actualizados desde Google Sheets");
     }
   } catch (error) {
     console.error("❌ Error cargando productos:", error);
