@@ -149,7 +149,7 @@ function insertarFooter() {
         <hr class="line-footer" />
         <section class="firma">
           <p>Created by</p>
-          <img src="images/GabCoder.png" alt="" />
+          <img src="images/GabCoder.png" alt="" style="margin-bottom: 50px;" />
         </section>
       </div>
 
