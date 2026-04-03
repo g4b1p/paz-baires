@@ -143,8 +143,12 @@ function renderizarProductos(lista) {
     if (prod.estado === "Sin Stock") {
       badgeHTML = `<span class="badge-sin-stock">SIN STOCK</span>`;
       claseExtra = "sin-stock";
+    } else if (prod.estado === "Próximamente") {
+      // --- NUEVA LÓGICA PARA PRÓXIMAMENTE ---
+      badgeHTML = `<span class="badge-sin-stock badge-proximamente">PRÓXIMAMENTE</span>`;
+      claseExtra = "proximamente";
     } else if (prod.estado && prod.estado !== "Activo") {
-      // Si dice "Últimos Disponibles", sale naranja con ese texto
+      // Aquí entran "Últimos Disponibles", "Últimas Unidades", etc. (Naranja)
       badgeHTML = `<span class="badge-sin-stock badge-alerta">${prod.estado.toUpperCase()}</span>`;
     }
 

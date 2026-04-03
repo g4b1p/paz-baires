@@ -279,4 +279,12 @@ function enviarPedidoWhatsApp(d) {
   const url = `https://api.whatsapp.com/send?phone=541128506874&text=${mensaje}`;
 
   window.open(url, "_blank");
+
+  localStorage.removeItem("carrito");
+  localStorage.removeItem("eleccionesFinales");
+
+  // Usamos un pequeño delay (500ms) para que el navegador no se trabe
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 500);
 }

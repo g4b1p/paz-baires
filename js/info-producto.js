@@ -85,8 +85,9 @@ function cargarProducto() {
       thumb.src = img;
       thumb.className = `thumb ${index === indexImagenPazBaires ? "active" : ""}`;
       thumb.onclick = function () {
-        usuarioYaInteractuo = true; // <--- AGREGAR ESTO
-        // --- AGREGÁ ESTA VALIDACIÓN AQUÍ ---
+        usuarioYaInteractuo = true;
+
+        // --- VALIDACIÓN DE STOCK (LA QUE YA TENÍAS) ---
         if (
           producto.tipo === "estampado" &&
           talleSeleccionado &&
@@ -99,10 +100,11 @@ function cargarProducto() {
             alert(
               `⚠️ El diseño "${nombreEstampadoClick}" no está disponible en Talle ${talleSeleccionado}.`,
             );
-            return; // Bloquea el cambio de imagen y la selección
+            return;
           }
         }
-        // -----------------------------------
+
+        // --- CAMBIO VISUAL DE LA IMAGEN ---
         indexImagenPazBaires = index;
         mainImg.src = this.src;
         document
@@ -110,12 +112,18 @@ function cargarProducto() {
           .forEach((t) => t.classList.remove("active"));
         this.classList.add("active");
 
-        // Si es tipo estampado, la miniatura también elige la variante
+        // --- SELECCIÓN INTELIGENTE DEL ESTAMPADO ---
         if (producto.tipo === "estampado") {
-          varianteSeleccionada = producto.variantes[index].nombre;
-          document.getElementById("stampedName").innerText =
-            varianteSeleccionada;
-          actualizarGuia();
+          const nombreVariante = producto.variantes[index].nombre;
+
+          // SOLO se selecciona automáticamente si el nombre es LARGO (más de 2 letras)
+          // Si es un número (ej: "1"), NO entra acá y no te pisa la selección.
+          if (nombreVariante.length > 2) {
+            varianteSeleccionada = nombreVariante;
+            document.getElementById("stampedName").innerText =
+              varianteSeleccionada;
+            actualizarGuia();
+          }
         }
       };
       thumbBar.appendChild(thumb);
@@ -211,11 +219,18 @@ function cargarProducto() {
 
     // IMPORTANTE: Si es estampado, actualizamos la selección al mover la flecha
     if (producto.tipo === "estampado") {
-      varianteSeleccionada = producto.variantes[indexImagenPazBaires].nombre;
-      const stampedDisplay = document.getElementById("stampedName");
-      if (stampedDisplay) stampedDisplay.innerText = varianteSeleccionada;
-      usuarioYaInteractuo = true;
-      actualizarGuia();
+      const nombreVarianteFlecha =
+        producto.variantes[indexImagenPazBaires].nombre;
+
+      // Solo actualiza el texto y la selección si el nombre tiene más de 2 letras (ej: "Rosa con Flores")
+      // Si es "1", "2" o "3", la flecha SOLO pasa la foto y deja el número quietito.
+      if (nombreVarianteFlecha.length > 2) {
+        varianteSeleccionada = nombreVarianteFlecha;
+        const stampedDisplay = document.getElementById("stampedName");
+        if (stampedDisplay) stampedDisplay.innerText = varianteSeleccionada;
+        usuarioYaInteractuo = true;
+        actualizarGuia();
+      }
     }
   }
 
@@ -256,6 +271,7 @@ function cargarProducto() {
   const precioContainer = document.getElementById("currentPrice");
 
   if (producto.estado === "Sin Stock") {
+    // ESTADO: AGOTADO (Gris)
     if (btn) {
       btn.disabled = true;
       btn.innerText = "SIN STOCK";
@@ -265,10 +281,23 @@ function cargarProducto() {
     if (precioContainer) {
       precioContainer.innerHTML += ` <span style="color: #ba2e2e; font-size: 0.8rem; display: block;">Temporalmente sin stock</span>`;
     }
-  } else if (producto.estado && producto.estado !== "Activo") {
-    // Para "Últimos Disponibles" u otros estados
+  } else if (producto.estado === "Próximamente") {
+    // --- NUEVO ESTADO: PRÓXIMAMENTE (Lila / Violeta Aesthetic) ---
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = "NUEVO INGRESO";
+      btn.style.background = "#a27ae3"; // Un violeta/lila que combine con tu web
+      btn.style.color = "white";
+      btn.style.cursor = "wait";
+    }
     if (precioContainer) {
-      precioContainer.innerHTML += ` <span style="color: #ff9800; font-size: 0.8rem; display: block;">¡Aprovechá! ${producto.estado}</span>`;
+      // Usamos el mismo violeta para el texto informativo
+      precioContainer.innerHTML += ` <span style="color: #99e05e; font-size: 0.9rem; display: block; font-weight: bold; margin-top: 5px;">¡Próximamente en Paz Baires!</span>`;
+    }
+  } else if (producto.estado && producto.estado !== "Activo") {
+    // ESTADO: ÚLTIMOS DISPONIBLES (Naranja)
+    if (precioContainer) {
+      precioContainer.innerHTML += ` <span style="color: #ffe600; font-size: 0.8rem; display: block;">¡Aprovechá! ${producto.estado}</span>`;
     }
   }
 }
@@ -280,7 +309,7 @@ function actualizarGuia() {
   const cantidad = document.getElementById("itemQuantity").value;
   if (!guia) return;
 
-  // 1. Manejar el estado del Talle (Útil para Pijamas o Toallas con talle)
+  // 1. Manejar el estado del Talle
   let textoTalle = "";
   if (talleSeleccionado) {
     textoTalle = ` (Talle: <strong>${talleSeleccionado}</strong>)`;
@@ -288,18 +317,27 @@ function actualizarGuia() {
 
   // 2. Manejar el estado de la Variante (Color o Estampado)
   if (!varianteSeleccionada) {
-    // Si no eligió color/estampado, solo mostramos la cantidad si ya es > 1
     if (parseInt(cantidad) > 1) {
       guia.innerHTML = `Elegí una opción para tus <strong>${cantidad}</strong> productos`;
     } else {
       guia.innerHTML = `Seleccioná una opción`;
     }
-    guia.style.opacity = "0.7"; // Un poco transparente para avisar que falta algo
+    guia.style.opacity = "0.7";
   } else {
-    // --- ESTA ES LA LINEA MAGICA ---
-    // Combinamos todo: Cantidad + Variante + Talle (si existe)
-    guia.innerHTML = `Seleccionaste <strong>${cantidad}</strong> de <strong>${varianteSeleccionada}</strong>${textoTalle}`;
-    guia.style.opacity = "1"; // Totalmente opaco, está todo listo
+    // --- NUEVA LÓGICA MÁGICA PARA NÚMEROS ---
+    let textoVariante = varianteSeleccionada;
+
+    // Si el nombre es un número (2 caracteres o menos), le damos formato de "Estampado N°"
+    if (varianteSeleccionada.length <= 2) {
+      textoVariante = `Estampado N° <strong>${varianteSeleccionada}</strong>`;
+    } else {
+      // Si es un nombre largo, lo ponemos en negrita normal
+      textoVariante = `<strong>${varianteSeleccionada}</strong>`;
+    }
+
+    // Combinamos todo: Cantidad + El texto que armamos arriba + Talle
+    guia.innerHTML = `Seleccionaste <strong>${cantidad}</strong> de ${textoVariante}${textoTalle}`;
+    guia.style.opacity = "1";
   }
 }
 
@@ -337,30 +375,64 @@ function renderSeccionColores(container, prod) {
 }
 
 function renderSeccionEstampados(container, prod) {
-  // Buscamos o creamos el contenedor de texto de estampados
-  let estTextDiv = document.getElementById("stampedTextContainer");
-  if (!estTextDiv) {
-    estTextDiv = document.createElement("div");
-    estTextDiv.id = "stampedTextContainer";
-    estTextDiv.className = "detalles-item";
-    container.appendChild(estTextDiv);
-  }
-
   const nombreMostrar = varianteSeleccionada
     ? varianteSeleccionada
     : "No seleccionado";
 
-  // MANTENEMOS TU LÓGICA: Solo mostramos el texto.
-  // La selección sigue siendo por el click en la galería de fotos.
-  container.innerHTML = `
-        <div class="stamped-selected-text">
-            Estampado: <strong id="stampedName">${nombreMostrar}</strong>
-        </div>
-        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px;">
-            <i>Seleccioná el diseño haciendo click en las fotos de la galería.</i>
-        </p>
+  // Detectamos si son números (2 letras o menos, ej: "1", "02", "A")
+  const esModoNumeros =
+    prod.variantes.length > 0 && prod.variantes[0].nombre.length <= 2;
+
+  if (esModoNumeros) {
+    // CASO A: CÍRCULOS CON NÚMEROS (Estilo Vidrio igual a los talles)
+    container.innerHTML = `
+      <div class="stamped-selected-text">
+          Estampado: <strong id="stampedName">${nombreMostrar}</strong>
+      </div>
+      <span class="selector-title">Elegí el número:</span>
+      <div class="talles-grid"></div> 
+      <p style="font-size:0.75rem; opacity:0.7; margin-top:8px;">
+          <i>Mirá los números en la foto y elegí el tuyo</i>
+      </p>
     `;
-  actualizarGuia();
+
+    const grid = container.querySelector(".talles-grid");
+
+    prod.variantes.forEach((v) => {
+      const dot = document.createElement("div");
+      dot.className = "talle-dot"; // Usamos tu clase de CSS de los talles
+      dot.innerText = v.nombre;
+
+      if (varianteSeleccionada === v.nombre) dot.classList.add("active");
+
+      dot.onclick = function () {
+        usuarioYaInteractuo = true;
+        // Buscamos dentro de este contenedor específico para no pisar los talles reales
+        grid
+          .querySelectorAll(".talle-dot")
+          .forEach((d) => d.classList.remove("active"));
+        this.classList.add("active");
+
+        varianteSeleccionada = v.nombre;
+        document.getElementById("stampedName").innerText = v.nombre;
+
+        if (typeof actualizarGuia === "function") actualizarGuia();
+      };
+      grid.appendChild(dot);
+    });
+  } else {
+    // CASO B: TU DISEÑO ORIGINAL (Nombres largos / Click en galería)
+    container.innerHTML = `
+      <div class="stamped-selected-text">
+          Estampado: <strong id="stampedName">${nombreMostrar}</strong>
+      </div>
+      <p style="font-size:0.8rem; opacity:0.7; margin-top:10px;">
+          <i>Seleccioná el diseño haciendo click en las fotos de la galería.</i>
+      </p>
+    `;
+  }
+
+  if (typeof actualizarGuia === "function") actualizarGuia();
 }
 
 function renderSeccionTalles(container, prod) {

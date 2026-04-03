@@ -139,7 +139,6 @@ main {
     color: white;
     padding: 30px 20px;
     flex-direction: column;
-
     flex: 0.8;
     /* Panel de info más angosto */
     display: flex;
@@ -266,6 +265,7 @@ main {
     color: #ffffff;
     font-size: 13px;
 }
+
 
 /* --- Ajuste de Cantidad --- */
 .cantidad-selector {
@@ -493,7 +493,7 @@ main {
     }
 
     .product-info-panel {
-        padding: 15px 10px;
+        padding: 25px;
     }
 
     .current-price {

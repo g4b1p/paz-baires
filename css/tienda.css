@@ -233,9 +233,21 @@
 
 /* Color naranja para estados especiales (Últimos Disponibles, etc.) */
 .badge-alerta {
-    background-color: #ff9800 !important;
+    background-color: #dfc935 !important;
 }
 
+/* Color lila para el nuevo estado (Próximamente) */
+.badge-proximamente {
+    background-color: #883eff !important;
+    /* El lila de Paz Baires */
+    color: white;
+}
+
+/* Opcional: Si querés que la tarjeta de próximamente no se vea tan opaca como la de sin stock */
+.producto-card.proximamente {
+    opacity: 0.95;
+    position: relative;
+}
 
 .producto-info {
     padding: 0 20px;
@@ -528,5 +540,19 @@
         border-radius: 30px;
         /*margin-top: 15px;
         transition: 0.3s;*/
+    }
+
+    /* Base del cartelito (Badge) */
+    .badge-sin-stock {
+        padding: 5px;
+        font-size: 9px;
+        top: 10px;
+        left: 10px;
+    }
+
+    /* Color naranja para estados especiales (Últimos Disponibles, etc.) */
+    .badge-alerta {
+        padding: 5px;
+        font-size: 9px;
     }
 }
