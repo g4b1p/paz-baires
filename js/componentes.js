@@ -85,7 +85,7 @@ function insertarHeader() {
         </video>
         <div class="video-overlay">
           <h1>Bienvenido a nuestra Tienda</h1>
-          <p>Los mejores productos a un clic de distancia</p>
+          <p>Pijamas, accesorios y blanquería diseñados para tu bienestar. <br> La mejor calidad en cada textura.</p>
           <a href="tienda.html" class="btn-comprar">Ver Catálogo</a>
         </div>
       </section>
