@@ -11,27 +11,13 @@ let filtrosActivos = {
 let yaFiltroElUsuario = false; // Variable de control
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- NUEVA LÓGICA DE RECUPERACIÓN ---
-  const catMemoria = localStorage.getItem("categoria_guardada");
-  if (catMemoria) {
-    filtrosActivos.categoria = catMemoria;
-
-    // Marcamos el botón visualmente como activo
-    document.querySelectorAll(".filter-btn").forEach((btn) => {
-      btn.classList.remove("active");
-      if (btn.innerText.trim().toLowerCase() === catMemoria) {
-        btn.classList.add("active");
-      }
-    });
-  }
-  // ------------------------------------
+  // Resetear siempre a todos al cargar la página
+  filtrosActivos.categoria = "todos";
 
   const contenedor = document.getElementById("contenedor-tienda");
   if (contenedor) {
-    // Ponemos esqueletos de entrada
     let esqueletosHTML = "";
     for (let i = 0; i < 8; i++) {
-      // 8 para llenar la grilla inicial
       esqueletosHTML += `
         <div class="producto-card skeleton">
             <div class="skeleton-img" style="height: 250px; background: #eee; border-radius: 20px; margin-bottom: 15px;"></div>
@@ -41,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     contenedor.innerHTML = esqueletosHTML;
   }
-  // LLAMADA: Ejecutala al final de configurarEscuchadores()
 });
 
 // Intentar cargar desde la memoria local ANTES de esperar a Google
@@ -70,28 +55,16 @@ if (cache) {
 
 // 2. INICIALIZACIÓN
 document.addEventListener("productosListos", () => {
-  console.log("🔄 Datos frescos de Google Sheets recibidos");
+  console.log("🔄 Datos frescos recibidos");
 
-  if (yaFiltroElUsuario) {
-    console.log("Filtros activos detectados, no se reinicia la vista.");
-    return;
-  }
+  if (yaFiltroElUsuario) return;
 
   const params = new URLSearchParams(window.location.search);
   const catURL = params.get("categoria");
-  const catMemoria = localStorage.getItem("categoria_guardada");
 
-  // --- LÓGICA DE PRIORIDAD ---
-  let categoriaFinal = "todos";
+  // Si hay categoría en la URL (ej: ?categoria=pijamas), la usamos. Si no, "todos".
+  let categoriaFinal = catURL ? catURL.toLowerCase().trim() : "todos";
 
-  if (catURL) {
-    categoriaFinal = catURL.toLowerCase().trim();
-    localStorage.setItem("categoria_guardada", categoriaFinal); // Actualizamos memoria con la URL
-  } else if (catMemoria) {
-    categoriaFinal = catMemoria;
-  }
-
-  // --- APLICAR LA CATEGORÍA ---
   if (categoriaFinal === "ofertas") {
     filtrosActivos.soloOfertas = true;
     filtrosActivos.categoria = "todos";
@@ -100,16 +73,13 @@ document.addEventListener("productosListos", () => {
     filtrosActivos.soloOfertas = false;
   }
 
-  // --- ACTUALIZACIÓN VISUAL ÚNICA ---
+  // Actualizar botones visualmente
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     const texto = btn.innerText.trim().toLowerCase();
-    // Esto asegura que SOLO el botón correcto tenga la clase 'active'
-    btn.classList.toggle("active", texto === (catURL || catMemoria || "todos"));
+    btn.classList.toggle("active", texto === categoriaFinal);
   });
 
-  // Renderizar con los filtros aplicados
   aplicarFiltros();
-
   configurarEscuchadores();
 
   if (typeof validarYLimpiarCarrito === "function") {
@@ -243,20 +213,15 @@ function configurarEscuchadores() {
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.onclick = (e) => {
       const textoBoton = e.target.innerText.trim().toLowerCase();
-      console.log("Click en categoría:", textoBoton);
 
       document
         .querySelectorAll(".filter-btn")
         .forEach((b) => b.classList.remove("active"));
       e.target.classList.add("active");
 
-      // --- AGREGA ESTA LÍNEA AQUÍ ---
-      localStorage.setItem("categoria_guardada", textoBoton);
-      // ------------------------------
+      // ELIMINAMOS: localStorage.setItem("categoria_guardada", textoBoton); <--- BORRAR ESTO
 
-      // Si el botón dice "todos", reseteamos el filtro de categoría
       filtrosActivos.categoria = textoBoton === "todos" ? "todos" : textoBoton;
-
       aplicarFiltros();
     };
   });
@@ -314,14 +279,17 @@ function configurarEscuchadores() {
 
 // 6. FUNCIÓN LIMPIAR
 function limpiarFiltros() {
-  localStorage.removeItem("categoria_guardada"); // <--- AGREGAR ESTO
+  // Ya no necesitamos borrar el localStorage porque ya no lo usamos
+
   document
     .querySelectorAll('.sidebar-filtros input[type="checkbox"]')
     .forEach((el) => (el.checked = false));
 
   const slider = document.getElementById("rango-precio");
-  slider.value = 30000;
-  document.getElementById("precio-valor").textContent = `$30.000`;
+  if (slider) {
+    slider.value = 30000;
+    document.getElementById("precio-valor").textContent = `$30.000`;
+  }
 
   filtrosActivos = {
     categoria: "todos",
@@ -332,11 +300,11 @@ function limpiarFiltros() {
     soloOfertas: false,
   };
 
-  // Reset de botones superiores
   document
     .querySelectorAll(".filter-btn")
     .forEach((b) => b.classList.remove("active"));
-  document.querySelector(".filter-btn:first-child").classList.add("active");
+  const btnTodos = document.querySelector(".filter-btn"); // El primero suele ser "todos"
+  if (btnTodos) btnTodos.classList.add("active");
 
   renderizarProductos(productos);
 }
