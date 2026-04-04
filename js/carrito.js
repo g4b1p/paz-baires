@@ -64,13 +64,26 @@ function renderizarCarrito() {
   carrito.forEach((item, index) => {
     totalGeneral += item.subtotal;
 
+    // --- LÓGICA DINÁMICA PARA EL LABEL (Color vs Estampado) ---
+    // Si el nombre del producto tiene "Estampado", "Pijama" o si la variante es un número corto, ponemos "Estampado"
+    const esEstampado =
+      item.nombre.toLowerCase().includes("estampado") ||
+      item.nombre.toLowerCase().includes("pijama") ||
+      (item.variante && item.variante.length <= 3);
+
+    const etiqueta = esEstampado ? "Estampado" : "Color";
+
     contenedor.innerHTML += `
             <tr class="carrito-item">
                 <td class="prod-detalles">
-                    <img src="${item.imagen}" alt="${item.nombre}">
+                    <a href="info-producto.html?id=${item.id}">
+                        <img src="${item.imagen}" alt="${item.nombre}">
+                    </a>
                     <div class="info-texto">
-                        <h3>${item.nombre}</h3>
-                        <p class="variante-tag">Color: <span>${item.variante}</span></p>
+                        <a href="info-producto.html?id=${item.id}" style="text-decoration: none; color: inherit;">
+                            <h3>${item.nombre}</h3>
+                        </a>
+                        <p class="variante-tag">${etiqueta}: <span>${item.variante}</span></p>
                     </div>
                 </td>
                 <td class="prod-precio">$ ${item.precio.toLocaleString()}</td>

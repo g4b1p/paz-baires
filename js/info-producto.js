@@ -583,9 +583,7 @@ function agregarAlCarrito(producto, cantidad, varianteSeleccionada, talle) {
   }
 
   localStorage.setItem("carrito", JSON.stringify(carrito));
-
-  // Agregamos un console.log para que veas en la consola que funcionó
-  console.log("✅ Producto agregado con éxito:", nuevoItem);
+  window.location.href = "carrito.html"; // La lleva a ver su compra
 }
 
 // En lugar de "load", esperamos a que los productos de Google estén listos
