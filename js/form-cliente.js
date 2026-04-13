@@ -258,32 +258,50 @@ function enviarPedidoWhatsApp(d) {
     mensaje += `*👤 QUIÉN RETIRA:* ${d.retira}%0A`;
   }
 
-  // 3. Método de Pago (viene del carrito)
+  // 3. Método de Pago
   if (elecciones.metodoPago) {
     mensaje += `%0A*💳 PAGO:* ${elecciones.metodoPago}%0A`;
   }
 
   // 4. Detalle de Productos
   mensaje += `%0A*🛍️ PRODUCTOS:*%0A`;
-  let total = 0;
+  let totalBase = 0;
   carrito.forEach((i) => {
     mensaje += `- ${i.cantidad}x ${i.nombre} (${i.variante}) - $${i.subtotal.toLocaleString()}%0A`;
-    total += i.subtotal;
+    totalBase += i.subtotal;
   });
 
-  // 5. Cierre con Total
-  mensaje += `%0A💰 *TOTAL A PAGAR: $${total.toLocaleString()}*%0A%0A`;
+  // --- 5. LÓGICA ESTRATÉGICA DE DESCUENTO ---
+  // Normalizamos el texto de pago para comparar (por si dice "Efectivo" o "EFECTIVO")
+  const esEfectivo =
+    elecciones.metodoPago &&
+    elecciones.metodoPago.toLowerCase().includes("efectivo");
+  const esRetiroLocal = d.metodo === "local";
+
+  let totalFinal = totalBase;
+
+  if (esRetiroLocal && esEfectivo) {
+    const descuento = totalBase * 0.1;
+    totalFinal = totalBase - descuento;
+
+    mensaje += `%0A--------------------------%0A`;
+    mensaje += `*Subtotal:* $${totalBase.toLocaleString()}%0A`;
+    mensaje += `*✅ Desc. Efectivo (10%):* -$${descuento.toLocaleString()}%0A`;
+    mensaje += `💰 *TOTAL FINAL: $${totalFinal.toLocaleString()}*%0A`;
+  } else {
+    mensaje += `%0A💰 *TOTAL A PAGAR: $${totalBase.toLocaleString()}*%0A`;
+  }
+
+  mensaje += `--------------------------%0A`;
   mensaje += `_Pedido generado desde la Tienda Online_`;
 
-  // Reemplazá con tu número real
+  // Abrir WhatsApp
   const url = `https://api.whatsapp.com/send?phone=541128506874&text=${mensaje}`;
-
   window.open(url, "_blank");
 
   localStorage.removeItem("carrito");
   localStorage.removeItem("eleccionesFinales");
 
-  // Usamos un pequeño delay (500ms) para que el navegador no se trabe
   setTimeout(() => {
     window.location.href = "index.html";
   }, 500);

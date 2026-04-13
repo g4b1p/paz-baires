@@ -61,6 +61,13 @@ function renderizarCarrito() {
   contenedor.innerHTML = ""; // Limpiamos tabla
   let totalGeneral = 0;
 
+  // Dentro de renderizarCarrito, justo después de actualizar el total-general por primera vez:
+  document
+    .querySelectorAll('input[name="envio"], input[name="pago"]')
+    .forEach((radio) => {
+      radio.addEventListener("change", actualizarTotalDinamico);
+    });
+
   carrito.forEach((item, index) => {
     totalGeneral += item.subtotal;
 
@@ -105,6 +112,21 @@ function renderizarCarrito() {
   // Actualizar el total en el panel lateral
   document.getElementById("total-general").textContent =
     `$ ${totalGeneral.toLocaleString()}`;
+
+  // 1. Actualizar el total base en el panel lateral
+  document.getElementById("total-general").textContent =
+    `$ ${totalGeneral.toLocaleString()}`;
+
+  // 2. Configurar los escuchadores (esto ya lo tenías, pero asegúrate de que esté al final)
+  document
+    .querySelectorAll('input[name="envio"], input[name="pago"]')
+    .forEach((radio) => {
+      radio.addEventListener("change", actualizarTotalDinamico);
+    });
+
+  // 3. --- AGREGÁ ESTA LÍNEA AQUÍ ---
+  // Esto fuerza a que, si ya estaba marcado "Local" y "Efectivo", el descuento se aplique tras sumar/restar
+  actualizarTotalDinamico();
 }
 
 // Función para borrar un producto
@@ -165,4 +187,29 @@ function validarYLimpiarCarrito() {
   // 3. Guardamos el carrito limpio y actualizamos la vista
   localStorage.setItem("carrito", JSON.stringify(carritoValidado));
   actualizarInterfazCarrito();
+}
+
+function actualizarTotalDinamico() {
+  const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  let totalGeneral = carrito.reduce((sum, item) => sum + item.subtotal, 0);
+
+  const envio = document.querySelector('input[name="envio"]:checked');
+  const pago = document.querySelector('input[name="pago"]:checked');
+  const contenedorTotal = document.getElementById("total-general");
+
+  if (!contenedorTotal) return; // Seguridad
+
+  if (envio?.value === "local" && pago?.value === "efectivo") {
+    const descuento = totalGeneral * 0.1;
+    const totalConDescuento = totalGeneral - descuento;
+
+    contenedorTotal.innerHTML = `
+      <span style="text-decoration: line-through; font-size: 0.9rem; opacity: 0.6;">$ ${totalGeneral.toLocaleString()}</span><br>
+      $ ${totalConDescuento.toLocaleString()} 
+      <small style="display:block; color: #27ae60; font-size: 0.7rem;">(10% OFF aplicado)</small>
+    `;
+  } else {
+    // Si no cumple la condición o no hay nada marcado, vuelve al precio normal
+    contenedorTotal.textContent = `$ ${totalGeneral.toLocaleString()}`;
+  }
 }

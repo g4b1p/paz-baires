@@ -67,11 +67,30 @@ function cargarProducto() {
     producto.marca || "PAZ BAIRES";
   document.getElementById("productDesc").innerHTML = producto.descripcion;
 
-  // 2. Precios
+  // 2. Precios en info-producto.js
   document.getElementById("currentPrice").innerText =
     `$${producto.precio.toLocaleString()}`;
-  document.getElementById("transferPrice").innerText =
-    `$${Math.round(producto.precio * 0.85).toLocaleString()}`;
+
+  // Calculamos el valor referencial (10% OFF)
+  const precioReferencialLocal = Math.round(producto.precio * 0.9);
+
+  // Actualizamos el cuadro de beneficio
+  const box = document.querySelector(".transfer-box");
+  if (box) {
+    box.innerHTML = `
+    <div style="line-height: 1.2;">
+      <strong id="transferPrice" style="font-size: 1.1rem;">$${precioReferencialLocal.toLocaleString()}</strong> 
+      <span style="font-size: 0.9rem;">pago en EFECTIVO</span>
+      <p style="margin: 5px 0 0 0; font-size: 0.75rem; font-weight: normal; opacity: 0.9;">
+        <i>El 10% OFF se aplica sobre el <b>total de tu pedido</b> en el carrito.</i>
+      </p>
+    </div>
+  `;
+
+    // Opcional: Cambiar el estilo de la caja para que no parezca solo de "transferencia"
+    box.style.background = "rgba(255, 255, 255, 0.1)";
+    box.style.border = "1px solid rgba(255, 255, 255, 0.2)";
+  }
 
   // 3. Galería y Miniaturas
   const mainImg = document.getElementById("mainImg");
