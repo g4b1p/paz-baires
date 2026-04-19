@@ -41,34 +41,6 @@ window.scrollCarrusel = function (direction, idContenedor) {
   }
 };
 
-// --- CONFIGURACIÓN DEL AUTO-PLAY ---
-let autoScrollDestacados;
-
-function iniciarAutoScroll() {
-  autoScrollDestacados = setInterval(() => {
-    // Usamos la función que ya tenemos.
-    // Si llega al final, el navegador es inteligente y no hará nada,
-    // o podemos programar que vuelva al inicio.
-    scrollCarrusel(1, "grid-destacados");
-    scrollCarrusel(1, "grid-ofertas"); // También para ofertas si quieres
-  }, 4000); // 4000ms = 4 segundos por cada movimiento
-}
-
-// Detener el movimiento cuando el usuario interactúa
-function detenerAutoScroll() {
-  clearInterval(autoScrollDestacados);
-}
-
-// Iniciar cuando cargue la página
-window.onload = iniciarAutoScroll;
-
-// (Opcional) Detener si el mouse entra al carrusel y reanudar al salir
-const grids = document.querySelectorAll(".grid-productos");
-grids.forEach((grid) => {
-  grid.addEventListener("mouseenter", detenerAutoScroll);
-  grid.addEventListener("mouseleave", iniciarAutoScroll);
-});
-
 // Añade esto en tu función configurarEscuchadores() en tienda.js
 const navToggle = document.getElementById("nav-toggle");
 const menuOverlay = document.getElementById("menuOverlay");

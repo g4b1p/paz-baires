@@ -224,7 +224,7 @@
     cursor: pointer;
     position: absolute;
     z-index: 10;
-    transition: transform 0.2s;
+    transition: transform 0.1s;
 }
 
 .flecha-carrusel:hover {
@@ -240,12 +240,20 @@
 }
 
 #grid-destacados,
-#grid-ofertas {
-    display: flex;
+#grid-nuevos {
+    display: flex !important;
     gap: 20px;
-    overflow-x: hidden;
+    overflow-x: auto !important; /* Permite el scroll manual */
     scroll-behavior: smooth;
     width: 100%;
+    scrollbar-width: none; /* Oculta barra en Firefox */
+    -ms-overflow-style: none; /* Oculta barra en IE/Edge */
+}
+
+/* Oculta la barra en Chrome, Safari y Opera */
+#grid-destacados::-webkit-scrollbar,
+#grid-nuevos::-webkit-scrollbar {
+    display: none !important;
 }
 
 .sobre-nosotras {

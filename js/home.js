@@ -1,3 +1,16 @@
+// MATA-AUTO-SCROLL: Esto detiene cualquier movimiento automático residual
+function detenerTodoMovimiento() {
+    console.log("🛑 Deteniendo todos los intervalos automáticos...");
+    for (let i = 1; i < 1000; i++) {
+        window.clearInterval(i);
+        window.clearTimeout(i);
+    }
+}
+
+// Lo ejecutamos apenas carga y un segundo después por si las dudas
+detenerTodoMovimiento();
+setTimeout(detenerTodoMovimiento, 1000);
+
 // 1. Al cargar la página, prioridad al Caché
 document.addEventListener("DOMContentLoaded", () => {
   const cache = localStorage.getItem("productos_cache");
@@ -56,7 +69,6 @@ function renderizarHome() {
   inyectarProductos(destacados, "grid-destacados");
   inyectarProductos(nuevos, "grid-nuevos");
 }
-
 function inyectarProductos(lista, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   if (!contenedor) return;
@@ -126,3 +138,25 @@ function inyectarProductos(lista, contenedorId) {
     contenedor.insertAdjacentHTML("beforeend", cardHTML);
   });
 }
+
+// --- LÓGICA DEL CARRUSEL (SOLO MANUAL) ---
+window.scrollCarrusel = function (direction, idContenedor) {
+  const contenedor = document.getElementById(idContenedor);
+  if (!contenedor) return;
+
+  const primeraTarjeta = contenedor.querySelector(".producto-card");
+  if (!primeraTarjeta) return; // Seguridad por si no cargaron los productos
+
+  const anchoTarjeta = primeraTarjeta.offsetWidth + 20;
+  const maxScroll = contenedor.scrollWidth - contenedor.clientWidth;
+
+  if (direction === 1 && contenedor.scrollLeft >= maxScroll - 5) {
+    contenedor.scrollTo({ left: 0, behavior: "smooth" });
+  } else if (direction === -1 && contenedor.scrollLeft <= 5) {
+    contenedor.scrollTo({ left: maxScroll, behavior: "smooth" });
+  } else {
+    contenedor.scrollBy({ left: direction * anchoTarjeta, behavior: "smooth" });
+  }
+};
+
+// IMPORTANTE: Asegurate de que no haya NINGÚN "setInterval" o "setTimeout" debajo de esto.
