@@ -88,7 +88,7 @@
     width: 250px;
     flex-shrink: 0;
     background: white;
-    padding: 25px;
+    padding: 20px;
     border-radius: 30px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 
@@ -121,11 +121,12 @@
 
 .grupo-filtro {
     margin: 0;
+    font-size: 13px;
 }
 
 .grupo-filtro h4 {
     font-family: "Unbounded", sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     margin: 5px 0 10px 0;
     color: #333;
 }
@@ -275,6 +276,7 @@
 /* Botón Violeta */
 .btn-ver-mas {
     background-color: #b591ef;
+    color: #ffffff;
     font-weight: bold;
     padding: 8px;
     border-radius: 20px;
@@ -329,6 +331,24 @@
 
 .producto-card {
     animation: fadeIn 0.4s ease forwards;
+}
+
+.precio-container {
+    margin-bottom: 10px;
+}
+
+.precio-tachado {
+    display: block;
+    font-size: 12px;
+    color: #818181;
+    text-decoration: line-through;
+    margin-bottom: 5px;
+    /* Para que el precio real quede pegadito */
+}
+
+.precio {
+    margin: 0;
+    font-size: 17px;
 }
 
 @keyframes fadeIn {

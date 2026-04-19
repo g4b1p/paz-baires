@@ -6,15 +6,18 @@ document.addEventListener("DOMContentLoaded", () => {
 function insertarHeader() {
   // Detectamos en qué página estamos
   const paginaActual = window.location.pathname;
+  
+  // 1. Ahora 'esHome' SOLO es para el index
   const esHome =
-    paginaActual.includes("index.html") ||
-    paginaActual.includes("quiero-comprar.html") ||
-    paginaActual.endsWith("/");
+    paginaActual.includes("index.html") || paginaActual.endsWith("/");
+
+  // 2. Detectamos si es la página de ayuda
+  const esAyuda = paginaActual.includes("quiero-comprar.html");
 
   // 1. Definimos solo la parte de navegación (Lo que va en TODAS las páginas)
   let headerHTML = `
     <header>
-      <div class="top-bar">Compra minima para envios a partir de $50.000.</div>
+      <div class="top-bar">Compra minima para envios a partir de <b>$80.000</b>.</div>
       <div class="header">
 
         <input type="checkbox" id="nav-toggle" hidden />
@@ -76,18 +79,30 @@ function insertarHeader() {
       </div>
     `;
 
+  // SECCIÓN DINÁMICA
+
   if (esHome) {
+    // EL VIDEO SOLO PARA EL INICIO
     headerHTML += `
       <section class="video-container">
         <video autoplay muted loop playsinline class="video-bg">
           <source src="https://files.catbox.moe/rxjmuc.mp4" type="video/mp4" />
-          Tu navegador no soporta videos.
         </video>
         <div class="video-overlay">
           <h1>Bienvenido a nuestra Tienda</h1>
-          <p>Pijamas, accesorios y blanquería diseñados para tu bienestar. <br> La mejor calidad en cada textura.</p>
+          <p>Pijamas, accesorios y blanquería diseñados para tu bienestar.</p>
           <a href="tienda.html" class="btn-comprar">Ver Catálogo</a>
         </div>
+      </section>
+    `;
+  } else if (esAyuda) {
+    // BANNER SIMPLE PARA QUIERO COMPRAR
+    headerHTML += `
+      <section class="ayuda-banner">
+        <h1>PREGUNTAS FRECUENTES</h1>
+        <p>
+          Aquí encontrarás la información necesaria para envíos, medios de pago y respuestas a las dudas más frecuentes para tu compra.
+        </p>
       </section>
     `;
   }

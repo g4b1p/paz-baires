@@ -122,20 +122,30 @@ function renderizarProductos(lista) {
       badgeHTML = `<span class="badge-sin-stock badge-alerta">${prod.estado.toUpperCase()}</span>`;
     }
 
+    // --- LÓGICA DE PRECIO PSICOLÓGICO ---
+    const precioReal = prod.precio;
+    const precioTachado = Math.round((precioReal * 1.30) / 100) * 100;
+    const precioPsicologico = precioReal - 1;
+
     const card = `
-        <div class="producto-card ${claseExtra}">
-            <a href="info-producto.html?id=${prod.id}" class="producto-href">
-                ${badgeHTML}
-                <img class="producto-img" src="${imagenPortada}" alt="${prod.nombre}" />
-                <div class="producto-info">
-                    <p class="producto-name">${prod.nombre}</p>
-                    ${prod.variantes && prod.variantes.length > 1 ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>` : ""}
-                    <p class="precio"><b>$${prod.precio.toLocaleString()}</b></p>
-                    <button class="btn-ver-mas">ver más</button>
+    <div class="producto-card ${claseExtra}">
+        <a href="info-producto.html?id=${prod.id}" class="producto-href">
+            ${badgeHTML}
+            <img class="producto-img" src="${imagenPortada}" alt="${prod.nombre}" />
+            <div class="producto-info">
+                <p class="producto-name"><b>${prod.nombre}</b></p>
+                ${prod.variantes && prod.variantes.length > 1 ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>` : ""}
+                
+                <div class="precio-container">
+                    <span class="precio-tachado">$${precioTachado.toLocaleString()}</span>
+                    <p class="precio"><b>$${precioPsicologico.toLocaleString()}</b></p>
                 </div>
-            </a>
-        </div>
-    `;
+
+                <button class="btn-ver-mas">ver más</button>
+            </div>
+        </a>
+    </div>
+`;
     contenedor.innerHTML += card;
   });
 }

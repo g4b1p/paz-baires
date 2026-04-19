@@ -67,9 +67,16 @@ function cargarProducto() {
     producto.marca || "PAZ BAIRES";
   document.getElementById("productDesc").innerHTML = producto.descripcion;
 
-  // 1. Limpiamos el precio actual
-  document.getElementById("currentPrice").innerText =
-    `$${producto.precio.toLocaleString()}`;
+  // 1. Lógica de precio psicológico
+  const precioRealInfo = producto.precio;
+  const precioTachadoInfo = Math.round((precioRealInfo * 1.30) / 100) * 100;
+  const precioPsicologicoInfo = precioRealInfo - 1;
+
+  // Insertamos ambos precios
+  document.getElementById("currentPrice").innerHTML = `
+    <span class="precio-tachado-info">$${precioTachadoInfo.toLocaleString()}</span>
+    $${precioPsicologicoInfo.toLocaleString()}
+`;
 
   // 2. Lógica de Cartel Personalizado desde el Excel
   const box = document.querySelector(".transfer-box");
