@@ -1,5 +1,5 @@
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbw2rh4Xgs8CuN-S-1wZmMHMwyIU_v0YjkGCaCGbeza2fd070R4lAu8cDRNfh3XAR26G/exec";
+  "https://script.google.com/macros/s/AKfycbxo8wdw11yte6nAOQqQtOiPcsP79MVYeqMc844ivITnYGRtq9oV9-3hmwal27YsGjLt/exec";
 
 // 2. Variable global para que el resto de tus archivos sigan funcionando
 let productos = [];
@@ -75,6 +75,7 @@ async function cargarProductosDesdeSheet() {
           tipo: p.Tipo ? p.Tipo.toLowerCase().trim() : "",
           nombre: p.Nombre,
           precio: parseFloat(p.Precio) || 0,
+          beneficio: p.Beneficio ? p.Beneficio.trim() : "",
           etiqueta: p.Etiqueta ? p.Etiqueta.trim() : "Ninguno",
           fechaIngreso: p["Fecha Ingreso"] || null,
           coleccion: p.Colección ? p.Colección.toLowerCase().trim() : "varios",
