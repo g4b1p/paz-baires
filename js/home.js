@@ -1,35 +1,36 @@
-// 1. Al cargar la página, ponemos los esqueletos
+// 1. Al cargar la página, prioridad al Caché
 document.addEventListener("DOMContentLoaded", () => {
-  mostrarEsqueletos("grid-destacados");
-  mostrarEsqueletos("grid-nuevos");
+  const cache = localStorage.getItem("productos_cache");
+  const contenedorDestacados = document.getElementById("grid-destacados");
+  const contenedorNuevos = document.getElementById("grid-nuevos");
 
-  // Si ya hay algo en caché, renderizamos de una
-  if (window.productos && window.productos.length > 0) {
+  if (cache) {
+    // Si hay caché, lo usamos de una y NO mostramos esqueletos
+    window.productos = JSON.parse(cache);
+    console.log("🏠 Home: Cargando desde caché...");
     renderizarHome();
+  } else {
+    // Solo si NO hay nada guardado, mostramos los esqueletos
+    console.log("🏠 Home: Sin caché, mostrando esqueletos...");
+    mostrarEsqueletos("grid-destacados");
+    mostrarEsqueletos("grid-nuevos");
   }
 });
 
-// 2. Escuchamos cuando los productos reales estén listos
+// 2. Escuchamos cuando los productos reales estén listos (de Google Sheets)
 document.addEventListener("productosListos", () => {
+  const cacheActual = localStorage.getItem("productos_cache");
+  const datosNuevos = JSON.stringify(window.productos);
+
+  // COMPARACIÓN: Si lo que llegó de Google es igual a lo que ya se ve, no hacemos nada
+  if (cacheActual === datosNuevos) {
+    console.log("🏠 Home: Datos idénticos, evitando re-renderizado.");
+    return;
+  }
+
+  console.log("🏠 Home: Datos nuevos detectados, actualizando...");
   renderizarHome();
 });
-
-function mostrarEsqueletos(contenedorId) {
-  const contenedor = document.getElementById(contenedorId);
-  if (!contenedor) return;
-
-  let esqueletosHTML = "";
-  for (let i = 0; i < 4; i++) {
-    esqueletosHTML += `
-            <div class="producto-card skeleton">
-                <div class="skeleton-img"></div>
-                <div class="skeleton-text"></div>
-                <div class="skeleton-text short"></div>
-            </div>
-        `;
-  }
-  contenedor.innerHTML = esqueletosHTML;
-}
 
 function renderizarHome() {
   const lista = window.productos;
@@ -70,21 +71,53 @@ function inyectarProductos(lista, contenedorId) {
 
   lista.forEach((prod) => {
     const imagenPortada =
-      prod.imagenes && prod.imagenes[0]
+      prod.imagenes && prod.imagenes.length > 0
         ? prod.imagenes[0]
         : "images/placeholder.jpg";
 
+    // --- 1. LÓGICA DINÁMICA DE BADGES (Igual a Tienda) ---
+    let badgeHTML = "";
+    let claseExtra = "";
+
+    if (prod.estado === "Sin Stock") {
+      badgeHTML = `<span class="badge-sin-stock">SIN STOCK</span>`;
+      claseExtra = "sin-stock";
+    } else if (prod.estado === "Próximamente") {
+      badgeHTML = `<span class="badge-sin-stock badge-proximamente">PRÓXIMAMENTE</span>`;
+      claseExtra = "proximamente";
+    } else if (prod.estado && prod.estado !== "Activo") {
+      // Para "Últimas Unidades", "Liquidación", etc.
+      badgeHTML = `<span class="badge-sin-stock badge-alerta">${prod.estado.toUpperCase()}</span>`;
+    }
+
+    // --- 2. LÓGICA DE PRECIO PSICOLÓGICO (Igual a Tienda) ---
+    const precioReal = prod.precio;
+    // Usamos el 1.3 (30%) como tenés en tienda.js
+    const precioTachado = Math.round((precioReal * 1.3) / 100) * 100;
+    const precioPsicologico = precioReal - 1;
+
+    // --- 3. CONSTRUCCIÓN DE LA CARD ---
     const cardHTML = `
-            <div class="producto-card ${prod.estado === "Sin Stock" ? "sin-stock" : ""}">
+            <div class="producto-card ${claseExtra}">
                 <a href="info-producto.html?id=${prod.id}" class="producto-href">
-                    ${prod.estado === "Sin Stock" ? '<span class="badge-sin-stock">SIN STOCK</span>' : ""}
+                    ${badgeHTML}
                     
                     <img class="producto-img" src="${imagenPortada}" alt="${prod.nombre}" />
                     
                     <div class="producto-info">
-                        <p class="producto-name">${prod.nombre}</p>
-                        ${prod.variantes && prod.variantes.length > 1 ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>` : ""}
-                        <p class="precio"><b>$${prod.precio.toLocaleString("es-AR")}</b></p>
+                        <p class="producto-name"><b>${prod.nombre}</b></p>
+                        
+                        ${
+                          prod.variantes && prod.variantes.length > 1
+                            ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>`
+                            : ""
+                        }
+                        
+                        <div class="precio-container">
+                            <span class="precio-tachado">$${precioTachado.toLocaleString()}</span>
+                            <p class="precio"><b>$${precioPsicologico.toLocaleString()}</b></p>
+                        </div>
+
                         <button class="btn-ver-mas">ver más</button>
                     </div>
                 </a>

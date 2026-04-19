@@ -15,7 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
   filtrosActivos.categoria = "todos";
 
   const contenedor = document.getElementById("contenedor-tienda");
-  if (contenedor) {
+
+  // --- EL CAMBIO ESTÁ AQUÍ ---
+  // Solo ponemos esqueletos si el contenedor está vacío (o sea, si el caché no cargó nada antes)
+  if (contenedor && contenedor.innerHTML.trim() === "") {
     let esqueletosHTML = "";
     for (let i = 0; i < 8; i++) {
       esqueletosHTML += `
@@ -27,42 +30,72 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     contenedor.innerHTML = esqueletosHTML;
   }
+
+  // Si después de 8 segundos sigue habiendo esqueletos (no cargó caché ni Google)
+  setTimeout(() => {
+    const contenedor = document.getElementById("contenedor-tienda");
+    if (contenedor && contenedor.querySelector(".skeleton")) {
+      contenedor.innerHTML = `
+        <div style="text-align: center; padding: 50px; color: white; width: 100%;">
+          <p>Parece que la conexión está lenta... </p>
+          <button onclick="location.reload()" style="background: #6342E8; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer;">
+            REINTENTAR CARGAR
+          </button>
+        </div>
+      `;
+    }
+  }, 8000); // 8 segundos de espera
 });
 
 // Intentar cargar desde la memoria local ANTES de esperar a Google
 const cache = localStorage.getItem("productos_cache");
+// En tu parte de "Intentar cargar desde la memoria local"
 if (cache) {
   productos = JSON.parse(cache);
   console.log("Cargando productos desde caché (Instantáneo)");
 
-  // Si estamos en la tienda, renderizamos ya mismo
   if (typeof renderizarProductos === "function") {
-    renderizarProductos(productos);
-    // Quitamos el mensaje de "Cargando..."
+    // Si querés que el caché también respete la categoría de la URL:
+    const params = new URLSearchParams(window.location.search);
+    const catURL = params.get("categoria") || "todos";
+
+    const productosFiltrados =
+      catURL === "todos"
+        ? productos
+        : productos.filter((p) => p.coleccion === catURL.toLowerCase());
+
+    renderizarProductos(productosFiltrados);
+
     const container = document.getElementById("contenedor-tienda");
     if (container) container.classList.remove("loading");
   }
 
-  // --- AGREGA ESTA LÍNEA AQUÍ ---
   configurarEscuchadores();
-  // ------------------------------
-
-  // Si estamos en info-producto, cargamos ya mismo
-  if (typeof cargarProducto === "function") {
-    cargarProducto();
-  }
 }
 
 // 2. INICIALIZACIÓN
 document.addEventListener("productosListos", () => {
-  console.log("🔄 Datos frescos recibidos");
+  console.log("🔄 Datos frescos recibidos de Google");
 
+  // 1. Chequeamos si el usuario ya tocó algo. Si ya está navegando, no lo molestamos.
   if (yaFiltroElUsuario) return;
+
+  // 2. COMPARACIÓN INTELIGENTE (Para evitar el parpadeo)
+  const cacheActual = localStorage.getItem("productos_cache");
+  const datosNuevos = JSON.stringify(productos); // 'productos' es lo que acaba de llegar
+
+  if (cacheActual === datosNuevos) {
+    console.log(
+      "✅ Los datos son idénticos al caché. No hace falta re-renderizar.",
+    );
+    return; // <--- AQUÍ CORTAMOS TODO. No hay parpadeo.
+  }
+
+  // 3. Si los datos SÍ son distintos (ej. cambió un precio o stock), actualizamos
+  console.log("⚠️ Hay cambios en los productos, actualizando vista...");
 
   const params = new URLSearchParams(window.location.search);
   const catURL = params.get("categoria");
-
-  // Si hay categoría en la URL (ej: ?categoria=pijamas), la usamos. Si no, "todos".
   let categoriaFinal = catURL ? catURL.toLowerCase().trim() : "todos";
 
   if (categoriaFinal === "ofertas") {
@@ -79,6 +112,7 @@ document.addEventListener("productosListos", () => {
     btn.classList.toggle("active", texto === categoriaFinal);
   });
 
+  // Ejecutamos la actualización
   aplicarFiltros();
   configurarEscuchadores();
 
@@ -124,7 +158,7 @@ function renderizarProductos(lista) {
 
     // --- LÓGICA DE PRECIO PSICOLÓGICO ---
     const precioReal = prod.precio;
-    const precioTachado = Math.round((precioReal * 1.30) / 100) * 100;
+    const precioTachado = Math.round((precioReal * 1.3) / 100) * 100;
     const precioPsicologico = precioReal - 1;
 
     const card = `

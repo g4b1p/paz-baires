@@ -167,6 +167,26 @@
     width: 60%;
 }
 
+
+.precio-container {
+    margin-bottom: 10px;
+}
+
+.precio-tachado {
+    display: block;
+    font-size: 12px;
+    color: #818181;
+    text-decoration: line-through;
+    margin-bottom: 5px;
+    /* Para que el precio real quede pegadito */
+}
+
+.precio {
+    margin: 0;
+    font-size: 17px;
+}
+
+
 @keyframes loading {
     0% {
         background-position: 200% 0;
@@ -195,11 +215,7 @@
     opacity: 0.7;
 }
 
-.variantes-tag {
-    font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 5px;
-}
+
 
 .flecha-carrusel {
     width: 40px;
