@@ -371,9 +371,19 @@ function renderSeccionColores(container, prod) {
   prod.variantes.forEach((v) => {
     const dot = document.createElement("div");
     dot.className = "color-dot";
+    dot.style.backgroundColor = v.valor; // El color se sigue viendo de fondo
+
+    // 1. Si la variante NO está disponible, le ponemos la clase de agotado // <--- NUEVO
+    if (v.disponible === false) {
+      dot.classList.add("variante-agotada");
+    }
+
     if (varianteSeleccionada === v.nombre) dot.classList.add("active");
     dot.style.backgroundColor = v.valor;
+
     dot.onclick = function () {
+      if (v.disponible === false) return;
+
       usuarioYaInteractuo = true;
       document
         .querySelectorAll(".color-dot")

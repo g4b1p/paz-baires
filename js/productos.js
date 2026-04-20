@@ -43,7 +43,11 @@ async function cargarProductosDesdeSheet() {
         // 2. Creamos el Mapa de Stock (Talle:Nombre)
         const stockMapa = variantesRaw.reduce((acc, item) => {
           if (item.includes(":")) {
-            const [talle, nombre] = item.split(":").map((s) => s.trim());
+            let [talle, nombre] = item.split(":").map((s) => s.trim());
+
+            // LIMPIEZA: Quitamos el "(SIN STOCK)" del nombre para que el mapa sea limpio // <--- NUEVO
+            nombre = nombre.replace(/\(SIN STOCK\)/i, "").trim();
+
             if (!acc[talle]) acc[talle] = [];
             acc[talle].push(nombre);
           }
@@ -59,13 +63,30 @@ async function cargarProductosDesdeSheet() {
           ),
         ];
 
-        // 4. Procesamos si es Color (Rosa|#hex) o Estampado
+        // 4. Procesamos si es Color (Rosa|#hex) o Estampado + ESTADO DE STOCK
         const variantesProcesadas = nombresUnicos.map((n) => {
-          if (n.includes("|")) {
-            const [nombreColor, hex] = n.split("|").map((s) => s.trim());
-            return { nombre: nombreColor, valor: hex };
+          // DETECTAR STOCK: ¿Contiene la frase mágica? // <--- NUEVO
+          const agotado = n.toUpperCase().includes("(SIN STOCK)");
+
+          // LIMPIEZA: Quitamos el texto "(SIN STOCK)" para que no se vea en la web // <--- NUEVO
+          let nombreLimpio = n.replace(/\(SIN STOCK\)/i, "").trim();
+
+          if (nombreLimpio.includes("|")) {
+            const [nombreColor, hex] = nombreLimpio
+              .split("|")
+              .map((s) => s.trim());
+            return {
+              nombre: nombreColor,
+              valor: hex,
+              disponible: !agotado, // <--- AGREGADO
+            };
           }
-          return { nombre: n, valor: n };
+
+          return {
+            nombre: nombreLimpio,
+            valor: nombreLimpio,
+            disponible: !agotado, // <--- AGREGADO
+          };
         });
 
         // 5. Retornamos el objeto producto final
