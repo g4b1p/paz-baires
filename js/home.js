@@ -1,10 +1,10 @@
 // MATA-AUTO-SCROLL: Esto detiene cualquier movimiento automático residual
 function detenerTodoMovimiento() {
-    console.log("🛑 Deteniendo todos los intervalos automáticos...");
-    for (let i = 1; i < 1000; i++) {
-        window.clearInterval(i);
-        window.clearTimeout(i);
-    }
+  console.log("🛑 Deteniendo todos los intervalos automáticos...");
+  for (let i = 1; i < 1000; i++) {
+    window.clearInterval(i);
+    window.clearTimeout(i);
+  }
 }
 
 // Lo ejecutamos apenas carga y un segundo después por si las dudas
@@ -51,10 +51,17 @@ function renderizarHome() {
 
   const hoy = new Date();
 
-  const destacados = lista.filter(
-    (p) => (p.etiqueta || "").toString().toLowerCase().trim() === "destacado",
-  );
+  // --- 1. FILTRO DE OFERTAS (Corregido para Arrays) ---
+  const ofertas = lista.filter((p) => {
+    // Si p.linea es una lista (array), buscamos si incluye "OFERTAS"
+    if (Array.isArray(p.linea)) {
+      return p.linea.some((l) => l.toUpperCase().trim() === "OFERTAS");
+    }
+    // Por si acaso fuera un texto simple
+    return (p.linea || "").toString().toUpperCase().trim() === "OFERTAS";
+  });
 
+  // --- 2. FILTRO DE NUEVOS INGRESOS (Se mantiene igual) ---
   const nuevos = lista.filter((p) => {
     const etiquetaLimpia = (p.etiqueta || "").toString().toLowerCase().trim();
     if (etiquetaLimpia === "nuevo ingreso") return true;
@@ -66,9 +73,12 @@ function renderizarHome() {
     return false;
   });
 
-  inyectarProductos(destacados, "grid-destacados");
+  console.log("🎁 Ofertas reales encontradas:", ofertas.length);
+
+  inyectarProductos(ofertas, "grid-destacados");
   inyectarProductos(nuevos, "grid-nuevos");
 }
+
 function inyectarProductos(lista, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   if (!contenedor) return;
@@ -104,9 +114,6 @@ function inyectarProductos(lista, contenedorId) {
 
     // --- 2. LÓGICA DE PRECIO PSICOLÓGICO (Igual a Tienda) ---
     const precioReal = prod.precio;
-    // Usamos el 1.3 (30%) como tenés en tienda.js
-    const precioTachado = Math.round((precioReal * 1.3) / 100) * 100;
-    const precioPsicologico = precioReal - 1;
 
     // --- 3. CONSTRUCCIÓN DE LA CARD ---
     const cardHTML = `
@@ -126,8 +133,7 @@ function inyectarProductos(lista, contenedorId) {
                         }
                         
                         <div class="precio-container">
-                            <span class="precio-tachado">$${precioTachado.toLocaleString()}</span>
-                            <p class="precio"><b>$${precioPsicologico.toLocaleString()}</b></p>
+                            <p class="precio"><b>$${precioReal.toLocaleString()}</b></p>
                         </div>
 
                         <button class="btn-ver-mas">ver más</button>

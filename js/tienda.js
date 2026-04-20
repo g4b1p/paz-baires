@@ -12,7 +12,7 @@ let yaFiltroElUsuario = false; // Variable de control
 
 document.addEventListener("DOMContentLoaded", () => {
   // Resetear siempre a todos al cargar la página
-  filtrosActivos.categoria = "todos";
+  //filtrosActivos.categoria = "todos";
 
   const contenedor = document.getElementById("contenedor-tienda");
 
@@ -49,67 +49,98 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Intentar cargar desde la memoria local ANTES de esperar a Google
 const cache = localStorage.getItem("productos_cache");
-// En tu parte de "Intentar cargar desde la memoria local"
+// --- CARGA INSTANTÁNEA DESDE CACHÉ (CON ACTUALIZACIÓN DE BOTONES) ---
 if (cache) {
   productos = JSON.parse(cache);
+  window.productos = productos;
   console.log("Cargando productos desde caché (Instantáneo)");
 
-  if (typeof renderizarProductos === "function") {
-    // Si querés que el caché también respete la categoría de la URL:
-    const params = new URLSearchParams(window.location.search);
-    const catURL = params.get("categoria") || "todos";
+  const params = new URLSearchParams(window.location.search);
+  const catURL = params.get("categoria");
+  const linURL = params.get("linea");
 
-    const productosFiltrados =
-      catURL === "todos"
-        ? productos
-        : productos.filter((p) => p.coleccion === catURL.toLowerCase());
+  let categoriaParaBoton = "todos";
 
-    renderizarProductos(productosFiltrados);
-
-    const container = document.getElementById("contenedor-tienda");
-    if (container) container.classList.remove("loading");
+  // Determinamos qué filtro aplicar y qué botón marcar
+  if ((linURL && linURL.toLowerCase() === "ofertas") || (catURL && catURL.toLowerCase() === "ofertas")) {
+    filtrosActivos.soloOfertas = true;
+    filtrosActivos.categoria = "todos";
+    categoriaParaBoton = "ofertas";
+  } else if (catURL) {
+    filtrosActivos.categoria = catURL.toLowerCase().trim();
+    filtrosActivos.soloOfertas = false;
+    categoriaParaBoton = filtrosActivos.categoria;
   }
+
+  // Aplicamos el filtro visual de inmediato
+  if (typeof aplicarFiltros === "function") {
+    aplicarFiltros();
+  }
+
+  // ¡ESTO ES LO QUE TE FALTABA!: Marcar el botón activo en la UI
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    const texto = btn.innerText.trim().toLowerCase();
+    btn.classList.toggle("active", texto === categoriaParaBoton);
+  });
+
+  const container = document.getElementById("contenedor-tienda");
+  if (container) container.classList.remove("loading");
 
   configurarEscuchadores();
 }
 
-// 2. INICIALIZACIÓN
+// 2. INICIALIZACIÓN (Versión Corregida para Nav y Ofertas)
 document.addEventListener("productosListos", () => {
   console.log("🔄 Datos frescos recibidos de Google");
 
-  // 1. Chequeamos si el usuario ya tocó algo. Si ya está navegando, no lo molestamos.
   if (yaFiltroElUsuario) return;
 
-  // 2. COMPARACIÓN INTELIGENTE (Para evitar el parpadeo)
   const cacheActual = localStorage.getItem("productos_cache");
-  const datosNuevos = JSON.stringify(productos); // 'productos' es lo que acaba de llegar
+  const datosNuevos = JSON.stringify(productos);
+
+  // Si el usuario ya está navegando o si los datos son iguales, no flasheamos la pantalla
+  if (yaFiltroElUsuario && cacheActual === datosNuevos) {
+    console.log("✅ El usuario ya está viendo los datos correctos del caché.");
+    return;
+  }
 
   if (cacheActual === datosNuevos) {
-    console.log(
-      "✅ Los datos son idénticos al caché. No hace falta re-renderizar.",
-    );
-    return; // <--- AQUÍ CORTAMOS TODO. No hay parpadeo.
+    console.log("✅ Datos idénticos, verificando URL...");
   }
 
-  // 3. Si los datos SÍ son distintos (ej. cambió un precio o stock), actualizamos
-  console.log("⚠️ Hay cambios en los productos, actualizando vista...");
-
+  // --- LÓGICA DE LECTURA DE URL (NAV) ---
   const params = new URLSearchParams(window.location.search);
   const catURL = params.get("categoria");
-  let categoriaFinal = catURL ? catURL.toLowerCase().trim() : "todos";
+  const linURL = params.get("linea");
 
-  if (categoriaFinal === "ofertas") {
+  let categoriaParaBoton = "todos";
+
+  // Prioridad 1: Si viene como Línea Ofertas o Categoría Ofertas
+  if (
+    (linURL && linURL.toLowerCase() === "ofertas") ||
+    (catURL && catURL.toLowerCase() === "ofertas")
+  ) {
     filtrosActivos.soloOfertas = true;
     filtrosActivos.categoria = "todos";
-  } else {
-    filtrosActivos.categoria = categoriaFinal;
+    categoriaParaBoton = "ofertas";
+  }
+  // Prioridad 2: Si viene una categoría normal (pijamas, blanqueria, etc)
+  else if (catURL) {
+    filtrosActivos.categoria = catURL.toLowerCase().trim();
     filtrosActivos.soloOfertas = false;
+    categoriaParaBoton = filtrosActivos.categoria;
+  }
+  // Prioridad 3: No hay nada en la URL
+  else {
+    filtrosActivos.categoria = "todos";
+    filtrosActivos.soloOfertas = false;
+    categoriaParaBoton = "todos";
   }
 
-  // Actualizar botones visualmente
+  // Actualizar botones visualmente (buscamos el texto exacto)
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     const texto = btn.innerText.trim().toLowerCase();
-    btn.classList.toggle("active", texto === categoriaFinal);
+    btn.classList.toggle("active", texto === categoriaParaBoton);
   });
 
   // Ejecutamos la actualización
@@ -156,10 +187,8 @@ function renderizarProductos(lista) {
       badgeHTML = `<span class="badge-sin-stock badge-alerta">${prod.estado.toUpperCase()}</span>`;
     }
 
-    // --- LÓGICA DE PRECIO PSICOLÓGICO ---
-    const precioReal = prod.precio;
-    const precioTachado = Math.round((precioReal * 1.3) / 100) * 100;
-    const precioPsicologico = precioReal - 1;
+    // --- PRECIO REAL (Sin descuentos ni redondeos) ---
+    const precioFinal = prod.precio;
 
     const card = `
     <div class="producto-card ${claseExtra}">
@@ -171,8 +200,7 @@ function renderizarProductos(lista) {
                 ${prod.variantes && prod.variantes.length > 1 ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>` : ""}
                 
                 <div class="precio-container">
-                    <span class="precio-tachado">$${precioTachado.toLocaleString()}</span>
-                    <p class="precio"><b>$${precioPsicologico.toLocaleString()}</b></p>
+                    <p class="precio"><b>$${precioFinal.toLocaleString()}</b></p>
                 </div>
 
                 <button class="btn-ver-mas">ver más</button>
@@ -253,7 +281,7 @@ function aplicarFiltros() {
 function configurarEscuchadores() {
   console.log("⚙️ Configurando escuchadores...");
 
-  // Botones de categoría (Superiores)
+  // Botones de categoría (Superiores) - REEMPLAZO
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.onclick = (e) => {
       const textoBoton = e.target.innerText.trim().toLowerCase();
@@ -263,9 +291,16 @@ function configurarEscuchadores() {
         .forEach((b) => b.classList.remove("active"));
       e.target.classList.add("active");
 
-      // ELIMINAMOS: localStorage.setItem("categoria_guardada", textoBoton); <--- BORRAR ESTO
+      // --- LÓGICA NUEVA PARA EL BOTÓN OFERTAS ---
+      if (textoBoton === "ofertas") {
+        filtrosActivos.soloOfertas = true;
+        filtrosActivos.categoria = "todos"; // Reseteamos categoría para ver todas las ofertas
+      } else {
+        filtrosActivos.soloOfertas = false;
+        filtrosActivos.categoria =
+          textoBoton === "todos" ? "todos" : textoBoton;
+      }
 
-      filtrosActivos.categoria = textoBoton === "todos" ? "todos" : textoBoton;
       aplicarFiltros();
     };
   });

@@ -16,6 +16,7 @@
           <button class="filter-btn">Blanqueria</button>
           <button class="filter-btn">Accesorios</button>
           <button class="filter-btn">Pijamas</button>
+          <button class="filter-btn">OFERTAS</button>
         </nav>
       </header>
 
@@ -91,12 +92,6 @@
                   Infantil / Juvenil</label
                 >
               </li>
-              <li>
-                <label
-                  ><input type="checkbox" name="oferta" value="si" />
-                  <strong>🔥 OFERTAS</strong></label
-                >
-              </li>
             </ul>
           </div>
 
@@ -135,7 +130,11 @@
               </li>
               <li>
                 <label>
-                  <input type="checkbox" name="material" value="Lana / Lanilla" />
+                  <input
+                    type="checkbox"
+                    name="material"
+                    value="Lana / Lanilla"
+                  />
                   Lana / Lanilla
                 </label>
               </li>
@@ -165,6 +164,14 @@
 
         <section class="grid-productos-fijo" id="contenedor-tienda"></section>
       </div>
+
+      <div id="contenedor-tienda" class="grid-productos">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+      
     </main>
     <script src="js/componentes.js"></script>
     <script src="js/productos.js"></script>
