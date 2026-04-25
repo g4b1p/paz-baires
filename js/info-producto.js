@@ -84,7 +84,7 @@ function cargarProducto() {
         <div style="line-height: 1.3;">
             <strong style="font-size: 1rem; color: #fff;">${producto.beneficio}</strong>
             <p style="margin: 5px 0 0 0; font-size: 0.75rem; font-weight: normal; opacity: 0.9;">
-                Válido para este producto. Consultar condiciones al finalizar la compra.
+                Válido para este producto.
             </p>
         </div>
     `;

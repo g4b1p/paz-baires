@@ -62,7 +62,10 @@ if (cache) {
   let categoriaParaBoton = "todos";
 
   // Determinamos qué filtro aplicar y qué botón marcar
-  if ((linURL && linURL.toLowerCase() === "ofertas") || (catURL && catURL.toLowerCase() === "ofertas")) {
+  if (
+    (linURL && linURL.toLowerCase() === "ofertas") ||
+    (catURL && catURL.toLowerCase() === "ofertas")
+  ) {
     filtrosActivos.soloOfertas = true;
     filtrosActivos.categoria = "todos";
     categoriaParaBoton = "ofertas";
@@ -415,26 +418,34 @@ function toggleFiltros() {
 }
 
 function sincronizarFiltrosDesdeUI() {
-  // Si todavía no cargaron los productos (ni de caché ni de Google), no filtramos nada aún
   if (!window.productos || window.productos.length === 0) return;
 
-  console.log(
-    "🔄 Sincronizando filtros con lo que quedó marcado en el navegador...",
-  );
+  console.log("🔄 Sincronizando filtros con la UI...");
 
-  // 1. Limpiamos el objeto de filtros para llenarlo de nuevo con lo que hay en pantalla
+  // 1. Sincronizar Categoría (Botones superiores)
+  const btnActivo = document.querySelector(".filter-btn.active");
+  if (btnActivo) {
+    const texto = btnActivo.innerText.trim().toLowerCase();
+    if (texto === "ofertas") {
+      filtrosActivos.soloOfertas = true;
+      filtrosActivos.categoria = "todos";
+    } else {
+      filtrosActivos.soloOfertas = false;
+      filtrosActivos.categoria = texto;
+    }
+  }
+
+  // 2. Limpiar y rellenar arrays de checkboxes
   filtrosActivos.ambientes = [];
   filtrosActivos.publicos = [];
   filtrosActivos.materiales = [];
 
-  // 2. Buscamos todos los checkboxes marcados y los metemos al objeto
   document
     .querySelectorAll('.sidebar-filtros input[type="checkbox"]')
     .forEach((check) => {
       if (check.checked) {
         const valor = check.value;
         const grupo = check.name;
-
         if (grupo === "ambiente") filtrosActivos.ambientes.push(valor);
         else if (grupo === "publico") filtrosActivos.publicos.push(valor);
         else if (grupo === "material") filtrosActivos.materiales.push(valor);
@@ -442,7 +453,7 @@ function sincronizarFiltrosDesdeUI() {
       }
     });
 
-  // 3. Sincronizar el Slider de Precio
+  // 3. Sincronizar Slider
   const slider = document.getElementById("rango-precio");
   if (slider) {
     filtrosActivos.precioMax = parseInt(slider.value);
@@ -450,6 +461,17 @@ function sincronizarFiltrosDesdeUI() {
       `$${filtrosActivos.precioMax.toLocaleString()}`;
   }
 
-  // 4. Ejecutamos el filtro para que la lista de productos se limpie YA
+  // 4. Forzar el filtrado YA
   aplicarFiltros();
 }
+
+window.addEventListener("pageshow", (event) => {
+  // Si la página se carga desde el caché del navegador (botón atrás)
+  if (
+    event.persisted ||
+    (window.performance && window.performance.navigation.type === 2)
+  ) {
+    console.log("🔙 Volviste atrás: Re-sincronizando filtros...");
+    sincronizarFiltrosDesdeUI();
+  }
+});

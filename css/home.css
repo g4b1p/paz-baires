@@ -60,12 +60,11 @@
 }
 
 .producto-card {
-    /* ELIMINAMOS width: 100% */
+    position: relative;
+    /* <--- ESTO ES LO QUE FALTA */
     background-color: #ffffff;
     border-radius: 40px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-
-    /* Calculamos para que entren exactamente 3 considerando los 2 espacios (gap) de 20px */
     flex: 0 0 calc((100% - 40px) / 3);
     min-width: calc((100% - 40px) / 3);
     margin: 0;
@@ -74,6 +73,9 @@
 .producto-card img {
     box-sizing: border-box;
     /* Incluye el padding y el borde en el ancho total */
+    aspect-ratio: 1/1;
+    /* Mantiene la imagen cuadrada */
+    object-fit: cover;
     width: 100%;
     border: 15px solid #ffffff;
     border-radius: 40px;
@@ -197,18 +199,20 @@
     }
 }
 
-/* Estilo para el badge de Sin Stock que pediste */
 .badge-sin-stock {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background: rgba(255, 0, 0, 0.7);
+    top: 18px;
+    left: 18px;
+    background: #cf3025;
     color: white;
-    padding: 5px 10px;
-    font-size: 12px;
+    padding: 7px 15px;
+    font-size: 0.75rem;
     font-weight: bold;
-    border-radius: 4px;
-    z-index: 2;
+    border-radius: 10px;
+    z-index: 10;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .producto-card.sin-stock {
@@ -243,11 +247,14 @@
 #grid-nuevos {
     display: flex !important;
     gap: 20px;
-    overflow-x: auto !important; /* Permite el scroll manual */
+    overflow-x: auto !important;
+    /* Permite el scroll manual */
     scroll-behavior: smooth;
     width: 100%;
-    scrollbar-width: none; /* Oculta barra en Firefox */
-    -ms-overflow-style: none; /* Oculta barra en IE/Edge */
+    scrollbar-width: none;
+    /* Oculta barra en Firefox */
+    -ms-overflow-style: none;
+    /* Oculta barra en IE/Edge */
 }
 
 /* Oculta la barra en Chrome, Safari y Opera */

@@ -218,23 +218,23 @@
 /* Base del cartelito (Badge) */
 .badge-sin-stock {
     position: absolute;
-    top: 17px;
-    left: 17px;
-    background-color: #ba2e2e;
-    /* Rojo para Sin Stock */
+    top: 18px;
+    left: 18px;
+    background: rgba(165, 0, 0, 0.85);
     color: white;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-size: 0.7rem;
+    padding: 7px 15px;
+    font-size: 0.75rem;
     font-weight: bold;
+    border-radius: 10px;
     z-index: 10;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Color naranja para estados especiales (Últimos Disponibles, etc.) */
 .badge-alerta {
-    background-color: #dfc935 !important;
+    background-color: #cf3025 !important;
 }
 
 /* Color lila para el nuevo estado (Próximamente) */
