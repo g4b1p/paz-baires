@@ -47,21 +47,27 @@ document.addEventListener("productosListos", () => {
 
 function renderizarHome() {
   const lista = window.productos;
-  if (!lista || lista.length === 0) return;
 
+  // --- CAMBIO CLAVE: Si no hay productos, esperamos y reintentamos ---
+  if (!lista || lista.length === 0) {
+    console.log("⏳ Datos no listos en Home, reintentando en 100ms...");
+    setTimeout(renderizarHome, 100);
+    return; // Salimos de esta ejecución, pero el setTimeout disparará la siguiente
+  }
+
+  // Si llegamos acá, es porque window.productos YA TIENE DATOS
+  console.log("✅ Datos cargados, renderizando galerías...");
   const hoy = new Date();
 
-  // --- 1. FILTRO DE OFERTAS (Corregido para Arrays) ---
+  // --- 1. FILTRO DE OFERTAS ---
   const ofertas = lista.filter((p) => {
-    // Si p.linea es una lista (array), buscamos si incluye "OFERTAS"
     if (Array.isArray(p.linea)) {
       return p.linea.some((l) => l.toUpperCase().trim() === "OFERTAS");
     }
-    // Por si acaso fuera un texto simple
     return (p.linea || "").toString().toUpperCase().trim() === "OFERTAS";
   });
 
-  // --- 2. FILTRO DE NUEVOS INGRESOS (Se mantiene igual) ---
+  // --- 2. FILTRO DE NUEVOS INGRESOS ---
   const nuevos = lista.filter((p) => {
     const etiquetaLimpia = (p.etiqueta || "").toString().toLowerCase().trim();
     if (etiquetaLimpia === "nuevo ingreso") return true;
@@ -73,11 +79,12 @@ function renderizarHome() {
     return false;
   });
 
-  console.log("🎁 Ofertas reales encontradas:", ofertas.length);
-
   inyectarProductos(ofertas, "grid-destacados");
   inyectarProductos(nuevos, "grid-nuevos");
 }
+
+// Ejecutar al cargar la página
+document.addEventListener("DOMContentLoaded", renderizarHome);
 
 function inyectarProductos(lista, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
