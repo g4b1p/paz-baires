@@ -39,7 +39,7 @@ function insertarHeader() {
             />
             <span id="cart-count" class="cart-badge">0</span>
           </a>
-          <a href="https://www.instagram.com/pazbaires.ok/" target="_blank"
+          <a href="https://www.instagram.com/pazbaires?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"
             ><img
               class="icon-social-header"
               src="images/icons/instagram-icon.png"
@@ -121,7 +121,7 @@ function insertarFooter() {
           <h2 class="title-footer">Seguinos</h2>
           <a
             class="social"
-            href="https://www.instagram.com/pazbaires.ok/"
+            href="https://www.instagram.com/pazbaires?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
             target="_blank"
             ><img
               class="icon-social-footer"
