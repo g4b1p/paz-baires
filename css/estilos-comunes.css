@@ -28,32 +28,40 @@ body {
 
 .marquee-track {
     display: flex;
-    white-space: nowrap;
-    position: absolute;
-    /* La animación: 20 segundos, lineal, infinita */
-    animation: marquee-infinito 6s linear infinite;
+    width: max-content;
+    /* IMPORTANTE: obliga a la pista a ser tan larga como el texto */
+    animation: marquee-infinito 10s linear infinite;
+    /* 6s es muy rápido para compu, probá con 15s */
+}
+
+.marquee-content {
+    display: flex;
+    flex-shrink: 0;
+    /* Evita que los bloques se achiquen */
 }
 
 .marquee-track span {
     font-size: 12px;
     font-weight: bold;
-    padding-right: 20px;
+    padding-right: 60px;
     /* Espacio entre repeticiones */
     text-transform: uppercase;
-    /* Bloqueo extra para navegadores de redes sociales */
-    -webkit-text-size-adjust: none;
-    text-size-adjust: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    ;
 }
 
 @keyframes marquee-infinito {
-    0% {
+    from {
         transform: translateX(0);
     }
 
-    100% {
-        /* Se mueve exactamente el 50% para que el ciclo sea invisible */
+    to {
         transform: translateX(-50%);
     }
+
+    /* Al llegar a -50%, el Bloque 2 está exactamente donde empezó el 1, 
+       haciendo que el salto sea imperceptible */
 }
 
 .header {
@@ -606,7 +614,7 @@ main {
 
 @media (max-width: 900px) {
 
-    
+
 
     .icon-social-header {
         width: 35px;

@@ -19,10 +19,16 @@ function insertarHeader() {
     <header>
       <div class="top-bar">
           <div class="marquee-track">
-              <span>ENVÍOS A TODO EL PAÍS</span>
-              <span>COMPRA MÍNIMA $80.000</span>
-              <span>ENVÍOS A TODO EL PAÍS</span>
-              <span>COMPRA MÍNIMA $80.000</span>
+              <span>ENVÍOS A TODO EL PAÍS | COMPRA MÍNIMA $80.000</span>
+              <span>ENVÍOS A TODO EL PAÍS | COMPRA MÍNIMA $80.000</span>
+              <span>ENVÍOS A TODO EL PAÍS | COMPRA MÍNIMA $80.000</span>
+              <span>ENVÍOS A TODO EL PAÍS | COMPRA MÍNIMA $80.000</span>
+          </div>
+          <div class="marquee-track">
+              <span>ENVÍOS A TODO EL PAÍS | COMPRA MÍNIMA $80.000</span>
+              <span>ENVÍOS A TODO EL PAÍS | COMPRA MÍNIMA $80.000</span>
+              <span>ENVÍOS A TODO EL PAÍS | COMPRA MÍNIMA $80.000</span>
+              <span>ENVÍOS A TODO EL PAÍS | COMPRA MÍNIMA $80.000</span>
           </div>
       </div>
       <div class="header">
