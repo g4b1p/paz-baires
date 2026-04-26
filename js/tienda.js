@@ -11,30 +11,29 @@ let filtrosActivos = {
 let yaFiltroElUsuario = false; // Variable de control
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Resetear siempre a todos al cargar la página
-  //filtrosActivos.categoria = "todos";
-
   const contenedor = document.getElementById("contenedor-tienda");
+  if (!contenedor) return;
 
-  // --- EL CAMBIO ESTÁ AQUÍ ---
-  // Solo ponemos esqueletos si el contenedor está vacío (o sea, si el caché no cargó nada antes)
-  if (contenedor && contenedor.innerHTML.trim() === "") {
-    let esqueletosHTML = "";
-    for (let i = 0; i < 8; i++) {
-      esqueletosHTML += `
-        <div class="producto-card skeleton">
-            <div class="skeleton-img" style="height: 250px; background: #eee; border-radius: 20px; margin-bottom: 15px;"></div>
-            <div class="skeleton-text" style="height: 20px; background: #eee; width: 80%; margin-bottom: 10px;"></div>
-            <div class="skeleton-text" style="height: 20px; background: #eee; width: 40%;"></div>
-        </div>`;
-    }
-    contenedor.innerHTML = esqueletosHTML;
+  // 1. FORZAR ESQUELETOS (Sin IF, los ponemos de entrada)
+  // Esto borra el "Cargando catálogo..." del CSS porque el DIV ya no está vacío
+  let esqueletosHTML = "";
+  for (let i = 0; i < 8; i++) {
+    esqueletosHTML += `
+      <div class="producto-card skeleton">
+          <div class="skeleton-img" style="height: 250px; background: #eee; border-radius: 20px; margin-bottom: 15px;"></div>
+          <div class="skeleton-text" style="height: 20px; background: #eee; width: 80%; margin-bottom: 10px;"></div>
+          <div class="skeleton-text" style="height: 20px; background: #eee; width: 40%;"></div>
+      </div>`;
   }
+  contenedor.innerHTML = esqueletosHTML;
 
-  // Si después de 8 segundos sigue habiendo esqueletos (no cargó caché ni Google)
+  // 2. Sincronizar filtros por si el usuario volvió atrás
+  sincronizarFiltrosDesdeUI();
+
+  // 3. TU LÓGICA DE SEGURIDAD (8 segundos)
   setTimeout(() => {
-    const contenedor = document.getElementById("contenedor-tienda");
-    if (contenedor && contenedor.querySelector(".skeleton")) {
+    // Si todavía hay esqueletos, significa que la carga falló o no hay internet
+    if (contenedor.querySelector(".skeleton")) {
       contenedor.innerHTML = `
         <div style="text-align: center; padding: 50px; color: white; width: 100%;">
           <p>Parece que la conexión está lenta... </p>
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
     }
-  }, 8000); // 8 segundos de espera
+  }, 8000);
 });
 
 // Intentar cargar desde la memoria local ANTES de esperar a Google

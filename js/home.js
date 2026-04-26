@@ -13,6 +13,8 @@ setTimeout(detenerTodoMovimiento, 1000);
 
 // 1. Al cargar la página, prioridad al Caché
 document.addEventListener("DOMContentLoaded", () => {
+  mostrarEsqueletosHome();
+  
   const cache = localStorage.getItem("productos_cache");
   const contenedorDestacados = document.getElementById("grid-destacados");
   const contenedorNuevos = document.getElementById("grid-nuevos");
@@ -29,6 +31,27 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarEsqueletos("grid-nuevos");
   }
 });
+
+function mostrarEsqueletosHome() {
+  const contenedores = ["grid-destacados", "grid-nuevos"];
+
+  contenedores.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      let esqueletosHTML = "";
+      // Ponemos 3 o 4 esqueletos por fila (lo que quepa en tu slider)
+      for (let i = 0; i < 4; i++) {
+        esqueletosHTML += `
+          <div class="producto-card skeleton">
+              <div class="skeleton-img" style="height: 200px; background: #eee; border-radius: 20px; margin-bottom: 15px;"></div>
+              <div class="skeleton-text" style="height: 15px; background: #eee; width: 80%; margin-bottom: 10px;"></div>
+              <div class="skeleton-text" style="height: 15px; background: #eee; width: 40%;"></div>
+          </div>`;
+      }
+      el.innerHTML = esqueletosHTML;
+    }
+  });
+}
 
 // 2. Escuchamos cuando los productos reales estén listos (de Google Sheets)
 document.addEventListener("productosListos", () => {
