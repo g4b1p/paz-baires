@@ -569,6 +569,10 @@ main {
 
 @media (max-width: 900px) {
 
+    .top-bar {
+        font-size: 11px;
+    }
+
     .icon-social-header {
         width: 35px;
         height: auto;
