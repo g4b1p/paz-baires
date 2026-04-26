@@ -98,6 +98,7 @@
 @media (max-width: 700px) {
 
     .ayuda-banner {
+        margin-top: 160px;
         padding: 40px 15px;
     }
 
