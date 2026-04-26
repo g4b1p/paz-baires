@@ -14,35 +14,46 @@ body {
     background-image: linear-gradient(to bottom, #7454d9, #8d61e1, #a36ee9, #b97cf2, #cd8bfa);
 }
 
-:root {
-    --altura-top-bar: 30px;
-    /* Ajustá esto a lo que necesites */
-}
-
 .top-bar {
     background-color: #8e6fe3;
     color: #ffffff;
-    padding: 5px;
-    text-align: center;
-
-    /* BLOQUEO DE ESCALADO */
-    -webkit-text-size-adjust: none;
-    /* Evita que navegadores móviles agranden la fuente */
-    text-size-adjust: none;
-    white-space: nowrap;
-    /* Obliga al texto a quedarse en una sola línea */
-    overflow: hidden;
-    /* Si no entra, se corta en lugar de empujar hacia abajo */
-    text-overflow: ellipsis;
-    /* Pone "..." si el texto es muy largo */
-
     height: 30px;
-    /* Definimos una altura fija igual o menor a tu top del header */
-    line-height: 20px;
-    /* Centra el texto verticalmente */
-    box-sizing: border-box;
+    /* Altura fija obligatoria */
+    overflow: hidden;
+    /* Esconde lo que sobra */
+    position: relative;
+    display: flex;
+    align-items: center;
+}
 
-    height: var(--altura-top-bar);
+.marquee-track {
+    display: flex;
+    white-space: nowrap;
+    position: absolute;
+    /* La animación: 20 segundos, lineal, infinita */
+    animation: marquee-infinito 6s linear infinite;
+}
+
+.marquee-track span {
+    font-size: 12px;
+    font-weight: bold;
+    padding-right: 20px;
+    /* Espacio entre repeticiones */
+    text-transform: uppercase;
+    /* Bloqueo extra para navegadores de redes sociales */
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+}
+
+@keyframes marquee-infinito {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        /* Se mueve exactamente el 50% para que el ciclo sea invisible */
+        transform: translateX(-50%);
+    }
 }
 
 .header {
@@ -56,8 +67,7 @@ body {
     border-radius: 0 0 50px 50px;
     box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
     position: absolute;
-    top: var(--altura-top-bar);
-    /* <--- Ahora es dinámico */
+    top: 30px;
     left: 0;
     right: 0;
     z-index: 1000;
@@ -587,10 +597,6 @@ main {
         padding: 0 8%;
     }
 
-    .header {
-        top: 26px;
-    }
-
     .video-container {
         height: 100vh;
         /* Un poco más bajo en celulares */
@@ -600,20 +606,7 @@ main {
 
 @media (max-width: 900px) {
 
-    :root {
-        --altura-top-bar: 25px;
-        /* Un poquito más fino en celus */
-    }
-
-    .top-bar {
-        font-size: 11px;
-        /* Bajamos un punto para asegurar que entre */
-        padding: 2px 5px;
-    }
-
-    .header {
-        top: var(--altura-top-bar);
-    }
+    
 
     .icon-social-header {
         width: 35px;
@@ -656,7 +649,6 @@ main {
     }
 
     .header {
-        top: 25px;
         flex-wrap: wrap;
         flex-direction: column;
         /* Alinea todo en vertical */

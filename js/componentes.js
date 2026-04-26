@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function insertarHeader() {
   // Detectamos en qué página estamos
   const paginaActual = window.location.pathname;
-  
+
   // 1. Ahora 'esHome' SOLO es para el index
   const esHome =
     paginaActual.includes("index.html") || paginaActual.endsWith("/");
@@ -17,7 +17,14 @@ function insertarHeader() {
   // 1. Definimos solo la parte de navegación (Lo que va en TODAS las páginas)
   let headerHTML = `
     <header>
-      <div class="top-bar">Compra minima para envios a partir de <b>$80.000</b>.</div>
+      <div class="top-bar">
+          <div class="marquee-track">
+              <span>ENVÍOS A TODO EL PAÍS</span>
+              <span>COMPRA MÍNIMA $80.000</span>
+              <span>ENVÍOS A TODO EL PAÍS</span>
+              <span>COMPRA MÍNIMA $80.000</span>
+          </div>
+      </div>
       <div class="header">
 
         <input type="checkbox" id="nav-toggle" hidden />
