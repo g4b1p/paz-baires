@@ -1,4 +1,4 @@
-// MATA-AUTO-SCROLL: Esto detiene cualquier movimiento automático residual
+/* MATA-AUTO-SCROLL: Esto detiene cualquier movimiento automático residual
 function detenerTodoMovimiento() {
   console.log("🛑 Deteniendo todos los intervalos automáticos...");
   for (let i = 1; i < 1000; i++) {
@@ -10,11 +10,12 @@ function detenerTodoMovimiento() {
 // Lo ejecutamos apenas carga y un segundo después por si las dudas
 detenerTodoMovimiento();
 setTimeout(detenerTodoMovimiento, 1000);
+*/
 
 // 1. Al cargar la página, prioridad al Caché
 document.addEventListener("DOMContentLoaded", () => {
   mostrarEsqueletosHome();
-  
+
   const cache = localStorage.getItem("productos_cache");
   const contenedorDestacados = document.getElementById("grid-destacados");
   const contenedorNuevos = document.getElementById("grid-nuevos");
@@ -122,10 +123,18 @@ function inyectarProductos(lista, contenedorId) {
   contenedor.innerHTML = "";
 
   lista.forEach((prod) => {
-    const imagenPortada =
-      prod.imagenes && prod.imagenes.length > 0
-        ? prod.imagenes[0]
-        : "images/placeholder.jpg";
+    // --- MEJORA DE LÓGICA DE IMAGEN ---
+    let imagenPortada = "images/placeholder.jpg"; // Default
+
+    if (
+      prod.imagenes &&
+      Array.isArray(prod.imagenes) &&
+      prod.imagenes.length > 0
+    ) {
+      imagenPortada = prod.imagenes[0];
+    } else if (typeof prod.imagen === "string") {
+      imagenPortada = prod.imagen;
+    }
 
     // --- 1. LÓGICA DINÁMICA DE BADGES (Igual a Tienda) ---
     let badgeHTML = "";

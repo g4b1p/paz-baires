@@ -4,6 +4,16 @@ const API_URL =
 // 2. Variable global para que el resto de tus archivos sigan funcionando
 let productos = [];
 
+// Función para quitar acentos y dejar el texto "limpio" para carpetas
+const limpiarTexto = (str) =>
+  str
+    ? str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim()
+    : "varios";
+
 // 3. Función para cargar los productos desde Google Sheets
 async function cargarProductosDesdeSheet() {
   try {
@@ -33,6 +43,8 @@ async function cargarProductosDesdeSheet() {
       })
 
       .map((p) => {
+        const coleccionParaRuta = limpiarTexto(p.Colección);
+
         // 1. Extraemos las variantes del Excel
         const variantesRaw = p.Variantes
           ? p.Variantes.toString()
@@ -113,7 +125,7 @@ async function cargarProductosDesdeSheet() {
                 const imgLimpia = img.trim();
                 return imgLimpia.startsWith("http")
                   ? imgLimpia
-                  : `images/productos/${p.Colección.toLowerCase().trim()}/${imgLimpia}`;
+                  : `images/productos/${coleccionParaRuta}/${imgLimpia}`;
               })
             : [],
           variantes: variantesProcesadas,
