@@ -100,7 +100,7 @@ function insertarHeader() {
     headerHTML += `
       <section class="video-container">
         <video autoplay muted loop playsinline class="video-bg">
-          <source src="/video/intro-pb.mp4" type="video/mp4" />
+          <source src="video/intro-pb.mp4" type="video/mp4" />
         </video>
         <div class="video-overlay">
           <h1>Bienvenido a nuestra Tienda</h1>
