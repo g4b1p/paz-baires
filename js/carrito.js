@@ -77,7 +77,7 @@ function renderizarCarrito() {
             <tr class="carrito-item">
                 <td class="prod-detalles">
                     <a href="info-producto.html?id=${item.id}">
-                        <img src="${item.imagen}" alt="${item.nombre}">
+                        <img src="${item.imagen}" loading="lazy" decoding="async" alt="${item.nombre}">
                     </a>
                     <div class="info-texto">
                         <a href="info-producto.html?id=${item.id}" style="text-decoration: none; color: inherit;">

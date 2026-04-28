@@ -151,7 +151,7 @@ function inyectarProductos(lista, contenedorId) {
                 <a href="info-producto.html?id=${prod.id}" class="producto-href">
                     ${badgeHTML}
                     
-                    <img class="producto-img" src="${imagenPortada}" alt="${prod.nombre}" />
+                    <img class="producto-img" loading="lazy" decoding="async" src="${imagenPortada}" alt="${prod.nombre}" />
                     
                     <div class="producto-info">
                         <p class="producto-name"><b>${prod.nombre}</b></p>

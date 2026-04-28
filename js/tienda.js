@@ -196,7 +196,7 @@ function renderizarProductos(lista) {
     <div class="producto-card ${claseExtra}">
         <a href="info-producto.html?id=${prod.id}" class="producto-href">
             ${badgeHTML}
-            <img class="producto-img" src="${imagenPortada}" alt="${prod.nombre}" />
+            <img class="producto-img" loading="lazy" decoding="async" src="${imagenPortada}" alt="${prod.nombre}" />
             <div class="producto-info">
                 <p class="producto-name"><b>${prod.nombre}</b></p>
                 ${prod.variantes && prod.variantes.length > 1 ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>` : ""}
