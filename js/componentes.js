@@ -40,14 +40,14 @@ function insertarHeader() {
         <label for="nav-toggle" class="menu-btn">&#9776;</label>
 
         <a href="index.html"
-          ><img class="logo" src="images/icons/paz-baires-logotipo.png" alt=""
+          ><img class="logo" src="images/icons/paz-baires-logotipo.webp" alt=""
         /></a>
 
         <nav class="nav-links">
           <a href="carrito.html" class="cart-container"
             ><img
               class="icon-social-header"
-              src="images/icons/carrito-icon.png"
+              src="images/icons/carrito-icon.webp"
               alt=""
             />
             <span id="cart-count" class="cart-badge">0</span>
@@ -55,13 +55,13 @@ function insertarHeader() {
           <a href="https://www.instagram.com/pazbaires?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"
             ><img
               class="icon-social-header"
-              src="images/icons/instagram-icon.png"
+              src="images/icons/instagram-icon.webp"
               alt=""
           /></a>
           <a href="https://www.facebook.com/pazbaires" target="_blank"
             ><img
               class="icon-social-header"
-              src="images/icons/facebook-icon.png"
+              src="images/icons/facebook-icon.webp"
               alt=""
           /></a>
         </nav>
@@ -138,7 +138,7 @@ function insertarFooter() {
             target="_blank"
             ><img
               class="icon-social-footer"
-              src="images/icons/instagram-icon.png"
+              src="images/icons/instagram-icon.webp"
               alt=""
             />pazbaires</a
           >
@@ -148,7 +148,7 @@ function insertarFooter() {
             target="_blank"
             ><img
               class="icon-social-footer"
-              src="images/icons/facebook-icon.png"
+              src="images/icons/facebook-icon.webp"
               alt=""
             />pazbaires</a
           >
@@ -159,7 +159,7 @@ function insertarFooter() {
           <p class="social">
             <img
               class="icon-social-footer"
-              src="images/icons/telefono-icon.png"
+              src="images/icons/telefono-icon.webp"
               alt=""
             />11 5601 8912
           </p>
@@ -167,7 +167,7 @@ function insertarFooter() {
           <p class="social">
             <img
               class="icon-social-footer"
-              src="images/icons/correo-icon.png"
+              src="images/icons/correo-icon.webp"
               alt=""
             />pazbaires.adm@gmail.com
           </p>
@@ -178,7 +178,7 @@ function insertarFooter() {
         <hr class="line-footer" />
         <section class="firma">
           <p>Created by</p>
-          <img src="images/GabCoder.png" alt="" style="margin-bottom: 70px;" />
+          <img src="images/GabCoder.webp" alt="" style="margin-bottom: 70px;" />
         </section>
       </div>
 
@@ -186,7 +186,7 @@ function insertarFooter() {
         <!-- Botón para abrir el chat -->
         <input type="checkbox" id="chat-toggle" class="chat-toggle" />
         <label for="chat-toggle" class="chat-button">
-          <img src="images/icons/whatsapp-icon.png" alt="" />
+          <img src="images/icons/whatsapp-icon.webp" alt="" />
           Haz click aquí para comunicarte
         </label>
 
@@ -194,7 +194,7 @@ function insertarFooter() {
         <div class="chat-container">
           <div class="chat-header">
             <img
-              src="images/icons/paz-baires-logotipo-2.png"
+              src="images/icons/paz-baires-logotipo-2.webp"
               alt="Lab Dental Congreso"
               class="chat-logo"
             />
