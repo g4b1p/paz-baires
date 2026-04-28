@@ -100,11 +100,10 @@ function insertarHeader() {
     headerHTML += `
       <section class="video-container">
         <video autoplay muted loop playsinline class="video-bg">
-          <source src="https://files.catbox.moe/rxjmuc.mp4" type="video/mp4" />
+          <source src="/video/intro-pb.mp4" type="video/mp4" />
         </video>
         <div class="video-overlay">
           <h1>Bienvenido a nuestra Tienda</h1>
-          <p>Pijamas, accesorios y blanquería diseñados para tu bienestar.</p>
           <a href="tienda.html" class="btn-comprar">Ver Catálogo</a>
         </div>
       </section>
