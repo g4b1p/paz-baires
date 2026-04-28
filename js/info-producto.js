@@ -481,28 +481,56 @@ function renderSeccionTalles(container, prod) {
       usuarioYaInteractuo = true;
       talleSeleccionado = t;
 
-      // Actualizamos visualmente los botones de talle
+      // 1. Actualizamos visualmente los botones de talle
       document
         .querySelectorAll(".talle-dot")
         .forEach((d) => d.classList.remove("active"));
       this.classList.add("active");
 
-      // --- AQUÍ ESTÁ EL CAMBIO ---
-      // Solo actualizamos la guía y el texto, NO borramos la pantalla
+      // --- 2. VALIDACIÓN DE ESTAMPADO SELECCIONADO (LA CORRECCIÓN) ---
+      if (prod.tipo === "estampado" && varianteSeleccionada && prod.stockMapa) {
+        const permitidos = prod.stockMapa[talleSeleccionado] || [];
+
+        // Si el estampado que ya eligió NO está en la lista del nuevo talle...
+        if (!permitidos.includes(varianteSeleccionada)) {
+          // Reseteamos la selección en la lógica
+          varianteSeleccionada = null;
+
+          // Reseteamos el texto visual
+          const stampedDisplay = document.getElementById("stampedName");
+          if (stampedDisplay) stampedDisplay.innerText = "No seleccionado";
+
+          // Quitamos el borde rosa/activo de las miniaturas
+          document
+            .querySelectorAll(".thumb")
+            .forEach((th) => th.classList.remove("active"));
+
+          // Opcional: Volver la imagen principal a la primera del producto
+          const mainImg = document.getElementById("mainImg");
+          if (mainImg && prod.imagenes && prod.imagenes.length > 0) {
+            mainImg.src = prod.imagenes[0];
+            indexImagenPazBaires = 0;
+          }
+        }
+      }
+
+      // 3. Actualizamos la guía de texto
       actualizarGuia();
 
-      // Si querés que al cambiar talle se avise qué estampados hay (opcional)
-      console.log("Estampados para este talle:", prod.stockMapa[t]);
-
-      // Dentro de btn.onclick de los talles, al final:
+      // 4. Feedback visual de qué estampados quedan disponibles (Opacidad)
       if (prod.tipo === "estampado" && prod.stockMapa) {
         const permitidos = prod.stockMapa[talleSeleccionado] || [];
         document.querySelectorAll(".thumb").forEach((thumb, idx) => {
           const nombreEst = prod.variantes[idx].nombre;
-          thumb.style.opacity = permitidos.includes(nombreEst) ? "1" : "0.3";
-          thumb.style.filter = permitidos.includes(nombreEst)
-            ? "none"
-            : "grayscale(100%)";
+          if (permitidos.includes(nombreEst)) {
+            thumb.style.opacity = "1";
+            thumb.style.filter = "none";
+            thumb.style.cursor = "pointer";
+          } else {
+            thumb.style.opacity = "0.3";
+            thumb.style.filter = "grayscale(100%)";
+            thumb.style.cursor = "not-allowed";
+          }
         });
       }
     };
