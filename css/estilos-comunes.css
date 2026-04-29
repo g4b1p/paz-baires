@@ -314,12 +314,23 @@ body:has(#nav-toggle:checked) {
     z-index: -1;
     /* Lo envía al fondo */
     transform: translate(-50%, -50%);
-    object-fit: contain; /* Cambiamos cover por contain para que se vea TODO el video */
-    background-color: rgb(255, 255, 255); /* Opcional: por si el video no llena todo el alto, que el fondo sea negro */
+    object-fit: cover;
+    /* Volvemos a cover porque el video ya viene con el formato correcto */
+    /* Cambiamos cover por contain para que se vea TODO el video */
+    background-color: rgb(255, 255, 255);
+    /* Opcional: por si el video no llena todo el alto, que el fondo sea negro */
 
     width: 100%;
     /* Ocupa todo el ancho */
     display: block;
+}
+
+.video-movil {
+    display: none !important;
+}
+
+.video-pc {
+    display: block !important;
 }
 
 .video-overlay {
@@ -648,9 +659,41 @@ main {
         text-align: center;
         /* Opcional: centra el texto en el menú móvil */
     }
+
+    /* En celulares, invertimos la visibilidad */
+    .video-pc {
+        display: none !important;
+    }
+
+    .video-movil {
+        display: block !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: translate(-50%, -50%);
+    }
+
+    .video-container {
+        height: 80vh;
+        /* Ajustá el alto para que luzca el video vertical */
+    }
 }
 
 @media (max-width: 700px) {
+
+    /* Aplica esto a los textos (h1, h2, p) que estén dentro del video */
+    .video-overlay h1 {
+        margin-bottom: 1px;
+        /* Crea espacio real entre una línea y otra */
+    }
+
+    .btn-comprar {
+        padding: 10px 20px;
+        margin-top: 5px;
+    }
 
     body {
         font-size: 12px;

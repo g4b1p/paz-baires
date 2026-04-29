@@ -99,8 +99,14 @@ function insertarHeader() {
     // EL VIDEO SOLO PARA EL INICIO
     headerHTML += `
       <section class="video-container">
-        <video autoplay muted loop playsinline class="video-bg">
-          <source src="https://cdn.discordapp.com/attachments/1498837712122413090/1498837851545145374/intro-pb.mp4?ex=69f29d06&is=69f14b86&hm=51d4aac4045a86187a5958c4b0912aff01eadbb22e646798296dd02350714b8b&" type="video/mp4" />
+        <!-- Video para PC -->
+        <video autoplay muted loop playsinline class="video-bg video-pc">
+          <source src="https://cdn.discordapp.com/attachments/1498837712122413090/1498837851545145374/intro-pb.mp4?ex=69f29d06&is=69f14b86&hm=51d4aac4045a86187a5958c4b0912aff01eadbb22e646798296dd02350714b8b&" type="video/mp4">
+        </video>
+
+        <!-- Video para Celu -->
+        <video autoplay muted loop playsinline class="video-bg video-movil">
+          <source src="https://cdn.discordapp.com/attachments/1498837712122413090/1498845431264841951/intro-pb-2.mp4?ex=69f2a416&is=69f15296&hm=178e4abe2e667a3dda34888ad8ce1a5f7f788110244e877618d6c9fda265f0c5&" type="video/mp4">
         </video>
         <div class="video-overlay">
           <h1>Bienvenido a nuestra Tienda</h1>
