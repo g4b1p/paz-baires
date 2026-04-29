@@ -314,8 +314,8 @@ body:has(#nav-toggle:checked) {
     z-index: -1;
     /* Lo envía al fondo */
     transform: translate(-50%, -50%);
-    object-fit: cover;
-    /* Clave para que no se deforme */
+    object-fit: contain; /* Cambiamos cover por contain para que se vea TODO el video */
+    background-color: rgb(255, 255, 255); /* Opcional: por si el video no llena todo el alto, que el fondo sea negro */
 
     width: 100%;
     /* Ocupa todo el ancho */
