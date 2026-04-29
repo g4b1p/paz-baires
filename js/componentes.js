@@ -100,7 +100,7 @@ function insertarHeader() {
     headerHTML += `
       <section class="video-container">
         <video autoplay muted loop playsinline class="video-bg">
-          <source src="video/intro-pb.mp4" type="video/mp4" />
+          <source src="https://cdn.discordapp.com/attachments/1498837712122413090/1498837851545145374/intro-pb.mp4?ex=69f29d06&is=69f14b86&hm=51d4aac4045a86187a5958c4b0912aff01eadbb22e646798296dd02350714b8b&" type="video/mp4" />
         </video>
         <div class="video-overlay">
           <h1>Bienvenido a nuestra Tienda</h1>
