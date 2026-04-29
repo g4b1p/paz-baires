@@ -755,10 +755,11 @@ main {
     }
 
     .video-overlay h1 {
-        font-size: 24px;
+        font-size: 20px;
         /* Achicar la letra evita que se encimen las líneas */
         line-height: 1.2;
         /* Da aire entre líneas */
+        margin-bottom: 30px;
     }
 
     .social-container {
