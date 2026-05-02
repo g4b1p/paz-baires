@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   mostrarEsqueletosHome();
 
   const cache = localStorage.getItem("productos_cache");
-  const contenedorDestacados = document.getElementById("grid-destacados");
+  const contenedorDestacados = document.getElementById("grid-ofertas");
   const contenedorNuevos = document.getElementById("grid-nuevos");
 
   if (cache) {
@@ -28,13 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     // Solo si NO hay nada guardado, mostramos los esqueletos
     console.log("🏠 Home: Sin caché, mostrando esqueletos...");
-    mostrarEsqueletos("grid-destacados");
+    mostrarEsqueletos("grid-ofertas");
     mostrarEsqueletos("grid-nuevos");
   }
 });
 
 function mostrarEsqueletosHome() {
-  const contenedores = ["grid-destacados", "grid-nuevos"];
+  const contenedores = ["grid-ofertas", "grid-nuevos"];
 
   contenedores.forEach((id) => {
     const el = document.getElementById(id);
@@ -103,7 +103,7 @@ function renderizarHome() {
     return false;
   });
 
-  inyectarProductos(ofertas, "grid-destacados");
+  inyectarProductos(ofertas, "grid-ofertas");
   inyectarProductos(nuevos, "grid-nuevos");
 }
 

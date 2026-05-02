@@ -137,7 +137,7 @@
     color: black;
 }
 
-.destacados,
+.ofertas,
 .ingresos {
     margin-bottom: 100px;
 }
@@ -244,7 +244,7 @@
     right: -50px;
 }
 
-#grid-destacados,
+#grid-ofertas,
 #grid-nuevos {
     display: flex !important;
     gap: 20px;
@@ -259,7 +259,7 @@
 }
 
 /* Oculta la barra en Chrome, Safari y Opera */
-#grid-destacados::-webkit-scrollbar,
+#grid-ofertas::-webkit-scrollbar,
 #grid-nuevos::-webkit-scrollbar {
     display: none !important;
 }
