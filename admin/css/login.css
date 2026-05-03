@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    -webkit-text-size-adjust: 100%;
+    /* Esto evita que iOS y navegadores in-app agranden la letra */
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    font-family: "Unbounded", sans-serif;
+    background-image: linear-gradient(to bottom, #7454d9, #8d61e1, #a36ee9, #b97cf2, #cd8bfa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.login-container {
+    width: 90%;
+    max-width: 400px;
+}
+
+.login-card {
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 30px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.login-logo {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #000000;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+input[type="password"] {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #c5c5c5;
+    border-radius: 20px;
+    font-family: "Unbounded", sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: #b97cf2;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    font-family: "Unbounded", sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.error-msg {
+    color: #ff4d4d;
+    font-size: 0.8rem;
+    margin-top: 15px;
+    min-height: 20px;
+}
+
+/* Responsive para celus muy chicos */
+@media (max-width: 400px) {
+    .login-card {
+        padding: 30px 20px;
+    }
+}

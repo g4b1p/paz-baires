@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    -webkit-text-size-adjust: 100%;
+    /* Esto evita que iOS y navegadores in-app agranden la letra */
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    font-family: "Unbounded", sans-serif;
+    background-image: linear-gradient(to bottom, #7454d9, #8d61e1, #a36ee9, #b97cf2, #cd8bfa);
+}
+
+.admin-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 0 0 50px 50px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.logo-admin {
+    height: 65px;
+    width: auto;
+    margin-bottom: 10px;
+}
+
+.admin-actions {
+    display: flex;
+}
+
+.admin-actions button {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border-radius: 15px;
+    border: none;
+    font-family: "Unbounded", sans-serif;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-primary {
+    background-color: #5fae40;
+    color: #ffffff;
+}
+
+.btn-outline {
+    background-color: #ff4e4e;
+    color: #ffffff;
+}
