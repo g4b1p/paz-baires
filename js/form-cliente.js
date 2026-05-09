@@ -211,18 +211,18 @@ async function validarYEnviar(e) {
   const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
   try {
-    // 3. GUARDADO EN EXCEL (Esperamos a que se envíe)
-    await registrarPedidoExcel(datosTemporalesCliente, carrito, elecciones);
+    // 1. Disparamos el Excel SIN el await (que corra de fondo)
+    registrarPedidoExcel(datosTemporalesCliente, carrito, elecciones);
 
-    btnFinalizar.innerHTML = "✅ ¡Pedido Enviado!";
+    // 2. Cambiamos el texto
+    btnFinalizar.innerHTML = "✅ ¡Abriendo WhatsApp!";
 
-    // 4. ABRIR WHATSAPP
+    // 3. Disparamos WhatsApp INMEDIATAMENTE
     enviarPedidoWhatsApp(datosTemporalesCliente);
   } catch (error) {
-    console.error("Error en el proceso final:", error);
+    console.error("Error en el proceso:", error);
     btnFinalizar.disabled = false;
     btnFinalizar.innerHTML = "Reintentar finalizar";
-    alert("Hubo un problema al procesar. Intentá de nuevo.");
   }
 }
 
@@ -278,7 +278,11 @@ function enviarPedidoWhatsApp(d) {
 
   // Abrir WhatsApp
   const url = `https://api.whatsapp.com/send?phone=541128506874&text=${mensaje}`;
-  window.open(url, "_blank");
+  const win = window.open(url, "_blank");
+  if (!win) {
+    // Si el navegador bloqueó la ventana emergente, lo redirigimos en la misma pestaña
+    window.location.href = url;
+  }
 
   // Limpieza de memoria
   localStorage.removeItem("carrito");
