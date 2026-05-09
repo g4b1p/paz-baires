@@ -14,6 +14,9 @@ const limpiarTexto = (str) =>
         .trim()
     : "varios";
 
+const CLOUDINARY_BASE =
+  "https://res.cloudinary.com/duoya2obs/image/upload/f_auto,q_auto/";
+
 // 3. Función para cargar los productos desde Google Sheets
 async function cargarProductosDesdeSheet() {
   try {
@@ -122,10 +125,31 @@ async function cargarProductosDesdeSheet() {
           descripcion: p.Descripción,
           imagenes: p.Imágenes
             ? p.Imágenes.split(",").map((img) => {
-                const imgLimpia = img.trim();
-                return imgLimpia.startsWith("http")
-                  ? imgLimpia
-                  : `images/productos/${coleccionParaRuta}/${imgLimpia}`;
+                const nombreLimpio = img.trim();
+
+                // Caso A: Link completo (de Cloudinary o cualquier otro sitio)
+                if (nombreLimpio.startsWith("http")) {
+                  if (nombreLimpio.includes("cloudinary.com")) {
+                    return nombreLimpio.replace(
+                      "/upload/",
+                      "/upload/f_auto,q_auto/",
+                    );
+                  }
+                  return nombreLimpio;
+                }
+
+                // Caso B: Nombre corto SIN PUNTO (Cloudinary)
+                // Si tu hermana pone "toallon-rosa", se busca en la nube
+                if (
+                  !nombreLimpio.includes(".") &&
+                  !nombreLimpio.includes("/")
+                ) {
+                  return `${CLOUDINARY_BASE}${nombreLimpio}`;
+                }
+
+                // Caso C: Nombre CON PUNTO (Fotos viejas en el servidor local)
+                // Si el Excel dice "remera.jpg", se busca en la carpeta /images/productos/...
+                return `images/productos/${coleccionParaRuta}/${nombreLimpio}`;
               })
             : [],
           variantes: variantesProcesadas,
