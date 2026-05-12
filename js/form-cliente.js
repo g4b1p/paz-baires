@@ -115,7 +115,7 @@ function cargarProvincias(selectId) {
 // --- NUEVA FUNCIÓN PARA EL EXCEL ---
 async function registrarPedidoExcel(d, carrito, elecciones) {
   const API_URL =
-    "https://script.google.com/macros/s/AKfycby4qajJa4AsB0W5t3XXrTfQSM2mBQkXi5YiAk4SfpNk80zzPOQ0CCbyKSzwK3CWK8eR/exec"; // Pegá aquí tu URL de implementación
+    "https://script.google.com/macros/s/AKfycbz9XY0O3P0N_K7P3ES7RgebPQacx1rIFiVd15hSVdK6yAXysZgGKSy6-4fqPu5xGYg1/exec"; // Pegá aquí tu URL de implementación
 
   console.log("Intentando enviar a Excel...", d); // Ver si los datos están listos
 
