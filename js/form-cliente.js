@@ -65,7 +65,7 @@ function renderizarFormularioSegunEnvio(metodo) {
             <div class="form-grid">
                 <div class="input-group full-width"><label>NOMBRE Y APELLIDO</label><input type="text" id="f-nombre" placeholder="Nombre completo"></div>
                 <div class="input-group"><label>CUIT / DNI</label><input type="text" id="f-cuit" placeholder="Ingrese CUIT o DNI"></div>
-                <div class="input-group"><label>TELÉFONO</label><input type="tel" id="f-tel" placeholder="Número de contacto"></div>
+                <div class="input-group"><label>TELÉFONO (Whatsapp)</label><input type="tel" id="f-tel" placeholder="Ej: 11 2345 6789"></div>
                 <div class="input-group full-width"><label>CORREO ELECTRÓNICO (OPCIONAL)</label><input type="email" id="f-email" placeholder="email@ejemplo.com"></div>
                 <div class="input-group"><label>PROVINCIA</label><div class="select-custom-wrapper"><select id="f-provincia"></select></div></div>
                 <div class="input-group"><label>LOCALIDAD</label><input type="text" id="f-localidad" placeholder="Localidad"></div>
@@ -78,7 +78,7 @@ function renderizarFormularioSegunEnvio(metodo) {
     htmlForm = `
             <div class="form-grid">
                 <div class="input-group full-width"><label>NOMBRE Y APELLIDO</label><input type="text" id="f-nombre" placeholder="Nombre completo"></div>
-                <div class="input-group"><label>TELÉFONO</label><input type="tel" id="f-tel" placeholder="Número de contacto"></div>
+                <div class="input-group"><label>TELÉFONO (Whatsapp)</label><input type="tel" id="f-tel" placeholder="Ej: 11 2345 6789"></div>
                 <div class="input-group"><label>LOCALIDAD</label><input type="text" id="f-localidad" placeholder="Barrio / Localidad"></div>
                 <div class="input-group"><label>CÓDIGO POSTAL</label><input type="text" id="f-cp" placeholder="CP"></div>
                 <div class="input-group full-width"><label>DOMICILIO</label><input type="text" id="f-domicilio" placeholder="Calle y número"></div>
@@ -88,7 +88,7 @@ function renderizarFormularioSegunEnvio(metodo) {
     htmlForm = `
             <div class="form-grid">
                 <div class="input-group full-width"><label>NOMBRE Y APELLIDO</label><input type="text" id="f-nombre" placeholder="Nombre completo"></div>
-                <div class="input-group"><label>TELÉFONO</label><input type="tel" id="f-tel" placeholder="Número de contacto"></div>
+                <div class="input-group"><label>TELÉFONO (Whatsapp)</label><input type="tel" id="f-tel" placeholder="Ej: 11 2345 6789"></div>
                 <div class="input-group full-width"><label>¿QUIÉN RETIRA?</label><input type="text" id="f-retira" placeholder="Yo misma / Comisionista / Familiar"></div>
             </div>`;
   }
@@ -115,7 +115,7 @@ function cargarProvincias(selectId) {
 // --- NUEVA FUNCIÓN PARA EL EXCEL ---
 async function registrarPedidoExcel(d, carrito, elecciones) {
   const API_URL =
-    "https://script.google.com/macros/s/AKfycbwUw5LrPHWpOz8gxbmObj8E0oE6Ccaew2JR3Y63OX2VTNBxdFno-EgjxXjQEMY6NFvg/exec"; // Pegá aquí tu URL de implementación
+    "https://script.google.com/macros/s/AKfycbzGNJk0ZLEBmfbCLtEl804sj0hon7bvh__F0-htaQl4QlVcMd7PQy0xKtIcT2Gh3FSP/exec"; // Pegá aquí tu URL de implementación
 
   console.log("Intentando enviar a Excel...", d); // Ver si los datos están listos
 
