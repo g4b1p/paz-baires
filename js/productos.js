@@ -1,5 +1,5 @@
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbzIZv1Ai8HcJUt5n20CIIiZ9NyCeEePwHFbcVhmo9CxNVxY0zO6a09CHkdGyRdpaX_t/exec";
+  "https://script.google.com/macros/s/AKfycbxvq7prQ2Kc4-8AJP3GaLRgFw_5pk4dd-m43yPruWNrCtFANu2m62XTNCTy6CCneiIF/exec";
 
 // 2. Variable global para que el resto de tus archivos sigan funcionando
 let productos = [];
