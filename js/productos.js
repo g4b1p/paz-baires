@@ -127,7 +127,7 @@ async function cargarProductosDesdeSheet() {
             ? p.Imágenes.split(",").map((img) => {
                 const nombreLimpio = img.trim();
 
-                // Caso A: Link completo (de Cloudinary o cualquier otro sitio)
+                // 1. Caso Link completo (Cualquier sitio o Cloudinary con URL larga)
                 if (nombreLimpio.startsWith("http")) {
                   if (nombreLimpio.includes("cloudinary.com")) {
                     return nombreLimpio.replace(
@@ -138,8 +138,7 @@ async function cargarProductosDesdeSheet() {
                   return nombreLimpio;
                 }
 
-                // Caso B: Nombre corto SIN PUNTO (Cloudinary)
-                // Si tu hermana pone "toallon-rosa", se busca en la nube
+                // 2. Caso Cloudinary (Nombre corto sin punto, ej: conjunto-pijama-plush-2)
                 if (
                   !nombreLimpio.includes(".") &&
                   !nombreLimpio.includes("/")
@@ -147,8 +146,7 @@ async function cargarProductosDesdeSheet() {
                   return `${CLOUDINARY_BASE}${nombreLimpio}`;
                 }
 
-                // Caso C: Nombre CON PUNTO (Fotos viejas en el servidor local)
-                // Si el Excel dice "remera.jpg", se busca en la carpeta /images/productos/...
+                // 3. Caso Local (Fotos viejas con punto, ej: pijama.jpg)
                 return `images/productos/${coleccionParaRuta}/${nombreLimpio}`;
               })
             : [],
