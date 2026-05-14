@@ -115,7 +115,7 @@ function cargarProvincias(selectId) {
 // --- NUEVA FUNCIÓN PARA EL EXCEL ---
 async function registrarPedidoExcel(d, carrito, elecciones) {
   const API_URL =
-    "https://script.google.com/macros/s/AKfycbz9XY0O3P0N_K7P3ES7RgebPQacx1rIFiVd15hSVdK6yAXysZgGKSy6-4fqPu5xGYg1/exec"; // Pegá aquí tu URL de implementación
+    "https://script.google.com/macros/s/AKfycbxe7UPbvDRT2dcfxMdWfPo5MZikdGb4HWIP6l5rg0kaxftUgOUvrsmIe_MhDSDeeiFw/exec"; // Pegá aquí tu URL de implementación
 
   console.log("Intentando enviar a Excel...", d); // Ver si los datos están listos
 
@@ -205,24 +205,25 @@ async function validarYEnviar(e) {
 
   // 2. EFECTO VISUAL DE CARGA
   btnFinalizar.disabled = true;
-  btnFinalizar.innerHTML = `Procesando...`;
-
+  btnFinalizar.innerHTML = `⏳ Guardando pedido...`; // Esto le da tiempo al sistema
   // --- INTEGRACIÓN FINAL ---
   const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
   try {
-    // 1. Disparamos el Excel SIN el await (que corra de fondo)
-    registrarPedidoExcel(datosTemporalesCliente, carrito, elecciones);
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const elecciones = JSON.parse(localStorage.getItem("eleccionesFinales"));
 
-    // 2. Cambiamos el texto
+    // EL AWAIT ES OBLIGATORIO AQUÍ
+    await registrarPedidoExcel(datosTemporalesCliente, carrito, elecciones);
+
     btnFinalizar.innerHTML = "✅ ¡Abriendo WhatsApp!";
 
-    // 3. Disparamos WhatsApp INMEDIATAMENTE
+    // Disparamos WhatsApp
     enviarPedidoWhatsApp(datosTemporalesCliente);
   } catch (error) {
-    console.error("Error en el proceso:", error);
-    btnFinalizar.disabled = false;
-    btnFinalizar.innerHTML = "Reintentar finalizar";
+    console.error("Error al guardar:", error);
+    // Si falla el Excel, igual abrimos WhatsApp para no perder la venta
+    enviarPedidoWhatsApp(datosTemporalesCliente);
   }
 }
 
@@ -290,5 +291,5 @@ function enviarPedidoWhatsApp(d) {
 
   setTimeout(() => {
     window.location.href = "index.html";
-  }, 500);
+  }, 2000);
 }
