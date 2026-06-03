@@ -277,19 +277,65 @@ function enviarPedidoWhatsApp(d) {
   mensaje += `--------------------------%0A`;
   mensaje += `_Pedido generado desde la Tienda Online_`;
 
-  // Abrir WhatsApp
-  const url = `https://api.whatsapp.com/send?phone=541128506874&text=${mensaje}`;
-  const win = window.open(url, "_blank");
-  if (!win) {
-    // Si el navegador bloqueó la ventana emergente, lo redirigimos en la misma pestaña
-    window.location.href = url;
-  }
-
-  // Limpieza de memoria
+  // 1. Limpiamos el carrito (fundamental hacerlo antes)
   localStorage.removeItem("carrito");
   localStorage.removeItem("eleccionesFinales");
 
+  const url = `https://api.whatsapp.com/send?phone=541128506874&text=${mensaje}`;
+
+  // --- 2. EL TRUCO DE VISIBILIDAD ---
+  let saltoAWhatsApp = false;
+
+  // Creamos un "vigilante" que mira si la pestaña se oculta
+  const vigilarPestana = () => {
+    if (document.hidden) {
+      saltoAWhatsApp = true; // Confirmamos que el cliente se fue de la pantalla
+
+      // Como ya se fue a WhatsApp, limpiamos la casa y volvemos al inicio
+      // para que no quede la pantalla de carga colgada.
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 500);
+
+      // Apagamos el vigilante para que no consuma memoria
+      document.removeEventListener("visibilitychange", vigilarPestana);
+    }
+  };
+
+  // Activamos el vigilante justo antes de intentar abrir WhatsApp
+  document.addEventListener("visibilitychange", vigilarPestana);
+
+  // 3. Intentamos abrir WhatsApp INMEDIATAMENTE
+  const win = window.open(url, "_blank");
+  if (!win) {
+    // Si la ventana emergente fue bloqueada, intentamos en la misma pestaña
+    window.location.href = url;
+  }
+
+  // 4. LA ESPERA INTELIGENTE (3 segundos)
   setTimeout(() => {
-    window.location.href = "index.html";
-  }, 2000);
+    // Si pasaron 3 segundos y el vigilante dice que el cliente SIGUE en la pantalla...
+    // ¡Significa que falló! Mostramos el cartel de rescate.
+    if (!saltoAWhatsApp) {
+      document.body.innerHTML = `
+        <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; font-family: sans-serif; background-color: #f9f9f9;">
+          <h2 style="color: #d9534f; font-size: 24px; margin-bottom: 10px;">🚨 ¡Último paso!</h2>
+          <p style="font-size: 18px; color: #333; margin-bottom: 20px;">
+            Tu pedido está registrado, pero <strong>NO ESTÁ CONFIRMADO</strong> hasta que nos envíes el mensaje por WhatsApp.
+          </p>
+          <p style="font-size: 16px; color: #666; margin-bottom: 30px;">
+            Si la aplicación no se abrió automáticamente, tocá el botón de abajo:
+          </p>
+          
+          <a href="${url}" style="background-color: #25D366; color: white; padding: 18px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            📲 ENVIAR PEDIDO AHORA
+          </a>
+
+          <a href="index.html" style="margin-top: 40px; color: #888; text-decoration: underline; font-size: 14px;">
+            Volver a la tienda (Cancelar pedido)
+          </a>
+        </div>
+      `;
+    }
+  }, 3000);
 }
