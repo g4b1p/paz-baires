@@ -107,6 +107,7 @@ async function cargarProductosDesdeSheet() {
         // 5. Retornamos el objeto producto final
         return {
           id: parseInt(p.ID),
+          orden: parseInt(p.Orden) || 999,
           estado: p.Estado,
           tipo: p.Tipo ? p.Tipo.toLowerCase().trim() : "",
           nombre: p.Nombre,
@@ -128,23 +129,23 @@ async function cargarProductosDesdeSheet() {
                 const nombreLimpio = img.trim();
 
                 // 1. Caso Link completo (Cualquier sitio o Cloudinary con URL larga)
-                if (nombreLimpio.startsWith("http")) {
-                  if (nombreLimpio.includes("cloudinary.com")) {
-                    return nombreLimpio.replace(
-                      "/upload/",
-                      "/upload/f_auto,q_auto/",
-                    );
-                  }
-                  return nombreLimpio;
-                }
+                // if (nombreLimpio.startsWith("http")) {
+                //   if (nombreLimpio.includes("cloudinary.com")) {
+                //     return nombreLimpio.replace(
+                //       "/upload/",
+                //       "/upload/f_auto,q_auto/",
+                //     );
+                //   }
+                //   return nombreLimpio;
+                // }
 
                 // 2. Caso Cloudinary (Nombre corto sin punto, ej: conjunto-pijama-plush-2)
-                if (
-                  !nombreLimpio.includes(".") &&
-                  !nombreLimpio.includes("/")
-                ) {
-                  return `${CLOUDINARY_BASE}${nombreLimpio}`;
-                }
+                // if (
+                //   !nombreLimpio.includes(".") &&
+                //   !nombreLimpio.includes("/")
+                //  ) {
+                //   return `${CLOUDINARY_BASE}${nombreLimpio}`;
+                // }
 
                 // 3. Caso Local (Fotos viejas con punto, ej: pijama.jpg)
                 return `images/productos/${coleccionParaRuta}/${nombreLimpio}`;
@@ -156,6 +157,20 @@ async function cargarProductosDesdeSheet() {
           detalles: { Tecnico: p["Detalles Técnicos"] || "" },
         };
       });
+
+    // --- AQUÍ VA EL CAMBIO (JUSTO DESPUÉS DEL MAP) ---
+    nuevosProductos.sort((a, b) => {
+      const ordenA = a.orden || 999;
+      const ordenB = b.orden || 999;
+
+      // Si alguno tiene orden manual (distinto de 999), se ordenan por ese número
+      if (ordenA !== 999 || ordenB !== 999) {
+        return ordenA - ordenB;
+      }
+
+      // Si no, el ID más alto (más nuevo) va primero
+      return b.id - a.id;
+    });
 
     window.productos = nuevosProductos; // <--- ESTO ES VITAL
     localStorage.setItem("productos_cache", JSON.stringify(window.productos));
