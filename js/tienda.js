@@ -6,6 +6,7 @@ let filtrosActivos = {
   materiales: [],
   precioMax: 30000,
   soloOfertas: false,
+  busqueda: "", // <--- NUEVO: Guarda lo que la persona escribe
 };
 
 let yaFiltroElUsuario = false; // Variable de control
@@ -227,7 +228,7 @@ function aplicarFiltros() {
       : "";
 
   const resultado = productos.filter((p) => {
-    yaFiltroElUsuario = true; // <--- AGREGAR ESTO AQUÍ
+    yaFiltroElUsuario = true;
 
     // 1. Categoría (Colección)
     const catFiltro = norm(filtrosActivos.categoria);
@@ -238,7 +239,7 @@ function aplicarFiltros() {
     // 2. Precio
     const matchPrecio = p.precio <= filtrosActivos.precioMax;
 
-    // 3. Sidebar (Usando la lógica de normalización para que 'Baño' coincida con 'baño')
+    // 3. Sidebar
     const verificarMatch = (filtrosArr, datoProd) => {
       if (!filtrosArr || filtrosArr.length === 0) return true;
       if (!datoProd) return false;
@@ -253,18 +254,25 @@ function aplicarFiltros() {
     const matchPublico = verificarMatch(filtrosActivos.publicos, p.linea);
     const matchMaterial = verificarMatch(filtrosActivos.materiales, p.material);
 
-    // 4. OFERTAS (Lógica Corregida)
-    let matchOferta = true; // Por defecto todos pasan
-
+    // 4. Ofertas
+    let matchOferta = true;
     if (filtrosActivos.soloOfertas) {
-      // Si el usuario activó el checkbox, SOLO pasan los que tienen la palabra "oferta"
       const enLinea = p.linea
         ? p.linea.some((l) => norm(l).includes("oferta"))
         : false;
       const enNombre = norm(p.nombre).includes("oferta");
-
       matchOferta = enLinea || enNombre;
     }
+
+    // 5. 🔍 BUSCADOR DINÁMICO (Con triple escudo por si falta nombre o descripción)
+    const queryBusqueda = norm(filtrosActivos.busqueda || "");
+
+    const nombreProducto = p.nombre ? norm(p.nombre) : "";
+    const descProducto = p.descripcion ? norm(p.descripcion) : "";
+
+    const matchBusqueda =
+      nombreProducto.includes(queryBusqueda) ||
+      descProducto.includes(queryBusqueda);
 
     return (
       matchCategoria &&
@@ -272,9 +280,15 @@ function aplicarFiltros() {
       matchAmbiente &&
       matchPublico &&
       matchMaterial &&
-      matchOferta
+      matchOferta &&
+      matchBusqueda
     );
   });
+
+  // 📝 RASTREADOR: Te avisa en consola cuántos productos pasaron el filtro
+  console.log(
+    `🔎 Buscando: "${filtrosActivos.busqueda}" | Productos encontrados: ${resultado.length}`,
+  );
 
   renderizarProductos(resultado);
 }
@@ -355,6 +369,16 @@ function configurarEscuchadores() {
     };
   }
 
+  // 🔍 NUEVO: Escuchador del buscador en tiempo real
+  const buscadorInput = document.getElementById("buscador-input");
+  if (buscadorInput) {
+    buscadorInput.oninput = (e) => {
+      filtrosActivos.busqueda = e.target.value;
+      yaFiltroElUsuario = true; // Evita que la carga de Google Sheets le pise la pantalla mientras escribe
+      aplicarFiltros();
+    };
+  }
+
   sincronizarFiltrosDesdeUI();
 }
 
@@ -386,6 +410,11 @@ function limpiarFiltros() {
     .forEach((b) => b.classList.remove("active"));
   const btnTodos = document.querySelector(".filter-btn"); // El primero suele ser "todos"
   if (btnTodos) btnTodos.classList.add("active");
+
+  // Vaciar caja del buscador
+  const buscadorInputReset = document.getElementById("buscador-input");
+  if (buscadorInputReset) buscadorInputReset.value = "";
+  filtrosActivos.busqueda = "";
 
   renderizarProductos(productos);
 }

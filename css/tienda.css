@@ -50,6 +50,32 @@
     font-size: 1.2rem;
 }
 
+/* Contenedor y Caja de Búsqueda */
+.contenedor-busqueda {
+    max-width: 600px;
+    margin: 10px auto 10px auto;
+    padding: 0 15px;
+}
+
+#buscador-input {
+    font-family: "Unbounded", sans-serif;
+    width: 100%;
+    padding: 10px 17px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Efecto focus al hacer clic para escribir */
+#buscador-input:focus {
+    /* Poné acá el color rosa/violeta de tu marca */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 /* 4. Botones de filtros (Manteniendo tu estilo compacto) */
 .filtros-superiores {
     display: flex;
@@ -94,7 +120,7 @@
 
     /* --- LA MAGIA ESTÁ AQUÍ --- */
     position: sticky;
-    top: 80px;
+    top: 155px;
     /* Para que no choque con el header */
     max-height: calc(100vh - 100px);
     /* Altura máxima: Pantalla completa menos un margen */
@@ -398,6 +424,16 @@
 }
 
 @media (max-width: 900px) {
+
+    .contenedor-busqueda {
+        max-width: 90%;
+        margin-top: 8px;
+    }
+
+    #buscador-input {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
 
     /* --- TIENDA Y LAYOUT --- */
     .tienda-main {
