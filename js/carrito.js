@@ -64,14 +64,24 @@ function renderizarCarrito() {
   carrito.forEach((item, index) => {
     totalGeneral += item.subtotal;
 
-    // --- LÓGICA DINÁMICA PARA EL LABEL (Color vs Estampado) ---
-    // Si el nombre del producto tiene "Estampado", "Pijama" o si la variante es un número corto, ponemos "Estampado"
-    const esEstampado =
-      item.nombre.toLowerCase().includes("estampado") ||
-      item.nombre.toLowerCase().includes("pijama") ||
-      (item.variante && item.variante.length <= 3);
+    // --- LÓGICA DINÁMICA PARA EL LABEL (Color vs Estampado vs Único) ---
+    let htmlVariante = "";
 
-    const etiqueta = esEstampado ? "Estampado" : "Color";
+    // Validamos si el texto de la variante contiene "Único modelo"
+    // (Buscamos la palabra por si incluye el talle, ej: "Único modelo - Talle M")
+    if (item.variante && item.variante.toLowerCase().includes("único modelo")) {
+      // Si es único, mostramos solo el texto sin poner "Color:" ni "Estampado:" adelante
+      htmlVariante = `<p class="variante-tag"><span>${item.variante}</span></p>`;
+    } else {
+      // Si tiene variantes reales, aplicamos tu lógica original
+      const esEstampado =
+        item.nombre.toLowerCase().includes("estampado") ||
+        item.nombre.toLowerCase().includes("pijama") ||
+        (item.variante && item.variante.length <= 3);
+
+      const etiqueta = esEstampado ? "Estampado" : "Color";
+      htmlVariante = `<p class="variante-tag">${etiqueta}: <span>${item.variante}</span></p>`;
+    }
 
     contenedor.innerHTML += `
             <tr class="carrito-item">
@@ -83,7 +93,7 @@ function renderizarCarrito() {
                         <a href="info-producto.html?id=${item.id}" style="text-decoration: none; color: inherit;">
                             <h3>${item.nombre}</h3>
                         </a>
-                        <p class="variante-tag">${etiqueta}: <span>${item.variante}</span></p>
+                        ${htmlVariante}
                     </div>
                 </td>
                 <td class="prod-precio">$ ${item.precio.toLocaleString()}</td>

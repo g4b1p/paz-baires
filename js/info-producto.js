@@ -176,16 +176,13 @@ function cargarProducto() {
   }
 
   // 5. Variantes (Colores o Estampados)
-  // BUSCÁ ESTO EN cargarProducto() y reemplazalo:
   const variantSelector = document.getElementById("variantSelector");
-  variantSelector.innerHTML = ""; // Limpiamos UNA SOLA VEZ al principio
+  variantSelector.innerHTML = "";
 
-  // Creamos contenedores vacíos para que cada función escriba en su lugar
   const divTalles = document.createElement("div");
   divTalles.id = "talleSelectorContainer";
   variantSelector.appendChild(divTalles);
 
-  // Contenedor para la opción (Color o Estampado)
   const divOpciones = document.createElement("div");
   divOpciones.id = "opcionesContainer";
   variantSelector.appendChild(divOpciones);
@@ -193,13 +190,22 @@ function cargarProducto() {
   // 1. Renderizamos talles si existen
   renderSeccionTalles(divTalles, producto);
 
-  // 2. Lógica Inteligente: ¿Es color o es estampado?
-  if (producto.tipo === "color") {
-    // Si en el Excel dice "color", dibuja los circulitos
-    renderSeccionColores(divOpciones, producto);
+  // --- NUEVA LÓGICA DE PRODUCTO ÚNICO (BLINDADA CONTRA MAYÚSCULAS/TILDES) ---
+  // Convertimos a minúsculas y limpiamos espacios por las dudas
+  const tipoLimpio = (producto.tipo || "").toString().trim().toLowerCase();
+
+  if (tipoLimpio === "único" || tipoLimpio === "unico") {
+    // CASO: ES UN PRODUCTO ÚNICO / COMBO
+    divOpciones.style.display = "none"; // Ocultamos selectores visuales
+    varianteSeleccionada = "Único modelo"; // Forzamos valor por defecto para el carrito
   } else {
-    // Si dice "estampado" (o cualquier otra cosa), usa la lógica de fotos
-    renderSeccionEstampados(divOpciones, producto);
+    // CASO: TIENE VARIANTES REALES
+    if (tipoLimpio === "color") {
+      renderSeccionColores(divOpciones, producto);
+    } else {
+      // Si no es único ni color, asumimos estampado
+      renderSeccionEstampados(divOpciones, producto);
+    }
   }
 
   // 6. Lógica de Flechas Carrusel
@@ -358,18 +364,24 @@ function actualizarGuia() {
     }
     guia.style.opacity = "0.7";
   } else {
-    // --- NUEVA LÓGICA MÁGICA PARA NÚMEROS ---
+    // --- LÓGICA DE TEXTO PARA LA GUÍA ---
     let textoVariante = varianteSeleccionada;
 
-    // Si el nombre es un número (2 caracteres o menos), le damos formato de "Estampado N°"
+    if (varianteSeleccionada === "Único modelo") {
+      guia.innerHTML = `Llevás <strong>${cantidad}</strong> producto(s)${textoTalle}`;
+      guia.style.opacity = "1";
+      return;
+    }
+
+    // Si es un número (2 caracteres o menos)
     if (varianteSeleccionada.length <= 2) {
       textoVariante = `Estampado N° <strong>${varianteSeleccionada}</strong>`;
     } else {
-      // Si es un nombre largo, lo ponemos en negrita normal
+      // Si es un nombre largo
       textoVariante = `<strong>${varianteSeleccionada}</strong>`;
     }
 
-    // Combinamos todo: Cantidad + El texto que armamos arriba + Talle
+    // Combinamos todo
     guia.innerHTML = `Seleccionaste <strong>${cantidad}</strong> de ${textoVariante}${textoTalle}`;
     guia.style.opacity = "1";
   }

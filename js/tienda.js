@@ -200,7 +200,11 @@ function renderizarProductos(lista) {
             <img class="producto-img" loading="lazy" decoding="async" src="${imagenPortada}" alt="${prod.nombre}" />
             <div class="producto-info">
                 <p class="producto-name"><b>${prod.nombre}</b></p>
-                ${prod.variantes && prod.variantes.length > 1 ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>` : ""}
+                ${
+                  prod.variantes && prod.variantes.length > 1
+                    ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>`
+                    : `<p class="variantes-tag" style="color: #5f5f5f;">Diseño exclusivo</p>`
+                }
                 
                 <div class="precio-container">
                     <p class="precio"><b>$${precioFinal.toLocaleString()}</b></p>
@@ -210,7 +214,7 @@ function renderizarProductos(lista) {
             </div>
         </a>
     </div>
-`;
+    `;
     contenedor.innerHTML += card;
   });
 }

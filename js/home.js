@@ -168,7 +168,7 @@ function inyectarProductos(lista, contenedorId) {
                         ${
                           prod.variantes && prod.variantes.length > 1
                             ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>`
-                            : ""
+                            : `<p class="variantes-tag" style="color: #5f5f5f;">Diseño exclusivo</p>`
                         }
                         
                         <div class="precio-container">
