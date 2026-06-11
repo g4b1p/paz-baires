@@ -110,6 +110,9 @@ async function cargarProductosDesdeSheet() {
           orden: parseInt(p.Orden) || 999,
           estado: p.Estado,
           tipo: p.Tipo ? p.Tipo.toLowerCase().trim() : "",
+          esEstampado: p.EsEstampado
+            ? p.EsEstampado.toString().trim().toUpperCase()
+            : "SI", // <--- NO TE OLVIDES DE AGREGAR ESTA LÍNEA ACÁ
           nombre: p.Nombre,
           precio: parseFloat(p.Precio) || 0,
           beneficio: p.Beneficio ? p.Beneficio.trim() : "",

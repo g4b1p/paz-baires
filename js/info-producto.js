@@ -100,31 +100,23 @@ function cargarProducto() {
   if (producto.imagenes && producto.imagenes.length > 0) {
     mainImg.src = producto.imagenes[indexImagenPazBaires];
     thumbBar.innerHTML = "";
+
+    // NUEVO CONTROL INICIAL: Si arranca en la foto 0 y es portada decorativa, no se selecciona variante
+    if (
+      indexImagenPazBaires === 0 &&
+      producto.esEstampado === "NO" &&
+      producto.tipo === "estampado"
+    ) {
+      varianteSeleccionada = null;
+      // ❌ BORRAMOS la línea de document.getElementById("stampedName").innerText de acá
+    }
+
     producto.imagenes.forEach((img, index) => {
       const thumb = document.createElement("img");
       thumb.src = img;
       thumb.className = `thumb ${index === indexImagenPazBaires ? "active" : ""}`;
       thumb.onclick = function () {
         usuarioYaInteractuo = true;
-
-        // --- VALIDACIÓN DE STOCK (LA QUE YA TENÍAS) ---
-        if (
-          producto.tipo === "estampado" &&
-          talleSeleccionado &&
-          producto.stockMapa
-        ) {
-          const nombreEstampadoClick = producto.variantes[index].nombre;
-          const permitidos = producto.stockMapa[talleSeleccionado] || [];
-
-          if (!permitidos.includes(nombreEstampadoClick)) {
-            alert(
-              `⚠️ El diseño "${nombreEstampadoClick}" no está disponible en Talle ${talleSeleccionado}.`,
-            );
-            return;
-          }
-        }
-
-        // --- CAMBIO VISUAL DE LA IMAGEN ---
         indexImagenPazBaires = index;
         mainImg.src = this.src;
         document
@@ -132,14 +124,25 @@ function cargarProducto() {
           .forEach((t) => t.classList.remove("active"));
         this.classList.add("active");
 
-        // --- SELECCIÓN INTELIGENTE DEL ESTAMPADO ---
+        // LÓGICA DE SELECCIÓN PARA ESTAMPADOS
         if (producto.tipo === "estampado") {
-          const nombreVariante = producto.variantes[index].nombre;
+          // CASO A: Hacen clic en la Portada Decorativa (Foto 0)
+          if (index === 0 && producto.esEstampado === "NO") {
+            varianteSeleccionada = null; // No hay estampado seleccionado
+            document.getElementById("stampedName").innerText =
+              "No seleccionado";
+            actualizarGuia();
+            return; // Nos salteamos la asignación de nombre de variante
+          }
 
-          // SOLO se selecciona automáticamente si el nombre es LARGO (más de 2 letras)
-          // Si es un número (ej: "1"), NO entra acá y no te pisa la selección.
-          if (nombreVariante.length > 2) {
-            varianteSeleccionada = nombreVariante;
+          // CASO B: Hacen clic en un Estampado Real (Ajustamos el índice)
+          // Si hay portada decorativa, el "Estampado 1" está en la foto index, pero su nombre en el Excel está en producto.variantes[index - 1]
+          const indiceVarianteReal =
+            producto.esEstampado === "NO" ? index - 1 : index;
+          const varianteActual = producto.variantes[indiceVarianteReal];
+
+          if (varianteActual && varianteActual.nombre.length > 2) {
+            varianteSeleccionada = varianteActual.nombre;
             document.getElementById("stampedName").innerText =
               varianteSeleccionada;
             actualizarGuia();
@@ -239,17 +242,28 @@ function cargarProducto() {
 
     // IMPORTANTE: Si es estampado, actualizamos la selección al mover la flecha
     if (producto.tipo === "estampado") {
-      const nombreVarianteFlecha =
-        producto.variantes[indexImagenPazBaires].nombre;
-
-      // Solo actualiza el texto y la selección si el nombre tiene más de 2 letras (ej: "Rosa con Flores")
-      // Si es "1", "2" o "3", la flecha SOLO pasa la foto y deja el número quietito.
-      if (nombreVarianteFlecha.length > 2) {
-        varianteSeleccionada = nombreVarianteFlecha;
+      // Si la flecha cayó en la foto 0 y es un envoltorio, limpiamos selección
+      if (indexImagenPazBaires === 0 && producto.esEstampado === "NO") {
+        varianteSeleccionada = null;
         const stampedDisplay = document.getElementById("stampedName");
-        if (stampedDisplay) stampedDisplay.innerText = varianteSeleccionada;
+        if (stampedDisplay) stampedDisplay.innerText = "No seleccionado";
         usuarioYaInteractuo = true;
         actualizarGuia();
+      } else {
+        // Ajustamos el índice para leer el nombre correcto del Excel
+        const indiceVarianteReal =
+          producto.esEstampado === "NO"
+            ? indexImagenPazBaires - 1
+            : indexImagenPazBaires;
+        const varianteActual = producto.variantes[indiceVarianteReal];
+
+        if (varianteActual && varianteActual.nombre.length > 2) {
+          varianteSeleccionada = varianteActual.nombre;
+          const stampedDisplay = document.getElementById("stampedName");
+          if (stampedDisplay) stampedDisplay.innerText = varianteSeleccionada;
+          usuarioYaInteractuo = true;
+          actualizarGuia();
+        }
       }
     }
   }
