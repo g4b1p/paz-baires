@@ -116,29 +116,29 @@ function cargarProducto() {
       thumb.src = img;
       thumb.className = `thumb ${index === indexImagenPazBaires ? "active" : ""}`;
       thumb.onclick = function () {
-        // --- PATOVICA DE SEGURIDAD PARA ESTAMPADOS ---
+        // --- 1. PATOVICA: ¿Se puede hacer clic en esta foto? ---
         if (
           producto.tipo === "estampado" &&
           talleSeleccionado &&
           producto.stockMapa
         ) {
-          // Calculamos el índice real ignorando la portada si la hay
-          const indiceVarianteReal =
-            producto.esEstampado === "NO" ? index - 1 : index;
+          // Si tiene portada (esEstampado === "NO"), el desfase es 1, si no, es 0
+          const offset = producto.esEstampado === "NO" ? 1 : 0;
 
-          // Si NO es la foto de portada (la portada siempre dejamos que la clickeen para verla en grande)
-          if (!(index === 0 && producto.esEstampado === "NO")) {
+          // Si NO es la foto 0 (portada), validamos el stock
+          if (!(offset === 1 && index === 0)) {
+            const indiceVarianteReal = index - offset;
             const varianteActual = producto.variantes[indiceVarianteReal];
             const permitidos = producto.stockMapa[talleSeleccionado] || [];
 
-            // Si la variante de esta foto no está en los permitidos de este talle, bloqueamos el clic
+            // Si el estampado de esta foto no está en el talle, ¡Bloqueamos el clic!
             if (varianteActual && !permitidos.includes(varianteActual.nombre)) {
-              return; // ⛔ ¡Corta la función! El usuario no puede seleccionarla.
+              return; // Corta la ejecución, no hace nada
             }
           }
         }
-        // --- FIN PATOVICA ---
 
+        // --- 2. ACCIÓN NORMAL DEL CLIC ---
         usuarioYaInteractuo = true;
         indexImagenPazBaires = index;
         mainImg.src = this.src;
@@ -154,21 +154,20 @@ function cargarProducto() {
             varianteSeleccionada = null; // No hay estampado seleccionado
             document.getElementById("stampedName").innerText =
               "No seleccionado";
-            actualizarGuia();
-            return; // Nos salteamos la asignación de nombre de variante
+            if (typeof actualizarGuia === "function") actualizarGuia();
+            return;
           }
 
-          // CASO B: Hacen clic en un Estampado Real (Ajustamos el índice)
-          // Si hay portada decorativa, el "Estampado 1" está en la foto index, pero su nombre en el Excel está en producto.variantes[index - 1]
-          const indiceVarianteReal =
-            producto.esEstampado === "NO" ? index - 1 : index;
+          // CASO B: Hacen clic en un Estampado Real
+          const offset = producto.esEstampado === "NO" ? 1 : 0;
+          const indiceVarianteReal = index - offset;
           const varianteActual = producto.variantes[indiceVarianteReal];
 
           if (varianteActual && varianteActual.nombre.length > 2) {
             varianteSeleccionada = varianteActual.nombre;
             document.getElementById("stampedName").innerText =
               varianteSeleccionada;
-            actualizarGuia();
+            if (typeof actualizarGuia === "function") actualizarGuia();
           }
         }
       };
@@ -238,62 +237,56 @@ function cargarProducto() {
 
   function cambiarImagen(direccion) {
     const totalImg = producto.imagenes.length;
-    let nuevoIndex = indexImagenPazBaires;
+    const offset = producto.esEstampado === "NO" ? 1 : 0;
 
-    // Intentamos buscar la siguiente imagen válida
-    for (let i = 0; i < totalImg; i++) {
-      nuevoIndex = (nuevoIndex + direccion + totalImg) % totalImg;
+    // Si no hay nada seleccionado, dejamos navegar libremente
+    if (producto.tipo === "estampado" && talleSeleccionado) {
+      let nuevoIndex = indexImagenPazBaires;
+      const permitidos = producto.stockMapa[talleSeleccionado] || [];
 
-      // Si es tipo estampado y hay un talle elegido, verificamos si esta imagen es válida
-      if (producto.tipo === "estampado" && talleSeleccionado) {
-        const nombreEst = producto.variantes[nuevoIndex].nombre;
-        const permitidos = producto.stockMapa[talleSeleccionado] || [];
+      // Bucle para buscar la siguiente imagen válida
+      for (let i = 0; i < totalImg; i++) {
+        nuevoIndex = (nuevoIndex + direccion + totalImg) % totalImg;
 
-        if (permitidos.includes(nombreEst)) {
-          // ¡Encontramos una válida! Cortamos el bucle
-          break;
+        // Si es la portada, siempre es válida
+        if (offset === 1 && nuevoIndex === 0) break;
+
+        // Si es un estampado, verificamos si está en los permitidos
+        const indiceVarianteReal = nuevoIndex - offset;
+        const variante = producto.variantes[indiceVarianteReal];
+
+        if (variante && permitidos.includes(variante.nombre)) {
+          break; // ¡Encontramos una válida!
         }
-        // Si no es válida, el "for" seguirá buscando la siguiente
-      } else {
-        // Si no hay restricciones de talle, la primera que sigue ya nos sirve
-        break;
       }
+      indexImagenPazBaires = nuevoIndex;
+    } else {
+      // Navegación normal si no hay restricciones
+      indexImagenPazBaires =
+        (indexImagenPazBaires + direccion + totalImg) % totalImg;
     }
 
-    indexImagenPazBaires = nuevoIndex;
+    // --- ACTUALIZACIÓN VISUAL ---
     const mainImg = document.getElementById("mainImg");
     mainImg.src = producto.imagenes[indexImagenPazBaires];
 
-    // Actualizamos miniaturas visualmente
+    // Actualizamos el botón activo en miniaturas
     document.querySelectorAll(".thumb").forEach((t, idx) => {
       t.classList.toggle("active", idx === indexImagenPazBaires);
     });
 
-    // IMPORTANTE: Si es estampado, actualizamos la selección al mover la flecha
+    // --- ACTUALIZACIÓN DE SELECCIÓN ---
     if (producto.tipo === "estampado") {
-      // Si la flecha cayó en la foto 0 y es un envoltorio, limpiamos selección
-      if (indexImagenPazBaires === 0 && producto.esEstampado === "NO") {
+      if (producto.esEstampado === "NO" && indexImagenPazBaires === 0) {
         varianteSeleccionada = null;
-        const stampedDisplay = document.getElementById("stampedName");
-        if (stampedDisplay) stampedDisplay.innerText = "No seleccionado";
-        usuarioYaInteractuo = true;
-        actualizarGuia();
+        document.getElementById("stampedName").innerText = "No seleccionado";
       } else {
-        // Ajustamos el índice para leer el nombre correcto del Excel
-        const indiceVarianteReal =
-          producto.esEstampado === "NO"
-            ? indexImagenPazBaires - 1
-            : indexImagenPazBaires;
-        const varianteActual = producto.variantes[indiceVarianteReal];
-
-        if (varianteActual && varianteActual.nombre.length > 2) {
-          varianteSeleccionada = varianteActual.nombre;
-          const stampedDisplay = document.getElementById("stampedName");
-          if (stampedDisplay) stampedDisplay.innerText = varianteSeleccionada;
-          usuarioYaInteractuo = true;
-          actualizarGuia();
-        }
+        const idxReal =
+          indexImagenPazBaires - (producto.esEstampado === "NO" ? 1 : 0);
+        varianteSeleccionada = producto.variantes[idxReal].nombre;
+        document.getElementById("stampedName").innerText = varianteSeleccionada;
       }
+      if (typeof actualizarGuia === "function") actualizarGuia();
     }
   }
 
@@ -569,13 +562,28 @@ function renderSeccionTalles(container, prod) {
       // 4. Feedback visual de qué estampados quedan disponibles (Opacidad)
       if (prod.tipo === "estampado" && prod.stockMapa) {
         const permitidos = prod.stockMapa[talleSeleccionado] || [];
+        const offset = prod.esEstampado === "NO" ? 1 : 0;
+
         document.querySelectorAll(".thumb").forEach((thumb, idx) => {
-          const nombreEst = prod.variantes[idx].nombre;
-          if (permitidos.includes(nombreEst)) {
+          // Si es la portada (foto 0 y tiene desfase), la dejamos siempre visible
+          if (offset === 1 && idx === 0) {
+            thumb.style.opacity = "1";
+            thumb.style.filter = "none";
+            thumb.style.cursor = "pointer";
+            return; // Pasamos a la siguiente foto
+          }
+
+          // Calculamos el índice real del estampado para esta foto
+          const indiceVarianteReal = idx - offset;
+          const varianteActual = prod.variantes[indiceVarianteReal];
+
+          // Si el estampado existe y ESTÁ en la lista de permitidos
+          if (varianteActual && permitidos.includes(varianteActual.nombre)) {
             thumb.style.opacity = "1";
             thumb.style.filter = "none";
             thumb.style.cursor = "pointer";
           } else {
+            // Si NO está permitido
             thumb.style.opacity = "0.3";
             thumb.style.filter = "grayscale(100%)";
             thumb.style.cursor = "not-allowed";
