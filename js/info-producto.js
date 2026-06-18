@@ -116,6 +116,29 @@ function cargarProducto() {
       thumb.src = img;
       thumb.className = `thumb ${index === indexImagenPazBaires ? "active" : ""}`;
       thumb.onclick = function () {
+        // --- PATOVICA DE SEGURIDAD PARA ESTAMPADOS ---
+        if (
+          producto.tipo === "estampado" &&
+          talleSeleccionado &&
+          producto.stockMapa
+        ) {
+          // Calculamos el índice real ignorando la portada si la hay
+          const indiceVarianteReal =
+            producto.esEstampado === "NO" ? index - 1 : index;
+
+          // Si NO es la foto de portada (la portada siempre dejamos que la clickeen para verla en grande)
+          if (!(index === 0 && producto.esEstampado === "NO")) {
+            const varianteActual = producto.variantes[indiceVarianteReal];
+            const permitidos = producto.stockMapa[talleSeleccionado] || [];
+
+            // Si la variante de esta foto no está en los permitidos de este talle, bloqueamos el clic
+            if (varianteActual && !permitidos.includes(varianteActual.nombre)) {
+              return; // ⛔ ¡Corta la función! El usuario no puede seleccionarla.
+            }
+          }
+        }
+        // --- FIN PATOVICA ---
+
         usuarioYaInteractuo = true;
         indexImagenPazBaires = index;
         mainImg.src = this.src;
