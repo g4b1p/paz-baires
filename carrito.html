@@ -2,11 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <link rel="icon" href="images/icons/paz-baires-logotipo-blanco-2.webp" />
     <link rel="stylesheet" href="css/estilos-comunes.css" />
     <link rel="stylesheet" href="css/carrito.css" />
     <title>Paz Baires</title>
+
+    <script type="text/javascript">
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, "clarity", "script", "xv4faet71w");
+    </script>
   </head>
   <body>
     <main>
@@ -24,10 +42,17 @@
             <tbody id="carrito-body">
               <tr class="carrito-item">
                 <td class="prod-detalles">
-                  <img src="images/ejemplo-producto.jpg" alt="Producto" />
+                  <img
+                    src="images/ejemplo-producto.jpg"
+                    alt="Producto"
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <div class="info-texto">
                     <h3>Nombre del Producto</h3>
-                    <p class="variante-tag">Color/Estampado: <span>Azul Francia</span></p>
+                    <p class="variante-tag">
+                      Color/Estampado: <span>Azul Francia</span>
+                    </p>
                     <p class="stock-tag">En stock</p>
                   </div>
                 </td>
@@ -47,75 +72,106 @@
             </tbody>
           </table>
 
-          <a href="tienda.html" class="btn-seguir-comprando"
-            >SEGUIR COMPRANDO</a
-          >
+          <a href="tienda.html" class="btn-volver"
+            ><b>SEGUIR COMPRANDO</b>
+            <p>Volver a la TIENDA</p>
+          </a>
         </section>
 
-        <aside class="totales-container">
-          <div class="totales-card">
-
-            <div class="envio-section">
-              <p>Seleccione método de envío</p>
-              <div class="envio-options">
-                <label class="option-card">
-                  <input type="radio" name="envio" value="expreso" />
-                  <div class="option-info">
-                    <strong>Transporte o expreso</strong>
-                    <span>Puedes elegir el transporte que prefieras.</span>
-                  </div>
-                </label>
-
-                <label class="option-card">
-                  <input type="radio" name="envio" value="moto" />
-                  <div class="option-info">
-                    <strong>Envío en moto</strong>
-                    <span>Consulta el precio según la dirección.</span>
-                  </div>
-                </label>
-
-                <label class="option-card">
-                  <input type="radio" name="envio" value="local" />
-                  <div class="option-info">
-                    <strong>Retiro en el local</strong>
-                    <span>Sin costo. Te esperamos en nuestra sucursal.</span>
-                  </div>
-                </label>
-              </div>
+        <div class="totales-container">
+          <div class="form">
+            <p>Completé los <b>datos:</b></p>
+            <div class="input-group">
+              <label>Nombre y Apellido *</label>
+              <input
+                type="text"
+                id="f-nombre"
+                placeholder="Nombre completo"
+                required
+              />
             </div>
-
-            <div class="pago-section">
-              <p>Seleccione método de pago</p>
-              <div class="pago-options">
-                <label class="option-card">
-                  <input
-                    type="radio"
-                    name="pago"
-                    value="transferencia"
-                  />
-                  <div class="option-info">
-                    <strong>Transferencia (MP)</strong>
-                    <span>Te enviaremos el CVU/Alias</span>
-                  </div>
-                </label>
-                <label class="option-card">
-                  <input type="radio" name="pago" value="efectivo" />
-                  <div class="option-info">
-                    <strong>Efectivo</strong>
-                    <span>Abonás al retirar tu pedido</span>
-                  </div>
-                </label>
-              </div>
+            <div class="input-group">
+              <label>Teléfono (WhatsApp) *</label>
+              <input
+                type="tel"
+                id="f-tel"
+                placeholder="Ej: 11 2345 6789"
+                required
+              />
             </div>
-
-            <div class="total-row">
-              <span>TOTAL</span>
-              <span class="total-price" id="total-general">$ 23.800</span>
-            </div>
-
-            <button class="btn-finalizar">CONFIRMAR COMPRA</button>
           </div>
-        </aside>
+
+          <hr class="hr-carrito" />
+
+          <p>Seleccioné <b>método de envío:</b></p>
+          <div class="envio-options">
+            <label class="option-card">
+              <input type="radio" name="envio" value="expreso" checked />
+              <div class="option-info">
+                <p><b>Transporte o expreso</b></p>
+                <p class="help-p">Puedes elegir el transporte que prefieras.</p>
+              </div>
+            </label>
+            <label class="option-card">
+              <input type="radio" name="envio" value="moto" />
+              <div class="option-info">
+                <p><b>Envío en moto</b></p>
+                <p class="help-p">Consulta el precio según la dirección.</p>
+              </div>
+            </label>
+            <label class="option-card">
+              <input type="radio" name="envio" value="local" />
+              <div class="option-info">
+                <p><b>Retiro en el local</b></p>
+                <p class="help-p">
+                  Sin costo. Te esperamos en nuestra sucursal.
+                </p>
+              </div>
+            </label>
+          </div>
+
+          <hr class="hr-carrito" />
+
+          <div class="pago-section">
+            <p>Seleccioné <b>método de pago:</b></p>
+            <div class="pago-options">
+              <label class="option-card">
+                <input type="radio" name="pago" value="transferencia" checked />
+                <div class="option-info">
+                  <p><b>Transferencia (MP)</b></p>
+                  <p class="help-p">Te enviaremos el CVU/Alias</p>
+                </div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="pago" value="efectivo" />
+                <div class="option-info">
+                  <p><b>Efectivo</b></p>
+                  <p class="help-p">Abonás al retirar tu pedido</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <hr class="hr-carrito" />
+
+          <!-- AQUI SE INYECTARÁ EL DESGLOSE DE DESCUENTOS -->
+          <div id="desglose-box" class="desglose-box"></div>
+
+          <div class="total-row">
+            <h3>TOTAL FINAL</h3>
+            <h2 id="total-general">$ 0</h2>
+          </div>
+
+          <button class="btn-enviar" id="btn-finalizar-compra">
+            <img
+              src="images/icons/whatsapp-icon.webp"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+            FINALIZAR COMPRA Y ENVIAR
+          </button>
+        </div>
       </div>
     </main>
     <script src="js/componentes.js"></script>

@@ -1,0 +1,39 @@
+/*-----------------ACORDEONES-----------------*/
+.preguntas-frecuentes {
+    text-align: center;
+    color: #ffffff;
+}
+
+.header-item {
+    background-color: #ffffff;
+    color: #b591ef;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 20px;
+    gap: 10px;
+}
+
+.icon-acordeon {
+    width: 40px;
+    height: auto;
+}
+
+.contenido-acordeon {
+    background-color: #d6c3ff;
+    color: #7454d9;
+    padding: 15px;
+    border-radius: 20px;
+    margin: 5px 0 20px 0;
+}
+
+.contenido-acordeon p {
+    line-height: 25px;
+}
+
+@media (max-width: 1000px) {
+    main {
+        margin-top: 150px;
+    }
+}

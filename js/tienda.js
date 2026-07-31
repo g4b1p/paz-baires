@@ -1,44 +1,27 @@
-// 1. VARIABLES DE ESTADO (Para saber qué filtros están marcados)
+// 1. VARIABLES DE ESTADO
 let filtrosActivos = {
-  categoria: "todos",
-  ambientes: [],
-  publicos: [],
-  materiales: [],
-  precioMax: 30000,
-  soloOfertas: false,
-  busqueda: "", // <--- NUEVO: Guarda lo que la persona escribe
+  categoria: "todos", // 'todos', 'blanqueria', 'accesorios', etc.
+  tipoPrecioFiltro: "todos", // 'todos', 'oferta', 'docena'
+  busqueda: "",
 };
 
-let yaFiltroElUsuario = false; // Variable de control
+let yaFiltroElUsuario = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const contenedor = document.getElementById("contenedor-tienda");
-  if (!contenedor) return;
+  // Inyectar esqueletos al cargar el DOM
+  mostrarEsqueletosTienda();
 
-  // 1. FORZAR ESQUELETOS (Sin IF, los ponemos de entrada)
-  // Esto borra el "Cargando catálogo..." del CSS porque el DIV ya no está vacío
-  let esqueletosHTML = "";
-  for (let i = 0; i < 8; i++) {
-    esqueletosHTML += `
-      <div class="producto-card skeleton">
-          <div class="skeleton-img" style="height: 250px; background: #eee; border-radius: 20px; margin-bottom: 15px;"></div>
-          <div class="skeleton-text" style="height: 20px; background: #eee; width: 80%; margin-bottom: 10px;"></div>
-          <div class="skeleton-text" style="height: 20px; background: #eee; width: 40%;"></div>
-      </div>`;
-  }
-  contenedor.innerHTML = esqueletosHTML;
-
-  // 2. Sincronizar filtros por si el usuario volvió atrás
+  // Sincronizar UI por si volvió atrás en el navegador
   sincronizarFiltrosDesdeUI();
 
-  // 3. TU LÓGICA DE SEGURIDAD (8 segundos)
+  // Tiempo límite de seguridad (8 segundos)
   setTimeout(() => {
-    // Si todavía hay esqueletos, significa que la carga falló o no hay internet
-    if (contenedor.querySelector(".skeleton")) {
+    const contenedor = document.getElementById("contenedor-tienda");
+    if (contenedor && contenedor.querySelector(".skeleton")) {
       contenedor.innerHTML = `
-        <div style="text-align: center; padding: 50px; color: white; width: 100%;">
-          <p>Parece que la conexión está lenta... </p>
-          <button onclick="location.reload()" style="background: #6342E8; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer;">
+        <div class="sin-resultados">
+          <p>Parece que la conexión está lenta...</p>
+          <button onclick="location.reload()" style="background: #ffffff; color: #7454d9; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px;">
             REINTENTAR CARGAR
           </button>
         </div>
@@ -47,170 +30,167 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 8000);
 });
 
-// Intentar cargar desde la memoria local ANTES de esperar a Google
+function mostrarEsqueletosTienda() {
+  const contenedor = document.getElementById("contenedor-tienda");
+  if (!contenedor) return;
+
+  let esqueletosHTML = "";
+  for (let i = 0; i < 6; i++) {
+    esqueletosHTML += `
+      <div class="producto-card skeleton">
+          <div class="skeleton-img" style="height: 240px; border-radius: 15px; margin-bottom: 15px;"></div>
+          <div class="info-prod" style="padding: 5px;">
+            <div class="skeleton-text" style="height: 16px; width: 80%; margin-bottom: 10px; border-radius: 6px;"></div>
+            <div class="skeleton-text" style="height: 14px; width: 40%; margin-bottom: 18px; border-radius: 6px;"></div>
+            <div class="skeleton-text" style="height: 22px; width: 55%; margin-bottom: 15px; border-radius: 6px;"></div>
+            <div class="skeleton-text" style="height: 38px; width: 100%; border-radius: 10px;"></div>
+          </div>
+      </div>`;
+  }
+  contenedor.innerHTML = esqueletosHTML;
+}
+
+// CARGA DESDE CACHÉ LOCAL INSTANTÁNEO
 const cache = localStorage.getItem("productos_cache");
-// --- CARGA INSTANTÁNEA DESDE CACHÉ (CON ACTUALIZACIÓN DE BOTONES) ---
 if (cache) {
   productos = JSON.parse(cache);
   window.productos = productos;
-  console.log("Cargando productos desde caché (Instantáneo)");
+  console.log("⚡ Tienda: Cargando desde caché...");
 
-  const params = new URLSearchParams(window.location.search);
-  const catURL = params.get("categoria");
-  const linURL = params.get("linea");
-
-  let categoriaParaBoton = "todos";
-
-  // Determinamos qué filtro aplicar y qué botón marcar
-  if (
-    (linURL && linURL.toLowerCase() === "ofertas") ||
-    (catURL && catURL.toLowerCase() === "ofertas")
-  ) {
-    filtrosActivos.soloOfertas = true;
-    filtrosActivos.categoria = "todos";
-    categoriaParaBoton = "ofertas";
-  } else if (catURL) {
-    filtrosActivos.categoria = catURL.toLowerCase().trim();
-    filtrosActivos.soloOfertas = false;
-    categoriaParaBoton = filtrosActivos.categoria;
-  }
-
-  // Aplicamos el filtro visual de inmediato
-  if (typeof aplicarFiltros === "function") {
-    aplicarFiltros();
-  }
-
-  // ¡ESTO ES LO QUE TE FALTABA!: Marcar el botón activo en la UI
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
-    const texto = btn.innerText.trim().toLowerCase();
-    btn.classList.toggle("active", texto === categoriaParaBoton);
-  });
-
-  const container = document.getElementById("contenedor-tienda");
-  if (container) container.classList.remove("loading");
-
+  procesarURLYFiltrar();
   configurarEscuchadores();
 }
 
-// 2. INICIALIZACIÓN (Versión Corregida para Nav y Ofertas)
+// INICIALIZACIÓN CUANDO LLEGAN DATOS DE GOOGLE SHEETS (ACTUALIZACIÓN SILENCIOSA)
 document.addEventListener("productosListos", () => {
-  console.log("🔄 Datos frescos recibidos de Google");
+  console.log("🔄 Datos frescos recibidos de Google (en segundo plano)");
 
-  if (yaFiltroElUsuario) return;
-
-  const cacheActual = localStorage.getItem("productos_cache");
-  const datosNuevos = JSON.stringify(productos);
-
-  // Si el usuario ya está navegando o si los datos son iguales, no flasheamos la pantalla
-  if (yaFiltroElUsuario && cacheActual === datosNuevos) {
-    console.log("✅ El usuario ya está viendo los datos correctos del caché.");
-    return;
+  // Actualizamos la referencia local de productos de forma interna
+  if (window.productos) {
+    productos = window.productos;
   }
 
-  if (cacheActual === datosNuevos) {
-    console.log("✅ Datos idénticos, verificando URL...");
-  }
-
-  // --- LÓGICA DE LECTURA DE URL (NAV) ---
-  const params = new URLSearchParams(window.location.search);
-  const catURL = params.get("categoria");
-  const linURL = params.get("linea");
-
-  let categoriaParaBoton = "todos";
-
-  // Prioridad 1: Si viene como Línea Ofertas o Categoría Ofertas
-  if (
-    (linURL && linURL.toLowerCase() === "ofertas") ||
-    (catURL && catURL.toLowerCase() === "ofertas")
-  ) {
-    filtrosActivos.soloOfertas = true;
-    filtrosActivos.categoria = "todos";
-    categoriaParaBoton = "ofertas";
-  }
-  // Prioridad 2: Si viene una categoría normal (pijamas, blanqueria, etc)
-  else if (catURL) {
-    filtrosActivos.categoria = catURL.toLowerCase().trim();
-    filtrosActivos.soloOfertas = false;
-    categoriaParaBoton = filtrosActivos.categoria;
-  }
-  // Prioridad 3: No hay nada en la URL
-  else {
-    filtrosActivos.categoria = "todos";
-    filtrosActivos.soloOfertas = false;
-    categoriaParaBoton = "todos";
-  }
-
-  // Actualizar botones visualmente (buscamos el texto exacto)
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
-    const texto = btn.innerText.trim().toLowerCase();
-    btn.classList.toggle("active", texto === categoriaParaBoton);
-  });
-
-  // Ejecutamos la actualización
-  aplicarFiltros();
-  configurarEscuchadores();
-
+  // Sincronizamos el carrito silenciosamente sin tocar el DOM de la tienda
   if (typeof validarYLimpiarCarrito === "function") {
     validarYLimpiarCarrito();
   }
 });
 
-// MODIFICACIÓN EN LA FUNCIÓN DE RENDERIZADO
+// PROCESAR PARÁMETROS DE LA URL
+function procesarURLYFiltrar() {
+  const params = new URLSearchParams(window.location.search);
+  const catURL = params.get("categoria");
+  const linURL = params.get("linea");
+
+  let textoBotonActivo = "todos";
+
+  if (
+    (linURL && linURL.toLowerCase() === "ofertas") ||
+    (catURL && catURL.toLowerCase() === "ofertas")
+  ) {
+    filtrosActivos.tipoPrecioFiltro = "oferta";
+    filtrosActivos.categoria = "todos";
+    textoBotonActivo = "ofertas";
+  } else if (
+    (linURL && linURL.toLowerCase() === "docenas") ||
+    (catURL && catURL.toLowerCase() === "docenas")
+  ) {
+    filtrosActivos.tipoPrecioFiltro = "docena";
+    filtrosActivos.categoria = "todos";
+    textoBotonActivo = "docenas";
+  } else if (catURL) {
+    filtrosActivos.categoria = catURL.toLowerCase().trim();
+    filtrosActivos.tipoPrecioFiltro = "todos";
+    textoBotonActivo = filtrosActivos.categoria;
+  } else {
+    filtrosActivos.categoria = "todos";
+    filtrosActivos.tipoPrecioFiltro = "todos";
+  }
+
+  // Marcar botón activo en la UI
+  document.querySelectorAll(".category-btn").forEach((btn) => {
+    const texto = btn.innerText.trim().toLowerCase();
+    btn.classList.toggle("active", texto === textoBotonActivo);
+  });
+
+  aplicarFiltros();
+}
+
+// FUNCIÓN DE RENDERIZADO DE PRODUCTOS
 function renderizarProductos(lista) {
   const contenedor = document.getElementById("contenedor-tienda");
   if (!contenedor) return;
 
   contenedor.innerHTML = "";
-  contenedor.classList.remove("loading");
 
+  // SI NO HAY PRODUCTOS, MOSTRAR MENSAJE EXPLICATIVO
   if (lista.length === 0) {
-    contenedor.innerHTML = `<p class="no-results" style="color: #ffffff;">No se encontraron productos con esos filtros.</p>`;
+    let mensaje = "No se encontraron productos disponibles.";
+    const tieneBusqueda = filtrosActivos.busqueda.trim() !== "";
+    const tieneCategoria = filtrosActivos.categoria !== "todos";
+    const tieneEspecial = filtrosActivos.tipoPrecioFiltro !== "todos";
+
+    if (tieneBusqueda && tieneCategoria) {
+      mensaje = `No se encontraron productos para "<strong>${filtrosActivos.busqueda}</strong>" en la categoría <strong>${filtrosActivos.categoria.toUpperCase()}</strong>.`;
+    } else if (tieneBusqueda && tieneEspecial) {
+      mensaje = `No se encontraron productos para "<strong>${filtrosActivos.busqueda}</strong>" en la sección <strong>${filtrosActivos.tipoPrecioFiltro.toUpperCase()}S</strong>.`;
+    } else if (tieneBusqueda) {
+      mensaje = `No se encontraron productos que coincidan con "<strong>${filtrosActivos.busqueda}</strong>".`;
+    } else if (tieneCategoria) {
+      mensaje = `No hay productos disponibles actualmente en la categoría <strong>${filtrosActivos.categoria.toUpperCase()}</strong>.`;
+    } else if (tieneEspecial) {
+      mensaje = `No hay productos disponibles actualmente en <strong>${filtrosActivos.tipoPrecioFiltro.toUpperCase()}S</strong>.`;
+    }
+
+    contenedor.innerHTML = `
+      <div class="sin-resultados">
+        <p>${mensaje}</p>
+      </div>`;
     return;
   }
 
+  // DIBUJAR CARDS
   lista.forEach((prod) => {
     const imagenPortada =
       prod.imagenes && prod.imagenes.length > 0
         ? prod.imagenes[0]
-        : "img/placeholder.jpg";
+        : "images/placeholder.jpg";
 
-    // Lógica dinámica de badges
     let badgeHTML = "";
     let claseExtra = "";
 
     if (prod.estado === "Sin Stock") {
-      badgeHTML = `<span class="badge-sin-stock">SIN STOCK</span>`;
+      badgeHTML = `<span class="badge">SIN STOCK</span>`;
       claseExtra = "sin-stock";
-    } else if (prod.estado === "Próximamente") {
-      // --- NUEVA LÓGICA PARA PRÓXIMAMENTE ---
-      badgeHTML = `<span class="badge-sin-stock badge-proximamente">PRÓXIMAMENTE</span>`;
-      claseExtra = "proximamente";
-    } else if (prod.estado && prod.estado !== "Activo") {
-      // Aquí entran "Últimos Disponibles", "Últimas Unidades", etc. (Naranja)
-      badgeHTML = `<span class="badge-sin-stock badge-alerta">${prod.estado.toUpperCase()}</span>`;
+    } else if (prod.estado === "Últimos Disponibles") {
+      badgeHTML = `<span class="badge">ÚLTIMOS DISPONIBLES</span>`;
+      claseExtra = "ultimos";
     }
 
-    // --- PRECIO REAL (Sin descuentos ni redondeos) ---
-    const precioFinal = prod.precio;
+    const HTMLPrecios =
+      typeof generarHTMLPrecios === "function"
+        ? generarHTMLPrecios(prod)
+        : `<div class="precios"><p class="precio-unico">$ ${prod.precioRegular || 0}</p></div>`;
 
     const card = `
     <div class="producto-card ${claseExtra}">
-        <a href="info-producto.html?id=${prod.id}" class="producto-href">
+        <a href="info-producto.html?id=${prod.id}" class="producto-href"> 
             ${badgeHTML}
             <img class="producto-img" loading="lazy" decoding="async" src="${imagenPortada}" alt="${prod.nombre}" />
-            <div class="producto-info">
-                <p class="producto-name"><b>${prod.nombre}</b></p>
+
+            <div class="info-prod">
+              <div class="producto-header">
+                <p class="producto-name">${prod.nombre}</p>
                 ${
                   prod.variantes && prod.variantes.length > 1
-                    ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>`
-                    : `<p class="variantes-tag" style="color: #5f5f5f;">Diseño exclusivo</p>`
+                    ? `<p class="opciones">+${prod.variantes.length} opciones</p>`
+                    : `<p class="opciones">Diseño exclusivo</p>`
                 }
+              </div>
                 
-                <div class="precio-container">
-                    <p class="precio"><b>$${precioFinal.toLocaleString()}</b></p>
-                </div>
+              ${HTMLPrecios}
 
-                <button class="btn-ver-mas">ver más</button>
+              <button class="btn-ver-mas">VER MÁS</button>
             </div>
         </a>
     </div>
@@ -219,7 +199,7 @@ function renderizarProductos(lista) {
   });
 }
 
-// --- FUNCIÓN DE FILTRADO (Limpiada y Garantizada) ---
+// FUNCIÓN DE FILTRADO
 function aplicarFiltros() {
   const norm = (t) =>
     t
@@ -232,201 +212,129 @@ function aplicarFiltros() {
       : "";
 
   const resultado = productos.filter((p) => {
-    yaFiltroElUsuario = true;
-
-    // 1. Categoría (Colección)
+    // 1. FILTRO DE CATEGORÍA
     const catFiltro = norm(filtrosActivos.categoria);
     const pColeccion = norm(p.coleccion);
     const matchCategoria =
       catFiltro === "todos" || pColeccion.includes(catFiltro);
 
-    // 2. Precio
-    const matchPrecio = p.precio <= filtrosActivos.precioMax;
+    // 2. FILTRO POR TIPO DE PRECIO (OFERTAS / DOCENAS)
+    let matchTipoPrecio = true;
+    const pTipoPrecio = norm(p.tipoPrecio || "");
 
-    // 3. Sidebar
-    const verificarMatch = (filtrosArr, datoProd) => {
-      if (!filtrosArr || filtrosArr.length === 0) return true;
-      if (!datoProd) return false;
-      const fNorm = filtrosArr.map((f) => norm(f));
-      const dNorm = Array.isArray(datoProd)
-        ? datoProd.map((d) => norm(d))
-        : [norm(datoProd)];
-      return fNorm.some((opcion) => dNorm.includes(opcion));
-    };
-
-    const matchAmbiente = verificarMatch(filtrosActivos.ambientes, p.ambiente);
-    const matchPublico = verificarMatch(filtrosActivos.publicos, p.linea);
-    const matchMaterial = verificarMatch(filtrosActivos.materiales, p.material);
-
-    // 4. Ofertas
-    let matchOferta = true;
-    if (filtrosActivos.soloOfertas) {
-      const enLinea = p.linea
-        ? p.linea.some((l) => norm(l).includes("oferta"))
-        : false;
-      const enNombre = norm(p.nombre).includes("oferta");
-      matchOferta = enLinea || enNombre;
+    if (filtrosActivos.tipoPrecioFiltro === "oferta") {
+      matchTipoPrecio = pTipoPrecio.includes("oferta");
+    } else if (filtrosActivos.tipoPrecioFiltro === "docena") {
+      matchTipoPrecio = pTipoPrecio.includes("docena");
     }
 
-    // 5. 🔍 BUSCADOR DINÁMICO (Con triple escudo por si falta nombre o descripción)
+    // 3. BUSCADOR POR TEXTO
     const queryBusqueda = norm(filtrosActivos.busqueda || "");
-
-    const nombreProducto = p.nombre ? norm(p.nombre) : "";
-    const descProducto = p.descripcion ? norm(p.descripcion) : "";
+    const nombreProducto = norm(p.nombre || "");
+    const descProducto = norm(p.descripcion || "");
 
     const matchBusqueda =
+      queryBusqueda === "" ||
       nombreProducto.includes(queryBusqueda) ||
       descProducto.includes(queryBusqueda);
 
-    return (
-      matchCategoria &&
-      matchPrecio &&
-      matchAmbiente &&
-      matchPublico &&
-      matchMaterial &&
-      matchOferta &&
-      matchBusqueda
-    );
+    return matchCategoria && matchTipoPrecio && matchBusqueda;
   });
-
-  // 📝 RASTREADOR: Te avisa en consola cuántos productos pasaron el filtro
-  console.log(
-    `🔎 Buscando: "${filtrosActivos.busqueda}" | Productos encontrados: ${resultado.length}`,
-  );
 
   renderizarProductos(resultado);
 }
 
-// --- CONFIGURACIÓN DE ESCUCHADORES CORREGIDA ---
+// CONFIGURACIÓN DE ESCUCHADORES Y EVENTOS
 function configurarEscuchadores() {
   console.log("⚙️ Configurando escuchadores...");
 
-  // Botones de categoría (Superiores) - REEMPLAZO
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
+  // 1. BOTONES DE CATEGORÍA
+  document.querySelectorAll(".category-btn").forEach((btn) => {
     btn.onclick = (e) => {
       const textoBoton = e.target.innerText.trim().toLowerCase();
 
       document
-        .querySelectorAll(".filter-btn")
+        .querySelectorAll(".category-btn")
         .forEach((b) => b.classList.remove("active"));
       e.target.classList.add("active");
 
-      // --- LÓGICA NUEVA PARA EL BOTÓN OFERTAS ---
       if (textoBoton === "ofertas") {
-        filtrosActivos.soloOfertas = true;
-        filtrosActivos.categoria = "todos"; // Reseteamos categoría para ver todas las ofertas
+        filtrosActivos.tipoPrecioFiltro = "oferta";
+        filtrosActivos.categoria = "todos";
+      } else if (textoBoton === "docenas") {
+        filtrosActivos.tipoPrecioFiltro = "docena";
+        filtrosActivos.categoria = "todos";
       } else {
-        filtrosActivos.soloOfertas = false;
+        filtrosActivos.tipoPrecioFiltro = "todos";
         filtrosActivos.categoria =
           textoBoton === "todos" ? "todos" : textoBoton;
       }
 
+      yaFiltroElUsuario = true;
       aplicarFiltros();
     };
   });
 
-  // Checkboxes (Laterales)
-  document
-    .querySelectorAll('.sidebar-filtros input[type="checkbox"]')
-    .forEach((check) => {
-      check.onchange = (e) => {
-        const valor = e.target.value; // El value del HTML: "baño", "adulto", etc.
-        const grupo = e.target.name;
+  // 2. LÓGICA DEL BUSCADOR (Lupa, Enter y X)
+  const buscadorInput = document.getElementById("buscador-input");
+  const btnLupa = document.getElementById("lupa-btn");
+  const btnLimpiar = document.getElementById("limpiar-busqueda-btn");
 
-        console.log(`Cambio en ${grupo}: ${valor} (${e.target.checked})`);
-
-        if (grupo === "ambiente") {
-          if (e.target.checked) filtrosActivos.ambientes.push(valor);
-          else
-            filtrosActivos.ambientes = filtrosActivos.ambientes.filter(
-              (v) => v !== valor,
-            );
-        } else if (grupo === "publico") {
-          if (e.target.checked) filtrosActivos.publicos.push(valor);
-          else
-            filtrosActivos.publicos = filtrosActivos.publicos.filter(
-              (v) => v !== valor,
-            );
-        } else if (grupo === "material") {
-          if (e.target.checked) filtrosActivos.materiales.push(valor);
-          else
-            filtrosActivos.materiales = filtrosActivos.materiales.filter(
-              (v) => v !== valor,
-            );
-        } else if (grupo === "oferta") {
-          filtrosActivos.soloOfertas = e.target.checked;
-        }
-
-        aplicarFiltros();
-      };
-    });
-
-  // Slider de Precio
-  const slider = document.getElementById("rango-precio");
-  if (slider) {
-    slider.oninput = (e) => {
-      const val = parseInt(e.target.value);
-      document.getElementById("precio-valor").innerText =
-        `$${val.toLocaleString()}`;
-      filtrosActivos.precioMax = val;
+  const ejecutarBusqueda = () => {
+    if (buscadorInput) {
+      filtrosActivos.busqueda = buscadorInput.value.trim();
+      yaFiltroElUsuario = true;
       aplicarFiltros();
+    }
+  };
+
+  if (buscadorInput) {
+    // Mostrar u ocultar la 'X' mientras escribe
+    buscadorInput.oninput = (e) => {
+      const val = e.target.value.trim();
+      if (btnLimpiar) {
+        btnLimpiar.classList.toggle("hidden", val === "");
+      }
+    };
+
+    // Buscar al presionar ENTER
+    buscadorInput.onkeydown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        ejecutarBusqueda();
+      }
     };
   }
 
-  // 🔍 NUEVO: Escuchador del buscador en tiempo real
-  const buscadorInput = document.getElementById("buscador-input");
-  if (buscadorInput) {
-    buscadorInput.oninput = (e) => {
-      filtrosActivos.busqueda = e.target.value;
-      yaFiltroElUsuario = true; // Evita que la carga de Google Sheets le pise la pantalla mientras escribe
-      aplicarFiltros();
+  // Buscar al presionar la LUPA
+  if (btnLupa) {
+    btnLupa.onclick = (e) => {
+      e.preventDefault();
+      ejecutarBusqueda();
+    };
+  }
+
+  // Borrar búsqueda con el botón 'X'
+  if (btnLimpiar) {
+    btnLimpiar.onclick = () => {
+      if (buscadorInput) {
+        buscadorInput.value = "";
+        btnLimpiar.classList.add("hidden");
+        filtrosActivos.busqueda = "";
+        yaFiltroElUsuario = true;
+        aplicarFiltros();
+      }
     };
   }
 
   sincronizarFiltrosDesdeUI();
 }
 
-// 6. FUNCIÓN LIMPIAR
-function limpiarFiltros() {
-  // Ya no necesitamos borrar el localStorage porque ya no lo usamos
-
-  document
-    .querySelectorAll('.sidebar-filtros input[type="checkbox"]')
-    .forEach((el) => (el.checked = false));
-
-  const slider = document.getElementById("rango-precio");
-  if (slider) {
-    slider.value = 30000;
-    document.getElementById("precio-valor").textContent = `$30.000`;
-  }
-
-  filtrosActivos = {
-    categoria: "todos",
-    ambientes: [],
-    publicos: [],
-    materiales: [],
-    precioMax: 30000,
-    soloOfertas: false,
-  };
-
-  document
-    .querySelectorAll(".filter-btn")
-    .forEach((b) => b.classList.remove("active"));
-  const btnTodos = document.querySelector(".filter-btn"); // El primero suele ser "todos"
-  if (btnTodos) btnTodos.classList.add("active");
-
-  // Vaciar caja del buscador
-  const buscadorInputReset = document.getElementById("buscador-input");
-  if (buscadorInputReset) buscadorInputReset.value = "";
-  filtrosActivos.busqueda = "";
-
-  renderizarProductos(productos);
-}
-
+// SCROLL HEADER EFFECT
 window.addEventListener("scroll", () => {
-  const header = document.querySelector(".tienda-header-sticky");
+  const header = document.querySelector(".filters");
+  if (!header) return;
 
-  // Si bajamos más de 50px de la parte superior
   if (window.scrollY > 50) {
     header.classList.add("scrolled");
   } else {
@@ -434,76 +342,33 @@ window.addEventListener("scroll", () => {
   }
 });
 
-function toggleFiltros() {
-  const sidebar = document.getElementById("sidebarFiltros");
-  const overlay = document.getElementById("filtrosOverlay");
-
-  sidebar.classList.toggle("active");
-
-  if (sidebar.classList.contains("active")) {
-    overlay.style.display = "block";
-    document.body.style.overflow = "hidden"; // Evita scroll de fondo
-  } else {
-    overlay.style.display = "none";
-    document.body.style.overflow = "auto"; // Devuelve el scroll
-  }
-}
-
+// SINCRONIZAR UI DESDE ESTADO
 function sincronizarFiltrosDesdeUI() {
   if (!window.productos || window.productos.length === 0) return;
 
-  console.log("🔄 Sincronizando filtros con la UI...");
-
-  // 1. Sincronizar Categoría (Botones superiores)
-  const btnActivo = document.querySelector(".filter-btn.active");
+  const btnActivo = document.querySelector(".category-btn.active");
   if (btnActivo) {
     const texto = btnActivo.innerText.trim().toLowerCase();
     if (texto === "ofertas") {
-      filtrosActivos.soloOfertas = true;
+      filtrosActivos.tipoPrecioFiltro = "oferta";
+      filtrosActivos.categoria = "todos";
+    } else if (texto === "docenas") {
+      filtrosActivos.tipoPrecioFiltro = "docena";
       filtrosActivos.categoria = "todos";
     } else {
-      filtrosActivos.soloOfertas = false;
+      filtrosActivos.tipoPrecioFiltro = "todos";
       filtrosActivos.categoria = texto;
     }
   }
 
-  // 2. Limpiar y rellenar arrays de checkboxes
-  filtrosActivos.ambientes = [];
-  filtrosActivos.publicos = [];
-  filtrosActivos.materiales = [];
-
-  document
-    .querySelectorAll('.sidebar-filtros input[type="checkbox"]')
-    .forEach((check) => {
-      if (check.checked) {
-        const valor = check.value;
-        const grupo = check.name;
-        if (grupo === "ambiente") filtrosActivos.ambientes.push(valor);
-        else if (grupo === "publico") filtrosActivos.publicos.push(valor);
-        else if (grupo === "material") filtrosActivos.materiales.push(valor);
-        else if (grupo === "oferta") filtrosActivos.soloOfertas = true;
-      }
-    });
-
-  // 3. Sincronizar Slider
-  const slider = document.getElementById("rango-precio");
-  if (slider) {
-    filtrosActivos.precioMax = parseInt(slider.value);
-    document.getElementById("precio-valor").innerText =
-      `$${filtrosActivos.precioMax.toLocaleString()}`;
-  }
-
-  // 4. Forzar el filtrado YA
   aplicarFiltros();
 }
 
 window.addEventListener("pageshow", (event) => {
-  // Si la página se carga desde el caché del navegador (botón atrás)
   if (
     event.persisted ||
     (window.performance && window.performance.navigation.type === 2)
   ) {
-    console.log("🔙 Volviste atrás: Re-sincronizando filtros...");
     sincronizarFiltrosDesdeUI();
   }
 });

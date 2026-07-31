@@ -1,68 +1,40 @@
-main {
-    padding-top: 120px;
-    /* Espacio para el header fijo */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-}
-
+/*-----------------PRODUCTO-----------------*/
 .product-container {
     display: flex;
-    gap: 40px;
-    max-width: 1200px;
+    justify-content: center;
+    align-items: start;
     width: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 30px;
-    border-radius: 20px;
-    color: white;
     margin-bottom: 30px;
+    animation: fadeInCard 0.4s ease forwards;
 }
 
-/* Este mensaje se verá mientras el contenedor tenga la clase "loading" */
-.product-container.loading::before {
-    content: "Cargando detalles del producto...";
-    display: block;
-    width: 100%;
-    text-align: center;
-    color: white;
-    padding: 100px 0;
-    font-size: 1.2rem;
-    font-weight: 300;
+@keyframes fadeInCard {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Ocultamos todo lo que esté dentro de la tarjeta mientras carga */
-.product-container.loading>* {
-    display: none;
-}
-
-/* Opcional: un efecto de fade-in para cuando aparezca el producto */
-main {
-    transition: opacity 0.5s ease-in-out;
-}
-
-/* Galería */
+/*-----------------PRODUCTO IMAGENES-----------------*/
 .product-gallery {
-    padding: 40px;
-    background: #fdfdfd;
+    max-width: 45%;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    border-radius: 30px;
-    flex: 1.2;
-    /* Galería más ancha */
-    min-width: 0;
-    /* Permite que el contenedor sepa que puede achicarse si es necesario */
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
 }
 
 .main-image-wrapper {
     position: relative;
-    border-radius: 20px;
-    /* Aquí aplicamos el redondeo que querés */
     overflow: hidden;
     /* Esto "corta" cualquier cosa que se salga de los bordes curvos */
-    background-color: #fdfdfd;
     /* Evita que se vea el fondo oscuro si la foto no llena el cuadro */
     width: 100%;
     display: flex;
@@ -70,117 +42,247 @@ main {
     align-items: center;
 }
 
-.main-image img {
-    width: 100%;
-    max-height: 500px;
-    object-fit: contain;
-    display: block;
-    border-radius: 20px;
-    /* Ya no lo necesita */
-}
-
 .nav-arrow {
+    background-color: #ad95ef;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 45px;
-    /* Ajusta el tamaño de tu icono aquí */
+    width: 50px;
     height: auto;
     cursor: pointer;
     z-index: 10;
     border-radius: 50px;
     padding: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    transition: transform 0.2s, opacity 0.2s;
     opacity: 0.9;
 }
 
-.nav-arrow:hover {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.1);
-}
-
 .prev-arrow {
-    left: 15px;
+    left: 5px;
     /* Distancia desde el borde izquierdo */
 }
 
 .next-arrow {
-    right: 15px;
+    right: 5px;
     /* Distancia desde el borde derecho */
+}
+
+.main-image {
+    width: 100%;
+}
+
+.main-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
 }
 
 .thumbnails {
     display: flex;
-    gap: 10px;
+    align-items: flex-start;
+    gap: 5px;
     overflow-x: auto;
-    padding-bottom: 10px;
-    width: 100%;
-    /* No deja que sea más ancho que la galería */
+    padding: 10px 0;
 }
 
 .thumb {
-    width: 70px;
-    height: 70px;
-    border-radius: 15px;
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    aspect-ratio: 3/4;
     object-fit: cover;
-    cursor: pointer;
-    border: 2px solid #eee;
 }
 
 .thumb.active {
-    border-color: var(--primary-violet);
-    transform: scale(1.05);
+    width: 100px;
+    border: 3px solid #ad95ef;
+    padding: 3px;
 }
 
-/* Info Panel */
-.product-info-panel {
-    background-color: var(--primary-violet);
-    color: white;
-    padding: 30px 20px;
-    flex-direction: column;
-    flex: 0.8;
-    /* Panel de info más angosto */
+.thumb-wrapper {
     display: flex;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
-.brand-tag {
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    opacity: 0.8;
+.thumb-counter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ad95ef;
+    border-radius: 10px;
+    padding: 2px 8px;
+    color: white;
+    box-sizing: border-box;
+    width: 100px;
+    /* Forzamos el ancho exacto de la miniatura (100px) */
+    padding: 0 4px;
+    /* Reducimos el padding lateral para ganar espacio */
+}
+
+.thumb-counter button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+}
+
+.thumb-counter span {
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.thumb-counter button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.thumb-counter-color {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ad95ef;
+    border-radius: 10px;
+    width: 45%;
+    padding: 2px 8px;
+    color: white;
+    box-sizing: border-box;
+}
+
+.thumb-counter-color button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+}
+
+.thumb-counter-color span {
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.thumb-counter-color button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/*-----------------PRODUCTO INFO-----------------*/
+.product-info-panel {
+    max-width: 50%;
+    background-color: #c1acf7;
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.product-header h1,
+.product-header p {
+    margin: 0;
+    margin: 20px 0;
 }
 
 .price-section {
-    margin: 0 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
 }
 
-.current-price {
-    font-size: 2.5rem;
-    font-weight: 700;
-    display: block;
+.price-section h1,
+.price-section p {
+    margin: 0;
+}
+
+.mayor-menor {
+    display: flex;
+    gap: 60px;
+}
+
+.precio-oferta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#precioAnterior {
+    text-decoration: line-through;
+    font-size: 17px;
+    font-weight: bold;
 }
 
 .transfer-box {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
+    background-color: #ad95ef;
+    padding: 20px;
     border-radius: 20px;
-    border: 1px dashed rgba(255, 255, 255, 0.3);
-    margin-top: 10px;
-    font-size: 0.9rem;
+    text-align: center;
+    border: 2px dashed #ffffff;
+    margin: 5px 0;
 }
 
-/* Selectores Dinámicos */
+.selector-section {
+    margin-bottom: 25px;
+}
+
+.talles-grid {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.talle-dot {
+    width: 48px;
+    /* Tamaño fijo para que sean círculos perfectos */
+    height: 48px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    /* Borde más sutil */
+    background: rgba(255, 255, 255, 0.1);
+    /* Fondo tipo vidrio */
+    backdrop-filter: blur(4px);
+    /* Desenfoque de fondo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+}
+
+.talle-dot.active {
+    background-color: white;
+    color: #a27ae3;
+    /* El color de tu fondo */
+    border-color: white;
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
 .color-grid {
     display: flex;
     gap: 10px;
-    margin-top: 10px;
-
     flex-wrap: wrap;
-    /* Esto hace que bajen a la siguiente línea si no hay espacio */
-    /* Espacio entre los círculos */
     justify-content: flex-start;
-    /* Alineados a la izquierda */
+    margin: 10px 0;
 }
 
 .color-dot {
@@ -189,15 +291,253 @@ main {
     border-radius: 50%;
     cursor: pointer;
     border: 3px solid transparent;
-
     flex-shrink: 0;
-    /* Esto evita que se aplasten y se vuelvan óvalos */
-    transition: transform 0.2s;
 }
 
 .color-dot.active {
     border-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.details-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 20px 0;
+    width: 100%;
+    align-items: center;
+}
+
+.detail-item {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.quantity-selector {
+    margin: 10px 0;
+}
+
+.quantity-selector p {
+    margin: 0;
+    margin: 5px 0;
+}
+
+.guia-seleccion,
+#guia-seleccion {
+    opacity: 0.7;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.quantity-controls {
+    background-color: #ad95ef;
+    border: 2px solid #ffffff;
+    border-radius: 20px;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 150px;
+}
+
+.quantity-controls input {
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: center;
+    width: 50px;
+    height: 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.qty-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 40px;
+    height: 30px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Quita las flechitas por defecto del input number */
+#itemQuantity::-webkit-inner-spin-button,
+#itemQuantity::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.floating-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(173, 149, 239, 0.9);
+    /* Tu color lila con algo de transparencia */
+    color: white;
+    padding: 7px 15px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    z-index: 15;
+    pointer-events: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.color-multi-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.color-counter-card {
+    flex: 2 1 calc(50% - 10px);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 12px;
+    border-radius: 12px;
+    gap: 15px;
+}
+
+.color-info-card {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    font-weight: 500;
+    font-size: 0.75rem;
+    max-width: 50%;
+}
+
+.color-dot-small {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid white;
+    flex-shrink: 0;
+}
+
+.estampado-multi-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.estampado-counter-card {
+    flex: 2 1 calc(50% - 10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 12px;
+    border-radius: 12px;
+    gap: 10px;
+}
+
+.estampado-counter-card.agotado {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
+.estampado-badge {
+    padding: 20px;
+    background: #b395ff;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    border: 2px solid white;
+    flex-shrink: 0;
+}
+
+.resumen-container {
+    margin: 15px 0;
+}
+
+.mensaje-mayorista {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.resumen-panel {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.resumen-panel p {
+    margin-top: 0;
+    font-size: 0.95rem;
+}
+
+.resumen-panel ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.icon-btn {
+    width: 30px;
+    height: auto;
+}
+
+.btn-whatsapp {
+    background-color: #65cf72;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 18px;
+    font-family: "Unbounded", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 2px solid #ffffff;
+    border-radius: 15px;
+    padding: 10px;
+    width: 100%;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.btn-add-cart {
+    background-color: #7454d9;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 18px;
+    font-family: "Unbounded", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 2px solid #ffffff;
+    border-radius: 15px;
+    padding: 10px;
+    width: 100%;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 
 .variante-agotada {
@@ -226,7 +566,7 @@ main {
     /* Para que la línea no se salga del círculo */
 }
 
-/* Opcional: una segunda línea para hacer una X */
+/* una segunda línea para hacer una X */
 .variante-agotada::after {
     content: "";
     position: absolute;
@@ -243,318 +583,118 @@ main {
     border-radius: 50%;
 }
 
-/* Ajuste del título "Elegí tu talle:" */
-.selector-title {
-    color: white;
-    /* Título blanco */
-    display: block;
-    margin-bottom: 5px;
+.color-counter-card.agotado {
+    opacity: 0.6;
+    cursor: not-allowed !important;
 }
 
-/* --- Selector de Talles Moderno (Efecto Vidrio) --- */
-.talles-grid {
-    display: flex;
-    gap: 12px;
-    margin-top: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-}
-
-.talle-dot {
-    width: 48px;
-    /* Tamaño fijo para que sean círculos perfectos */
-    height: 48px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    /* Borde más sutil */
-    background: rgba(255, 255, 255, 0.1);
-    /* Fondo tipo vidrio */
-    backdrop-filter: blur(4px);
-    /* Desenfoque de fondo */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 50%;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: white;
-}
-
-.talle-dot:hover {
-    border-color: white;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-3px);
-    /* Levanta un poquito */
-}
-
-.talle-dot.active {
-    background-color: white;
-    color: #a27ae3;
-    /* El color de tu fondo */
-    border-color: white;
-    transform: scale(1.1);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* --- Texto de Estampado Seleccionado --- */
-.stamped-selected-text {
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 8px;
-    gap: 8px;
-}
-
-#stampedName {
-    color: #ffffff;
-    font-size: 13px;
-}
-
-
-/* --- Ajuste de Cantidad --- */
-.cantidad-selector {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 30px;
-    padding: 5px;
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.qty-btn {
-    background: transparent;
-    border: none;
-    color: white;
-    width: 30px;
-    height: 30px;
-    font-size: 1.2rem;
-    cursor: pointer;
-}
-
-.btn-add-cart {
-    background: #7454d9;
-    color: var(--primary-violet);
-    border: none;
-    padding: 20px;
-    border-radius: 25px;
-    font-family: 'Unbounded';
-    font-weight: 700;
-    margin-top: auto;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-add-cart:hover {
-    background: var(--soft-violet);
-    transform: translateY(-3px);
-    background: #6843e0;
-}
-
-/* Descripción (Debajo de imagen) */
-.product-description-container {
-    border-top: 1px solid #eee;
-    padding-top: 20px;
-}
-
-.desc-title {
-    color: #555;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-
-.desc-content {
-    color: #555;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    font-weight: 300;
-}
-
-/* Esto va fuera de las media queries, en la parte general */
-#techDetails {
-    display: flex;
-    /* Los pone uno al lado del otro */
-    flex-wrap: wrap;
-    /* Si no entran, bajan a la siguiente línea */
-    gap: 10px;
-    /* Espacio entre cuadros */
-    margin-top: 0;
-}
-
-.detail-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    min-width: fit-content;
-    /* Se ajusta al texto */
-}
-
-.detail-item strong {
-    display: block;
-    /* Pone el título arriba */
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    opacity: 0.7;
-    margin-bottom: 2px;
-}
-
-.quantity-selector {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.selector-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    opacity: 0.8;
-}
-
-.quantity-controls {
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    width: fit-content;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.qty-btn {
-    background: none;
-    border: none;
-    color: white;
-    width: 45px;
-    height: 45px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.qty-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-#itemQuantity {
-    width: 50px;
-    background: none;
-    border: none;
-    color: white;
-    text-align: center;
-    font-family: 'Unbounded';
-    font-size: 1rem;
-    outline: none;
-}
-
-/* Quita las flechitas por defecto del input number */
-#itemQuantity::-webkit-inner-spin-button,
-#itemQuantity::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-
-/*----------------RESONSIVE----------------*/
-
+/*-----------------RESPONSIVE-----------------*/
 @media (max-width: 1200px) {
+    .product-gallery {
+        max-width: 50%;
+    }
 
-    /* Ajustamos el contenedor principal para que no tenga tanto margen */
+    .product-info-panel {
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 1000px) {
     main {
-        padding-top: 150px;
+        margin-top: 140px;
     }
 
     .product-container {
         flex-direction: column;
-        /* Apila imagen arriba e info abajo */
-        gap: 0;
-        padding: 0;
-        /* Quitamos padding para que la imagen aproveche el ancho */
-        overflow: hidden;
-        /* Para que los bordes redondeados del contenedor afecten a los hijos */
-        border-radius: 30px;
-        /* Refuerza el redondeado del contenedor */
+        align-items: center;
     }
 
     .product-gallery {
-        padding: 20px;
-        flex: none;
-        width: 100%;
-        background: #ffffff;
-        /* Fondo sólido en móvil para mejor visibilidad */
-        border-radius: 0;
-        /* Quitamos este para que mande el del product-container */
-    }
-
-    .main-image-wrapper {
-        border-radius: 20px;
-        /* Redondeado un poco menor para tablets */
-    }
-
-    .main-image img {
-        max-height: 400px;
-        border-radius: 20px;
+        max-width: 100%;
     }
 
     .product-info-panel {
-        padding: 30px 25px;
-        flex: none;
-        width: 100%;
-        /* Eliminamos radios internos si los hubiera */
-        min-width: 350px;
-        /* Garantiza que el panel de info no sea más chico que esto */
-    }
-
-    .current-price {
-        font-size: 2rem;
-    }
-
-    .btn-add-cart {
-        margin-top: 20px;
-        /* Evita que quede pegado al texto en pantallas chicas */
-        width: 100%;
-    }
-
-    /* Ajuste para los detalles técnicos (el grid) */
-    .details-grid {
-        grid-template-columns: 1fr;
-        /* Una sola columna en detalles técnicos */
-        gap: 10px;
+        max-width: 100%;
     }
 }
 
-@media (max-width: 900px) {
-
-    main {
-        padding-top: 180px;
-    }
-}
-
-@media (max-width: 400px) {
-
-    main {
-        padding-top: 180px;
-    }
-
-    .product-info-panel {
-        padding: 25px;
-    }
-
-    .current-price {
-        font-size: 1.8rem;
+@media (max-width: 650px) {
+    .thumbnails {
+        margin-top: 5px;
     }
 
     .thumb {
-        width: 60px;
-        height: 60px;
+        width: 90px;
     }
 
-    .color-grid {
-        gap: 12px;
-        /* Un poquito menos de espacio para que entren más por fila */
+    .thumb.active {
+        width: 90px;
+        padding: 3px;
     }
 
-    .main-image-wrapper {
-        border-radius: 20px;
-        /* Redondeado ideal para celulares */
+    .product-info-panel {
+        max-width: 100%;
+        padding: 20px;
+    }
+
+    .product-header h1 {
+        font-size: 24px;
+    }
+
+    .price-section {
+        margin: 10px 0;
+    }
+
+    .price-section h1 {
+        font-size: 24px;
+    }
+
+    .price-section p {
+        font-size: 13px;
+    }
+
+    .mayor-menor {
+        gap: 30px;
+    }
+
+    .nav-arrow {
+        width: 40px;
+        height: auto;
+    }
+
+    .details-grid {
+        font-size: 13px;
+    }
+
+    .color-multi-grid {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .color-info-card {
+        gap: 10px;
+        font-size: 0.9rem;
+    }
+
+    .estampado-counter-card {
+        padding: 5px 10px;
+    }
+
+    .resumen-panel {
+        padding: 12px;
+    }
+
+    .resumen-panel ul {
+        line-height: 1.7;
+    }
+
+    .btn-whatsapp,
+    .btn-add-cart {
+        font-size: 16px;
+        border-radius: 15px;
+    }
+
+    .icon-btn {
+        width: 24px;
     }
 }

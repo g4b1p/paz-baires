@@ -2,41 +2,72 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <link rel="icon" href="images/icons/paz-baires-logotipo-blanco-2.webp" />
     <link rel="stylesheet" href="css/estilos-comunes.css" />
     <link rel="stylesheet" href="css/info-producto.css" />
     <title>Paz Baires</title>
+
+    <script type="text/javascript">
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, "clarity", "script", "xv4faet71w");
+    </script>
   </head>
   <body>
     <main>
       <div class="product-container loading" id="productContainer">
         <div class="product-gallery">
           <div class="main-image-wrapper">
+            <!-- NUEVO: Cartel flotante sobre la foto -->
+            <div
+              class="floating-label"
+              id="stampedLabelContainer"
+              style="display: none"
+            >
+              ESTAMPADO: <strong id="stampedName">No seleccionado</strong>
+            </div>
             <img
-              src="images/icons/flecha-izq-lila.webp"
+              src="images/icons/flecha-izq.webp"
               class="nav-arrow prev-arrow"
               id="prevBtn"
               alt="Anterior"
+              loading="lazy"
+              decoding="async"
             />
 
             <div class="main-image">
-              <img id="mainImg" src="" alt="Cargando..." />
+              <img
+                id="mainImg"
+                src=""
+                alt="Cargando..."
+                loading="lazy"
+                decoding="async"
+              />
             </div>
 
             <img
-              src="images/icons/flecha-der-lila.webp"
+              src="images/icons/flecha-der.webp"
               class="nav-arrow next-arrow"
               id="nextBtn"
               alt="Siguiente"
+              loading="lazy"
+              decoding="async"
             />
           </div>
           <div class="thumbnails" id="thumbBar"></div>
-
-          <div class="product-description-container">
-            <h3 class="desc-title">Sobre este producto</h3>
-            <p id="productDesc" class="desc-content"></p>
-          </div>
         </div>
 
         <div class="product-info-panel">
@@ -45,19 +76,65 @@
             <h1 id="productName">Nombre del Producto</h1>
           </div>
 
-          <div class="price-section">
-            <span id="oldPrice" class="old-price"></span>
-            <span id="currentPrice" class="current-price"></span>
-            <div class="transfer-box">
-              <strong id="transferPrice"></strong> con Transferencia (15% OFF)
+          <!-- SECCIÓN PRECIOS DINÁMICOS POR CASO -->
+          <div class="price-section" id="priceContainer">
+            <!-- CASO 1: MAYOR Y MENOR -->
+            <div
+              id="priceCasoMayorMenor"
+              class="price-case"
+              style="display: none"
+            >
+              <div class="mayor-menor">
+                <div class="precio-mayorista">
+                  <p>Precio <b>MAYORISTA:</b></p>
+                  <h1 id="precioMayorista">$ 0</h1>
+                </div>
+                <div class="precio-minorista">
+                  <p>Precio <b>MINORISTA:</b></p>
+                  <h1 id="precioMinorista">$ 0</h1>
+                </div>
+              </div>
             </div>
+
+            <!-- CASO 2: OFERTA -->
+            <div id="priceCasoOferta" class="price-case" style="display: none">
+              <p>Precio <b>OFERTA:</b></p>
+              <div class="precio-oferta">
+                <h1 id="precioOferta">$ 0</h1>
+                <p id="precioAnterior">$ 0</p>
+              </div>
+            </div>
+
+            <!-- CASO 3: DOCENA -->
+            <div id="priceCasoDocena" class="price-case" style="display: none">
+              <div class="docena">
+                <p>Precio <b>DOCENA:</b></p>
+                <h1 id="precioDocena">$ 0</h1>
+              </div>
+            </div>
+
+            <!-- CASO 4: UNICO -->
+            <div id="priceCasoUnico" class="price-case" style="display: none">
+              <div class="unico">
+                <p>Precio <b>ÚNICO:</b></p>
+                <h1 id="precioUnico">$ 0</h1>
+              </div>
+            </div>
+
+            <!-- BENEFICIO / CARTEL EXTRA -->
+            <div
+              class="transfer-box"
+              id="transferBox"
+              style="display: none"
+            ></div>
           </div>
 
           <div id="variantSelector" class="selector-section"></div>
 
           <div id="techDetails" class="details-grid"></div>
 
-          <div class="quantity-selector">
+          <!-- SELECTOR DE CANTIDAD CLÁSICO (Para Ofertas, Docenas, Unicos) -->
+          <div class="quantity-selector" id="cantidadGlobalContainer">
             <p class="selector-label">Cantidad</p>
             <div class="quantity-controls">
               <button type="button" class="qty-btn" id="decreaseQty">−</button>
@@ -70,22 +147,47 @@
               />
               <button type="button" class="qty-btn" id="increaseQty">+</button>
             </div>
-            <p
-              id="guia-seleccion"
-              style="
-                font-size: 0.85rem;
-                margin-top: 10px;
-                color: #fff;
-                font-weight: 300;
-              "
-            >
-              Seleccioná un color y la cantidad.
-            </p>
+            <p id="guia-seleccion">Seleccioná un color y la cantidad.</p>
           </div>
 
-          <button class="btn-add-cart" id="btn-agregar">
-            Añadir al carrito
-          </button>
+          <!-- NUEVO PANEL DE RESUMEN Y MENSAJE MAYORISTA -->
+          <div
+            class="resumen-container"
+            id="resumenContainer"
+            style="display: none"
+          >
+            <div id="mensajeMayoristaDinamico" class="mensaje-mayorista">
+              Te faltan <span id="cantFaltante">3</span> artículos para acceder
+              al precio <b>por mayor!</b>
+            </div>
+            <div class="resumen-panel">
+              <p><strong>RESUMEN DE SELECCIÓN:</strong></p>
+              <ul id="listaResumen"></ul>
+            </div>
+          </div>
+
+          <div class="btns">
+            <button class="btn-whatsapp" id="btn-whatsapp">
+              <img
+                src="images/icons/whatsapp-icon.webp"
+                class="icon-btn"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              CONSULTAR
+            </button>
+            <button class="btn-add-cart" id="btn-agregar">
+              <img
+                src="images/icons/carrito-blanco-icon.webp"
+                class="icon-btn"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              AÑADIR AL CARRITO
+            </button>
+          </div>
         </div>
       </div>
     </main>

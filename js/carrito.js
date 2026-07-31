@@ -1,180 +1,388 @@
+// REEMPLAZAR POR LA URL DE TU MACRO DE GOOGLE SHEETS
+const GOOGLE_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycby7NDP6_vUlAxOvigaqaEZs2RdpKhAGxIH5YFaUG4iMzBSJamybsaeMLzqwhBs1bOA1iw/exec";
+
+let montoTotalFinal = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
   renderizarCarrito();
+  actualizarContadorCarrito(); // Llamamos al contador al iniciar
 
-  // Escuchar el clic en el botón finalizar dentro del carrito
-  const btnIrAPagar = document.querySelector(".btn-finalizar");
-  if (btnIrAPagar) {
-    btnIrAPagar.addEventListener("click", guardarPreferenciasYContinuar);
+  // 1. FORZAMOS LA LIMPIEZA DE LOS MÉTODOS DE ENVÍO Y PAGO PARA QUE ARRANQUEN VACÍOS
+  document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+    radio.checked = false;
+  });
+  document.querySelectorAll(".option-card").forEach((card) => {
+    card.classList.remove("active");
+  });
+
+  const btnFinalizar = document.getElementById("btn-finalizar-compra");
+  if (btnFinalizar) {
+    btnFinalizar.addEventListener("click", procesarCompra);
+  }
+
+  const radios = document.querySelectorAll('input[type="radio"]');
+  radios.forEach((radio) => {
+    radio.addEventListener("change", function () {
+      let name = this.name;
+      document.querySelectorAll(`input[name="${name}"]`).forEach((r) => {
+        r.closest(".option-card").classList.remove("active");
+      });
+      if (this.checked) {
+        this.closest(".option-card").classList.add("active");
+      }
+    });
+  });
+});
+
+// --- SOLUCIÓN AL BFCACHE (Botón "Atrás" del navegador) ---
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    const btn = document.getElementById("btn-finalizar-compra");
+    if (btn) {
+      btn.innerHTML = `<img src="images/whatsapp-icon.webp" alt="" loading="lazy" decoding="async" /> FINALIZAR COMPRA Y ENVIAR`;
+      btn.disabled = false;
+    }
+    renderizarCarrito();
+    actualizarContadorCarrito();
   }
 });
 
-function guardarPreferenciasYContinuar() {
-  // 1. Obtener qué radio buttons están seleccionados
-  const envioSeleccionado = document.querySelector(
-    'input[name="envio"]:checked',
-  );
-  const pagoSeleccionado = document.querySelector('input[name="pago"]:checked');
+function mostrarAlertaPersonalizada(mensaje) {
+  const modal = document.createElement("div");
+  modal.style.cssText =
+    "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;";
+  modal.innerHTML = `
+        <div style="background:#fff;color:#333;padding:25px;border-radius:12px;max-width:350px;width:90%;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+            <h3 style="margin-top:0;color:#ff9800;font-size:22px;">⚠️ Advertencia</h3>
+            <p style="margin-bottom:20px;font-size:16px;line-height:1.5;">${mensaje}</p>
+            <button onclick="this.parentElement.parentElement.remove()" style="background:#222;color:#fff;border:none;padding:12px 25px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:16px;width:100%;">Aceptar</button>
+        </div>
+    `;
+  document.body.appendChild(modal);
+}
 
-  // 2. Validar que ambos estén elegidos
-  if (!envioSeleccionado || !pagoSeleccionado) {
-    alert("❌ Por favor, selecciona un método de envío y de pago.");
-    return;
-  }
-
-  // 3. Guardar con los nombres exactos que espera form-cliente.js
-  const elecciones = {
-    // Usamos .value para obtener "expreso", "moto" o "local"
-    metodoEnvio: envioSeleccionado.value,
-    // Usamos el texto del strong para el mensaje de WhatsApp
-    metodoPago:
-      pagoSeleccionado.parentElement.querySelector("strong").innerText,
-  };
-
-  // IMPORTANTE: Guardar como 'eleccionesFinales'
-  localStorage.setItem("eleccionesFinales", JSON.stringify(elecciones));
-
-  // 4. Redirigir al formulario
-  window.location.href = "form-cliente.html";
+function parsearPrecio(valor) {
+  if (!valor && valor !== 0) return 0;
+  if (typeof valor === "number") return valor;
+  let str = valor
+    .toString()
+    .replace(/\$/g, "")
+    .replace(/\./g, "")
+    .replace(/,/g, ".")
+    .trim();
+  return parseFloat(str) || 0;
 }
 
 function renderizarCarrito() {
   const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-  const contenedor = document.getElementById("carrito-body"); // El tbody de tu tabla
-  const wrapper = document.querySelector(".carrito-wrapper"); // El contenedor principal
+  const productosBD =
+    JSON.parse(localStorage.getItem("productos_cache")) ||
+    window.productos ||
+    [];
+  const contenedor = document.getElementById("carrito-body");
+  const wrapper = document.querySelector(".carrito-wrapper");
 
-  // SI EL CARRITO ESTÁ VACÍO
   if (carrito.length === 0) {
-    // Reemplazamos todo el contenido por el mensaje de vacío
-    wrapper.innerHTML = `
-            <div class="carrito-vacio-msj" style="text-align: center; width: 100%; padding: 100px 20px;">
-                <h2 style="color: white; margin-bottom: 20px;">Tu carrito está vacío</h2>
-                <p style="color: rgba(255,255,255,0.8); margin-bottom: 30px;">¡Parece que aún no has elegido nada!</p>
-                <a href="tienda.html" class="btn-finalizar-carrito-vacio" style="text-decoration: none; display: inline-block; width: auto; padding: 15px 40px;">
-                    IR A LA TIENDA
-                </a>
-            </div>
-        `;
+    if (wrapper) {
+      wrapper.innerHTML = `
+                <div class="carrito-vacio-msj" style="text-align: center; width: 100%; padding: 50px 20px; color: white;">
+                    <h2>Tu carrito está vacío</h2>
+                    <p>¡Parece que aún no has elegido nada!</p>
+                    <a href="tienda.html" class="btn-volver">IR A LA TIENDA</a>
+                </div>
+            `;
+    }
     return;
   }
 
-  // SI TIENE PRODUCTOS
-  contenedor.innerHTML = ""; // Limpiamos tabla
-  let totalGeneral = 0;
+  if (contenedor) contenedor.innerHTML = "";
 
-  carrito.forEach((item, index) => {
-    totalGeneral += item.subtotal;
-
-    // --- LÓGICA DINÁMICA PARA EL LABEL (Color vs Estampado vs Único) ---
-    let htmlVariante = "";
-
-    // Validamos si el texto de la variante contiene "Único modelo"
-    // (Buscamos la palabra por si incluye el talle, ej: "Único modelo - Talle M")
-    if (item.variante && item.variante.toLowerCase().includes("único modelo")) {
-      // Si es único, mostramos solo el texto sin poner "Color:" ni "Estampado:" adelante
-      htmlVariante = `<p class="variante-tag"><span>${item.variante}</span></p>`;
-    } else {
-      // Si tiene variantes reales, aplicamos tu lógica original
-      const esEstampado =
-        item.nombre.toLowerCase().includes("estampado") ||
-        item.nombre.toLowerCase().includes("pijama") ||
-        (item.variante && item.variante.length <= 3);
-
-      const etiqueta = esEstampado ? "Estampado" : "Color";
-      htmlVariante = `<p class="variante-tag">${etiqueta}: <span>${item.variante}</span></p>`;
-    }
-
-    contenedor.innerHTML += `
-            <tr class="carrito-item">
-                <td class="prod-detalles">
-                    <a href="info-producto.html?id=${item.id}">
-                        <img src="${item.imagen}" loading="lazy" decoding="async" alt="${item.nombre}">
-                    </a>
-                    <div class="info-texto">
-                        <a href="info-producto.html?id=${item.id}" style="text-decoration: none; color: inherit;">
-                            <h3>${item.nombre}</h3>
-                        </a>
-                        ${htmlVariante}
-                    </div>
-                </td>
-                <td class="prod-precio">$ ${item.precio.toLocaleString()}</td>
-                <td class="prod-qty">
-                    <div class="qty-selector">
-                        <button onclick="cambiarCantidad(${index}, -1)">-</button>
-                        <input type="number" value="${item.cantidad}" readonly>
-                        <button onclick="cambiarCantidad(${index}, 1)">+</button>
-                    </div>
-                </td>
-                <td class="prod-subtotal"><strong>$ ${item.subtotal.toLocaleString()}</strong></td>
-                <td class="prod-remove">
-                    <button class="btn-remove" onclick="eliminarDelCarrito(${index})">×</button>
-                </td>
-            </tr>
-        `;
+  const conteoUnidadesPorProd = {};
+  carrito.forEach((item) => {
+    const idProd = String(item.id || item.nombre);
+    conteoUnidadesPorProd[idProd] =
+      (conteoUnidadesPorProd[idProd] || 0) +
+      (parsearPrecio(item.cantidad) || 1);
   });
 
-  // ACTUALIZAR EL TOTAL (Sin descuentos automáticos)
-  const contenedorTotal = document.getElementById("total-general");
-  if (contenedorTotal) {
-    contenedorTotal.textContent = `$ ${totalGeneral.toLocaleString()}`;
+  let totalOriginal = 0;
+  let totalConDescuentos = 0;
+
+  carrito.forEach((item, index) => {
+    const prodBD =
+      productosBD.find(
+        (p) => String(p.id) === String(item.id) || p.nombre === item.nombre,
+      ) || {};
+
+    // ESCUDO: Si el producto ya no existe en la base de datos (fue ocultado), lo saltamos para que no dibuje nada falso
+    if (!prodBD.id) {
+      return;
+    }
+
+    const tipoPrecioRaw = String(
+      item.tipoPrecio || prodBD.tipoPrecio || "unico",
+    )
+      .toLowerCase()
+      .trim();
+    const precioRegular = parsearPrecio(
+      item.precioRegular !== undefined
+        ? item.precioRegular
+        : prodBD.precioRegular,
+    );
+    const precioEspecial = parsearPrecio(
+      item.precioEspecial !== undefined
+        ? item.precioEspecial
+        : prodBD.precioEspecial,
+    );
+
+    const idProd = String(item.id || item.nombre);
+    const unidadesAcumuladas =
+      conteoUnidadesPorProd[idProd] || parsearPrecio(item.cantidad);
+    const cantidadItem = parsearPrecio(item.cantidad) || 1;
+
+    let precioAplicado = precioRegular;
+    let precioBaseComparacion = precioRegular;
+    let tipoDescuentoText = "Precio Único";
+    let claseBadge = "badge-minorista";
+
+    if (tipoPrecioRaw.includes("mayor")) {
+      if (unidadesAcumuladas >= 3 && precioEspecial > 0) {
+        precioAplicado = precioEspecial;
+        precioBaseComparacion =
+          precioRegular > 0 ? precioRegular : precioEspecial;
+        tipoDescuentoText = "Precio x Mayor";
+        claseBadge = "badge-mayor";
+      } else {
+        precioAplicado = precioRegular > 0 ? precioRegular : precioEspecial;
+        precioBaseComparacion = precioAplicado;
+        tipoDescuentoText = "Precio Minorista";
+        claseBadge = "badge-minorista";
+      }
+    } else if (tipoPrecioRaw.includes("oferta")) {
+      precioAplicado = precioEspecial > 0 ? precioEspecial : precioRegular;
+      precioBaseComparacion =
+        precioRegular > precioAplicado ? precioRegular : precioAplicado;
+      tipoDescuentoText = "¡Oferta!";
+      claseBadge = "badge-oferta";
+    } else if (tipoPrecioRaw.includes("docena")) {
+      precioAplicado = precioEspecial > 0 ? precioEspecial : precioRegular;
+      precioBaseComparacion =
+        precioRegular > precioAplicado ? precioRegular : precioAplicado;
+      tipoDescuentoText = "Precio Docena";
+      claseBadge = "badge-docena";
+    } else {
+      precioAplicado = precioRegular > 0 ? precioRegular : precioEspecial;
+      precioBaseComparacion = precioAplicado;
+    }
+
+    let subtotalFila = precioAplicado * cantidadItem;
+    totalConDescuentos += subtotalFila;
+    totalOriginal += precioBaseComparacion * cantidadItem;
+    item.precioCobrado = precioAplicado;
+
+    let precioHtml =
+      precioBaseComparacion > precioAplicado
+        ? `<span class="precio-viejo">$ ${precioBaseComparacion.toLocaleString("es-AR")}</span>
+             <span class="precio-nuevo">$ ${precioAplicado.toLocaleString("es-AR")}</span>`
+        : `<span class="precio-nuevo">$ ${precioAplicado.toLocaleString("es-AR")}</span>`;
+
+    let imagenAMostrar =
+      prodBD.imagenes && prodBD.imagenes.length > 0
+        ? prodBD.imagenes[0]
+        : "images/ejemplo-producto.jpg";
+    let htmlVariante = `<p class="variante-tag">Variante: <b>${item.variante || "Única"}</b></p>`;
+
+    if (contenedor) {
+      contenedor.innerHTML += `
+                <tr class="carrito-item">
+                    <td class="prod-detalles">
+                        <a href="info-producto.html?id=${item.id}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:15px;">
+                            <img src="${imagenAMostrar}" alt="${item.nombre}" loading="lazy" decoding="async" >
+                            <div class="info-texto">
+                                <p><b><i>${item.nombre}</i></b></p>
+                                ${htmlVariante}
+                                <span class="badge-precio ${claseBadge}">${tipoDescuentoText}</span>
+                            </div>
+                        </a>
+                    </td>
+                    <td class="prod-precio">${precioHtml}</td>
+                    <td class="prod-qty">
+                        <div class="qty-selector">
+                            <button onclick="cambiarCantidad(${index}, -1)">-</button>
+                            <input type="number" value="${cantidadItem}" readonly>
+                            <button onclick="cambiarCantidad(${index}, 1)">+</button>
+                        </div>
+                    </td>
+                    <td class="prod-subtotal"><strong>$ ${subtotalFila.toLocaleString("es-AR")}</strong></td>
+                    <td class="prod-remove">
+                        <button class="btn-remove" onclick="eliminarDelCarrito(${index})">×</button>
+                    </td>
+                </tr>
+            `;
+    }
+  });
+
+  montoTotalFinal = totalConDescuentos;
+  const ahorroTotal = totalOriginal - totalConDescuentos;
+
+  const desgloseBox = document.getElementById("desglose-box");
+  if (desgloseBox) {
+    if (ahorroTotal > 0) {
+      desgloseBox.style.display = "block";
+      desgloseBox.innerHTML = `
+                <div class="desglose-linea">
+                    <span>Subtotal (Sin desc.):</span>
+                    <span>$ ${totalOriginal.toLocaleString("es-AR")}</span>
+                </div>
+                <div class="desglose-linea ahorro">
+                    <span>¡Ahorrás en esta compra!:</span>
+                    <span>- $ ${ahorroTotal.toLocaleString("es-AR")}</span>
+                </div>
+            `;
+    } else {
+      desgloseBox.style.display = "none";
+    }
+  }
+
+  const elemTotalGeneral = document.getElementById("total-general");
+  if (elemTotalGeneral) {
+    elemTotalGeneral.textContent = `$ ${montoTotalFinal.toLocaleString("es-AR")}`;
   }
 }
 
-// Función para borrar un producto
 function cambiarCantidad(index, cambio) {
-  let carrito = JSON.parse(localStorage.getItem("carrito"));
-
-  // Aplicamos el cambio
-  carrito[index].cantidad += cambio;
-
-  // Si la cantidad llega a 0, eliminamos el producto
-  if (carrito[index].cantidad <= 0) {
-    carrito.splice(index, 1);
-  } else {
-    // Recalculamos el subtotal de esa fila
-    carrito[index].subtotal = carrito[index].cantidad * carrito[index].precio;
-  }
-
-  // Guardamos los cambios en el "bloc de notas" (localStorage)
+  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  if (!carrito[index]) return;
+  carrito[index].cantidad =
+    (parsearPrecio(carrito[index].cantidad) || 1) + cambio;
+  if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
   localStorage.setItem("carrito", JSON.stringify(carrito));
-
-  // RE-DIBUJAMOS TODO PARA QUE SE VEA EL CAMBIO
-  renderizarCarrito(); // Esto actualiza la tabla y el TOTAL abajo
-  actualizarContadorCarrito(); // <--- ESTO ACTUALIZA EL CÍRCULO DEL HEADER
+  renderizarCarrito();
+  actualizarContadorCarrito(); // Llamar al contador al cambiar cantidad
 }
 
 function eliminarDelCarrito(index) {
-  let carrito = JSON.parse(localStorage.getItem("carrito"));
+  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
   carrito.splice(index, 1);
   localStorage.setItem("carrito", JSON.stringify(carrito));
-
   renderizarCarrito();
-  actualizarContadorCarrito(); // <--- También actualizamos el badge aquí
+  actualizarContadorCarrito(); // Llamar al contador al eliminar
 }
 
-function validarYLimpiarCarrito() {
-  // 1. Obtenemos lo que la clienta tenía guardado
-  let carritoGuardado = JSON.parse(localStorage.getItem("carrito")) || [];
+async function procesarCompra() {
+  const nombre = document.getElementById("f-nombre")
+    ? document.getElementById("f-nombre").value.trim()
+    : "";
+  const telefono = document.getElementById("f-tel")
+    ? document.getElementById("f-tel").value.trim()
+    : "";
+  const envio = document.querySelector('input[name="envio"]:checked');
+  const pago = document.querySelector('input[name="pago"]:checked');
 
-  if (carritoGuardado.length === 0) return;
+  if (!nombre || !telefono) {
+    mostrarAlertaPersonalizada(
+      "Por favor, ingresá tu Nombre y tu número de WhatsApp para poder contactarte.",
+    );
+    return;
+  }
 
-  // 2. Filtramos el carrito: solo se quedan los que están en 'productos' Y tienen stock
-  const carritoValidado = carritoGuardado.filter((itemCarrito) => {
-    // Buscamos el producto real en la lista que bajó de Google Sheets
-    const productoReal = productos.find((p) => p.id === itemCarrito.id);
+  if (!envio || !pago) {
+    mostrarAlertaPersonalizada(
+      "Por favor, seleccioná un método de envío y de pago para continuar.",
+    );
+    return;
+  }
 
-    // Si el producto ya no existe en el Excel o dice "Sin Stock", lo borramos
-    if (!productoReal || productoReal.estado === "Sin Stock") {
-      console.warn(
-        `Producto ${itemCarrito.nombre} eliminado por falta de stock.`,
-      );
-      return false;
-    }
+  if (envio.value === "expreso" && montoTotalFinal < 70000) {
+    mostrarAlertaPersonalizada(
+      `Para seleccionar el envío por "Transporte o expreso", la compra mínima es de <b>$70.000</b>.<br><br>Tu total actual es de $${montoTotalFinal.toLocaleString("es-AR")}.`,
+    );
+    return;
+  }
 
-    // Si existe y hay stock, se queda
-    return true;
+  const btn = document.getElementById("btn-finalizar-compra");
+  if (btn) {
+    btn.innerHTML = "PROCESANDO...";
+    btn.disabled = true;
+  }
+
+  const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  const stringProductos = carrito
+    .map(
+      (item) =>
+        `${item.cantidad}x ${item.nombre} - ${item.variante || "Única"} ($${item.precioCobrado || item.precio})`,
+    )
+    .join(" | ");
+
+  const payload = {
+    cliente: nombre,
+    telefono: telefono,
+    envio: envio.value,
+    pago: pago.value,
+    productos: stringProductos,
+    total: montoTotalFinal,
+  };
+
+  const metodoEnvioTxt = envio
+    .closest(".option-card")
+    .querySelector("p b, strong").innerText;
+  const metodoPagoTxt = pago
+    .closest(".option-card")
+    .querySelector("p b, strong").innerText;
+
+  // --- MENSAJE ORIGINAL LIMPIO Y SIN EMOJIS ---
+  let msjWA = `Hola Paz Baires! Mi nombre es *${nombre}*.\n`;
+  msjWA += `Acabo de realizar un pedido en la web.\n\n`;
+  msjWA += `*MI PEDIDO:*\n`;
+  carrito.forEach((item) => {
+    let sub = (item.precioCobrado || item.precio) * item.cantidad;
+    msjWA += `- ${item.cantidad}x ${item.nombre} (${item.variante || "Única"}) - $${sub.toLocaleString("es-AR")}\n`;
   });
+  msjWA += `\n*Envío:* ${metodoEnvioTxt}\n`;
+  msjWA += `*Pago:* ${metodoPagoTxt}\n`;
+  msjWA += `*TOTAL A PAGAR: $${montoTotalFinal.toLocaleString("es-AR")}*\n\n`;
+  msjWA += `Quedo a la espera para coordinar. ¡Gracias!`;
 
-  // 3. Guardamos el carrito limpio y actualizamos la vista
-  localStorage.setItem("carrito", JSON.stringify(carritoValidado));
-  actualizarInterfazCarrito();
+  localStorage.removeItem("carrito");
+  if (typeof actualizarContadorCarrito === "function")
+    actualizarContadorCarrito();
+
+  try {
+    if (GOOGLE_SCRIPT_URL) {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    }
+  } catch (error) {
+    console.error("Error silencioso al intentar guardar en Excel:", error);
+  }
+
+  const telPazBaires = "5491128506874";
+  const urlWhatsApp = `https://wa.me/${telPazBaires}?text=${encodeURIComponent(msjWA)}`;
+  window.location.href = urlWhatsApp;
 }
+
+// --- FUNCIÓN DEL CONTADOR GLOBAL ---
+function actualizarContadorCarrito() {
+  const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  // Sumamos la cantidad de unidades de todos los productos
+  const totalItems = carrito.reduce(
+    (acc, item) => acc + (parseInt(item.cantidad) || 1),
+    0,
+  );
+
+  // Actualizamos todos los elementos HTML que tengan la clase 'contador-carrito'
+  document.querySelectorAll(".contador-carrito").forEach((badge) => {
+    badge.textContent = totalItems;
+    badge.style.display = totalItems > 0 ? "flex" : "none"; // Lo oculta si está en 0
+  });
+}
+
+// Ejecutar al cargar la página dándole un respiro a componentes.js
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(actualizarContadorCarrito, 500);
+});

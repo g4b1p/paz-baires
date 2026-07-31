@@ -1,7 +1,7 @@
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbxe7UPbvDRT2dcfxMdWfPo5MZikdGb4HWIP6l5rg0kaxftUgOUvrsmIe_MhDSDeeiFw/exec";
+  "https://script.google.com/macros/s/AKfycby7NDP6_vUlAxOvigaqaEZs2RdpKhAGxIH5YFaUG4iMzBSJamybsaeMLzqwhBs1bOA1iw/exec";
 
-// 2. Variable global para que el resto de tus archivos sigan funcionando
+// Variable global para que el resto de tus archivos sigan funcionando
 let productos = [];
 
 // Función para quitar acentos y dejar el texto "limpio" para carpetas
@@ -17,50 +17,103 @@ const limpiarTexto = (str) =>
 const CLOUDINARY_BASE =
   "https://res.cloudinary.com/duoya2obs/image/upload/f_auto,q_auto/";
 
-// 3. Función para cargar los productos desde Google Sheets
+// FUNCIÓN PARA LIMPIAR Y ACTUALIZAR EL CARRITO SEGÚN EL EXCEL
+function sincronizarCarritoConProductos() {
+  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  if (carrito.length === 0 || productos.length === 0) return;
+
+  let carritoFiltrado = [];
+  let carritoModificado = false;
+
+  carrito.forEach((item) => {
+    // Buscamos el producto actual en la lista oficial de Google Sheets
+    const productoReal = productos.find((p) => p.id === item.id);
+
+    // CASO 1: El producto fue ocultado o eliminado del Excel -> LO ELIMINAMOS DEL CARRITO
+    if (!productoReal) {
+      carritoModificado = true;
+      console.log(
+        `🗑️ Producto ID ${item.id} (${item.nombre}) eliminado del carrito: ya no está disponible (fue ocultado o borrado en el Excel).`,
+      );
+      return; // No se agrega a carritoFiltrado, por lo que desaparece
+    }
+
+    // CASO 2: El producto fue modificado de estructura/tipo (ej. pasó de normal a docena) -> LO ELIMINAMOS para evitar variantes viejas
+    const tipoActual = (productoReal.tipoPrecio || "unico")
+      .toLowerCase()
+      .trim();
+    const tipoItem = (item.tipoPrecio || "").toLowerCase().trim();
+
+    if (tipoItem && tipoItem !== tipoActual) {
+      carritoModificado = true;
+      console.log(
+        `🗑️ Producto ID ${item.id} (${item.nombre}) eliminado del carrito: su tipo de precio cambió en el Excel y la variante ya no es válida.`,
+      );
+      return; // Se elimina por modificación estructural
+    }
+
+    // Si pasa las validaciones, actualizamos los precios vigentes y lo mantenemos
+    item.precioMinorista = productoReal.precioRegular || 0;
+    item.precioMayorista = productoReal.precioEspecial || 0;
+    item.tipoPrecio = tipoActual;
+    item.precio =
+      tipoActual.includes("oferta") || tipoActual.includes("docena")
+        ? productoReal.precioEspecial > 0
+          ? productoReal.precioEspecial
+          : productoReal.precioRegular
+        : productoReal.precioRegular;
+    item.subtotal = item.precio * item.cantidad;
+
+    carritoFiltrado.push(item);
+  });
+
+  if (carritoModificado) {
+    localStorage.setItem("carrito", JSON.stringify(carritoFiltrado));
+    console.log(
+      "🛒 Carrito depurado: Se eliminaron productos ocultos o modificados estructuralmente.",
+    );
+  }
+}
+
+// Función para cargar los productos desde Google Sheets
 async function cargarProductosDesdeSheet() {
   try {
-    // 1. INTENTO DE CARGA INSTANTÁNEA (Caché)
+    // INTENTO DE CARGA INSTANTÁNEA (Caché)
     const cache = localStorage.getItem("productos_cache");
     if (cache) {
       productos = JSON.parse(cache);
       console.log("🚀 Cargando desde caché (Instantáneo)");
-      // Avisamos a la web que ya tenemos datos para mostrar mientras Google responde en segundo plano
+      sincronizarCarritoConProductos(); // Sincroniza si carga de caché
       document.dispatchEvent(new CustomEvent("productosListos"));
     }
 
-    // 2. PEDIDO A GOOGLE SHEETS (Segundo plano)
+    // PEDIDO A GOOGLE SHEETS (Segundo plano)
     const respuesta = await fetch(API_URL, {
       method: "GET",
       redirect: "follow",
     });
     const data = await respuesta.json();
 
-    // 3. TRANSFORMACIÓN DE DATOS
+    // TRANSFORMACIÓN DE DATOS
     const nuevosProductos = data
       .filter((p) => {
-        // Normalizamos el estado para que no importen espacios ni mayúsculas
         const est = p.Estado ? p.Estado.toString().trim().toLowerCase() : "";
-        // REGLA: Pasa todo menos lo que esté vacío o diga "oculto"
         return est !== "oculto" && est !== "";
       })
-
       .map((p) => {
         const coleccionParaRuta = limpiarTexto(p.Colección);
 
-        // 1. Extraemos las variantes del Excel
+        // Extraemos las variantes del Excel
         const variantesRaw = p.Variantes
           ? p.Variantes.toString()
               .split(",")
               .map((v) => v.trim())
           : [];
 
-        // 2. Creamos el Mapa de Stock (Talle:Nombre)
+        // Creamos el Mapa de Stock (Talle:Nombre)
         const stockMapa = variantesRaw.reduce((acc, item) => {
           if (item.includes(":")) {
             let [talle, nombre] = item.split(":").map((s) => s.trim());
-
-            // LIMPIEZA: Quitamos el "(SIN STOCK)" del nombre para que el mapa sea limpio // <--- NUEVO
             nombre = nombre.replace(/\(SIN STOCK\)/i, "").trim();
 
             if (!acc[talle]) acc[talle] = [];
@@ -69,7 +122,7 @@ async function cargarProductosDesdeSheet() {
           return acc;
         }, {});
 
-        // 3. Obtenemos nombres únicos (para no repetir fotos si hay varios talles)
+        // Obtenemos nombres únicos
         const nombresUnicos = [
           ...new Set(
             variantesRaw.map((v) =>
@@ -78,12 +131,9 @@ async function cargarProductosDesdeSheet() {
           ),
         ];
 
-        // 4. Procesamos si es Color (Rosa|#hex) o Estampado + ESTADO DE STOCK
+        // Procesamos variantes
         const variantesProcesadas = nombresUnicos.map((n) => {
-          // DETECTAR STOCK: ¿Contiene la frase mágica? // <--- NUEVO
           const agotado = n.toUpperCase().includes("(SIN STOCK)");
-
-          // LIMPIEZA: Quitamos el texto "(SIN STOCK)" para que no se vea en la web // <--- NUEVO
           let nombreLimpio = n.replace(/\(SIN STOCK\)/i, "").trim();
 
           if (nombreLimpio.includes("|")) {
@@ -93,64 +143,46 @@ async function cargarProductosDesdeSheet() {
             return {
               nombre: nombreColor,
               valor: hex,
-              disponible: !agotado, // <--- AGREGADO
+              disponible: !agotado,
             };
           }
 
           return {
             nombre: nombreLimpio,
             valor: nombreLimpio,
-            disponible: !agotado, // <--- AGREGADO
+            disponible: !agotado,
           };
         });
 
-        // 5. Retornamos el objeto producto final
+        const tipoPrecioRaw =
+          p["Tipo de Precio"] || p["Tipo Precio"] || p["tipoPrecio"] || "";
+
+        // Retornamos el objeto producto final
         return {
           id: parseInt(p.ID),
           orden: parseInt(p.Orden) || 999,
           estado: p.Estado,
           tipo: p.Tipo ? p.Tipo.toLowerCase().trim() : "",
+
+          tipoPrecio: tipoPrecioRaw.toString().trim().toLowerCase(),
+          precioRegular:
+            parseFloat(p["Precio Regular"]) || parseFloat(p.Precio) || 0,
+          precioEspecial: parseFloat(p["Precio Especial"]) || 0,
+
+          tipoVariante: p["Tipo de Variante"]
+            ? p["Tipo de Variante"].toString().trim()
+            : "Color",
+
           esEstampado: p.EsEstampado
             ? p.EsEstampado.toString().trim().toUpperCase()
-            : "SI", // <--- NO TE OLVIDES DE AGREGAR ESTA LÍNEA ACÁ
+            : "SI",
           nombre: p.Nombre,
-          precio: parseFloat(p.Precio) || 0,
           beneficio: p.Beneficio ? p.Beneficio.trim() : "",
           etiqueta: p.Etiqueta ? p.Etiqueta.trim() : "Ninguno",
-          fechaIngreso: p["Fecha Ingreso"] || null,
           coleccion: p.Colección ? p.Colección.toLowerCase().trim() : "varios",
-          ambiente: p.Ambiente
-            ? p.Ambiente.split(",").map((s) => s.trim())
-            : [],
-          linea: p.Línea ? p.Línea.split(",").map((s) => s.trim()) : [],
-          material: p.Material
-            ? p.Material.split(",").map((s) => s.trim())
-            : [],
-          descripcion: p.Descripción,
           imagenes: p.Imágenes
             ? p.Imágenes.split(",").map((img) => {
                 const nombreLimpio = img.trim();
-
-                // 1. Caso Link completo (Cualquier sitio o Cloudinary con URL larga)
-                // if (nombreLimpio.startsWith("http")) {
-                //   if (nombreLimpio.includes("cloudinary.com")) {
-                //     return nombreLimpio.replace(
-                //       "/upload/",
-                //       "/upload/f_auto,q_auto/",
-                //     );
-                //   }
-                //   return nombreLimpio;
-                // }
-
-                // 2. Caso Cloudinary (Nombre corto sin punto, ej: conjunto-pijama-plush-2)
-                // if (
-                //   !nombreLimpio.includes(".") &&
-                //   !nombreLimpio.includes("/")
-                //  ) {
-                //   return `${CLOUDINARY_BASE}${nombreLimpio}`;
-                // }
-
-                // 3. Caso Local (Fotos viejas con punto, ej: pijama.jpg)
                 return `images/productos/${coleccionParaRuta}/${nombreLimpio}`;
               })
             : [],
@@ -161,38 +193,89 @@ async function cargarProductosDesdeSheet() {
         };
       });
 
-    // --- AQUÍ VA EL CAMBIO (JUSTO DESPUÉS DEL MAP) ---
+    // Ordenamiento
     nuevosProductos.sort((a, b) => {
       const ordenA = a.orden || 999;
       const ordenB = b.orden || 999;
 
-      // Si alguno tiene orden manual (distinto de 999), se ordenan por ese número
       if (ordenA !== 999 || ordenB !== 999) {
         return ordenA - ordenB;
       }
-
-      // Si no, el ID más alto (más nuevo) va primero
       return b.id - a.id;
     });
 
-    window.productos = nuevosProductos; // <--- ESTO ES VITAL
+    window.productos = nuevosProductos;
     localStorage.setItem("productos_cache", JSON.stringify(window.productos));
+    localStorage.setItem("productos", JSON.stringify(window.productos));
+
+    // AQUÍ ESTABA EL DETALLE: Llamamos a la sincronización con los datos frescos de Google
+    sincronizarCarritoConProductos();
 
     console.log("✅ Datos actualizados y guardados en window.productos");
     document.dispatchEvent(new CustomEvent("productosListos"));
-
-    // 4. ACTUALIZACIÓN DE MEMORIA Y CACHÉ
-    // Comparamos si lo nuevo es distinto a lo que teníamos para no refrescar innecesariamente
-    if (JSON.stringify(nuevosProductos) !== JSON.stringify(productos)) {
-      productos = nuevosProductos;
-      window.productos = nuevosProductos;
-      localStorage.setItem("productos_cache", JSON.stringify(productos));
-      document.dispatchEvent(new CustomEvent("productosListos"));
-      console.log("✅ Productos actualizados desde Google Sheets");
-    }
   } catch (error) {
     console.error("❌ Error cargando productos:", error);
   }
+}
+
+function generarHTMLPrecios(prod) {
+  const tipo = (prod.tipoPrecio || "unico").toLowerCase().trim();
+  const regFormatted = prod.precioRegular
+    ? prod.precioRegular.toLocaleString("es-AR")
+    : "0";
+  const espFormatted = prod.precioEspecial
+    ? prod.precioEspecial.toLocaleString("es-AR")
+    : "0";
+
+  // 1. Caso OFERTA
+  if (tipo.includes("oferta")) {
+    return `
+      <div class="precios">
+        <div class="caso-oferta">
+          <div class="etiqueta-oferta">OFERTA</div>
+          <p class="precio-anterior">$ ${regFormatted}</p>
+          <p class="precio-oferta">$ ${espFormatted}</p>
+        </div>
+      </div>`;
+  }
+
+  // 2. Caso POR MAYOR / MAYORISTA
+  if (
+    tipo.includes("mayor") ||
+    tipo.includes("por mayor") ||
+    tipo.includes("mayorista") ||
+    tipo.includes("pormayor")
+  ) {
+    return `
+      <div class="precios">
+        <div class="caso-mayor-menor">
+          <div class="por-mayor">
+            <div class="etiqueta-mayor">POR MAYOR</div>
+            <p class="precio-mayor">$ ${espFormatted}</p>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // 3. Caso DOCENA
+  if (tipo.includes("docena")) {
+    return `
+      <div class="precios">
+        <div class="caso-docena">
+          <div class="etiqueta-docena">DOCENA</div>
+          <p class="precio-docena">$ ${espFormatted}</p>
+        </div>
+      </div>`;
+  }
+
+  // 4. Caso ÚNICO (Default)
+  return `
+    <div class="precios">
+      <div class="caso-unico">
+        <div class="etiqueta-unico">ÚNICO PRECIO</div>
+        <p class="precio-unico">$ ${regFormatted}</p>
+      </div>
+    </div>`;
 }
 
 // Iniciamos la carga

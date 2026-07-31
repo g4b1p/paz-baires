@@ -2,17 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <link rel="icon" href="images/icons/paz-baires-logotipo-blanco-2.webp" />
     <link rel="stylesheet" href="css/estilos-comunes.css" />
     <link rel="stylesheet" href="css/home.css" />
     <title>Paz Baires</title>
+
+    <script type="text/javascript">
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, "clarity", "script", "xv4faet71w");
+    </script>
   </head>
   <body>
     <main>
       <section class="features">
         <div class="feature">
-          <img src="images/icons/transaccion-icon.webp" alt="" />
+          <img
+            src="images/icons/transaccion-icon.webp"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
           <h2>Compra segura</h2>
           <p>
             Una vez que realices tu pedido nos comunicamos para confirmarla y
@@ -20,57 +43,42 @@
           </p>
         </div>
         <div class="feature">
-          <img src="images/icons/envio-icon.webp" alt="" />
+          <img
+            src="images/icons/envio-icon.webp"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
           <h2>Envíos a todo el país</h2>
           <p>Hacemos envíos a todo el país ya sea por expreso o por correo.</p>
         </div>
       </section>
 
-      <section class="productos ofertas">
-        <h2 class="section-title">OFERTAS</h2>
-        <div class="carrusel-wrapper">
-          <img
-            src="images/icons/flecha-izq.webp"
-            class="flecha-carrusel prev"
-            onclick="scrollCarrusel(-1, 'grid-ofertas')"
-          />
-          <div class="grid-productos" id="grid-ofertas"></div>
-          <img
-            src="images/icons/flecha-der.webp"
-            class="flecha-carrusel next"
-            onclick="scrollCarrusel(1, 'grid-ofertas')"
-          />
-        </div>
-      </section>
-
       <section class="productos ingresos">
-        <h2 class="section-title">NUEVOS INGRESOS</h2>
+        <div class="cartel">NUEVOS INGRESOS!</div>
         <div class="carrusel-wrapper">
           <img
             src="images/icons/flecha-izq.webp"
             class="flecha-carrusel prev"
             onclick="scrollCarrusel(-1, 'grid-nuevos')"
+            loading="lazy"
+            decoding="async"
           />
+
           <div class="grid-productos" id="grid-nuevos"></div>
+
           <img
             src="images/icons/flecha-der.webp"
             class="flecha-carrusel next"
             onclick="scrollCarrusel(1, 'grid-nuevos')"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </section>
 
       <section class="sobre-nosotras">
-        <h2 class="section-title">SOBRE NOSOTRAS</h2>
-
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4005.604315587541!2d-58.48012092344262!3d-34.62585005866887!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcc993267983a1%3A0x953bd5fab119147!2sPASEO%20DE%20COMPRAS%20MUNDO%20TEXTIL!5e1!3m2!1ses-419!2sar!4v1768789438516!5m2!1ses-419!2sar"
-          width="100%"
-          height="300"
-          style="border: 0"
-          allowfullscreen=""
-          loading="lazy"
-        ></iframe>
+        <div class="not-cartel">SOBRE NOSOTRAS</div>
 
         <div class="info-sobre-nosotras">
           <div class="direccion">
@@ -78,6 +86,8 @@
               class="icon-direccion"
               src="images/icons/ubicacion-icon.webp"
               alt=""
+              loading="lazy"
+              decoding="async"
             />
             <h2>Dirección</h2>
             <p>
@@ -92,6 +102,8 @@
               class="icon-horarios"
               src="images/icons/horario-icon.webp"
               alt=""
+              loading="lazy"
+              decoding="async"
             />
             <h2>Horarios del local</h2>
             <div class="semana">
@@ -109,6 +121,14 @@
             </div>
           </div>
         </div>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4005.604315587541!2d-58.48012092344262!3d-34.62585005866887!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcc993267983a1%3A0x953bd5fab119147!2sPASEO%20DE%20COMPRAS%20MUNDO%20TEXTIL!5e1!3m2!1ses-419!2sar!4v1768789438516!5m2!1ses-419!2sar"
+          width="100%"
+          height="300"
+          style="border: 0"
+          allowfullscreen=""
+          loading="lazy"
+        ></iframe>
       </section>
     </main>
     <script src="js/home.js"></script>

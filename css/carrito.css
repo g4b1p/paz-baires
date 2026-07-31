@@ -1,29 +1,23 @@
-main {
-    padding-top: 140px;
-}
-
+/*-----------------CARRITO-----------------*/
 .carrito-wrapper {
     display: flex;
-    gap: 30px;
-    max-width: 1200px;
     width: 100%;
     align-items: flex-start;
-    padding-bottom: 50px;
-    margin: 0 auto;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 60px;
 }
 
-/* --- TABLA DE PRODUCTOS --- */
+/*-----------------ITEMS CARRITO-----------------*/
 .items-container {
     flex: 2;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    color: #ffffff;
+    background-color: #c1acf7;
     padding: 20px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.4);
-    /* Más transparente */
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    /* El "brillo" del borde */
-    color: white;
+    border: 2px solid #ffffff;
 }
 
 .carrito-tabla {
@@ -33,118 +27,121 @@ main {
 
 .carrito-tabla th {
     text-align: start;
-    padding-bottom: 20px;
+    font-size: 13px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #eee;
-    font-size: 10px;
-    padding: 8px 15px;
-}
-
-/* Estilo de los textos de info */
-.info-texto h3 {
-    font-size: 1rem;
-    margin-bottom: 5px;
-    color: white;
-    max-width: 200px;
-}
-
-.variante-tag {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.stock-tag {
-    font-size: 0.7rem;
-    color: #b97cf2;
-    /* Un lila encendido para indicar que hay stock */
-    font-weight: bold;
-    margin-top: 5px;
 }
 
 .carrito-item td {
-    padding: 8px 10px;
-    font-size: 10px;
+    padding: 10px 0;
+    font-size: 12px;
     border-bottom: 1px solid #eee;
 }
 
+.info-texto {
+    margin-right: 23px;
+}
+
+.info-texto p {
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.variante-tag {
+    font-size: 12px;
+}
+
 .prod-detalles {
     display: flex;
     align-items: center;
-    gap: 15px;
-    position: relative;
-}
-
-.btn-remove {
-    background: none;
-    border: none;
-    font-size: 24px;
-    /* Un poco más grande para que se vea bien */
-    cursor: pointer;
-    color: #eee;
-    /* Gris suave */
-    transition: color 0.3s, transform 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-remove:hover {
-    color: #ff4d4d;
-    /* Se pone roja al pasar el mouse */
-    transform: scale(1.2);
-}
-
-/* Alineación de la celda de la X */
-.prod-remove {
-    text-align: right;
-    width: 40px;
-}
-
-/* Ajuste para que los detalles no se peguen a la imagen */
-.prod-detalles {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    /* Quitamos el position relative si lo tenía */
+    gap: 10px;
 }
 
 .prod-detalles img {
     width: 80px;
     height: 100px;
+    aspect-ratio: 3/4;
     object-fit: cover;
     border-radius: 10px;
 }
 
-.info-texto p {
-    font-size: 0.75rem;
-    margin: 2px 0;
-    color: #eee;
+.badge-precio {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.65rem;
+    font-weight: bold;
+    margin-top: 5px;
+    color: white;
 }
 
-/* --- SELECTOR CANTIDAD --- */
+.badge-oferta {
+    background-color: #ff4d4d;
+}
+
+.badge-mayor {
+    background-color: #52a95c;
+}
+
+.badge-docena {
+    background-color: #ffb703;
+    color: #000;
+}
+
+.badge-minorista {
+    background-color: #8f7bc7;
+}
+
+.precio-viejo {
+    text-decoration: line-through;
+    opacity: 0.6;
+    font-size: 0.8rem;
+    margin-right: 5px;
+    display: block;
+}
+
+/* Cambia los estilos activos de las tarjetas para que funcionen con JS */
+.option-card input:checked+.option-info {
+    opacity: 1;
+}
+
+.btn-remove {
+    background: none;
+    border: none;
+    font-size: 35px;
+    cursor: pointer;
+    color: #b65353;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prod-remove {
+    text-align: right;
+    width: 40px;
+}
+
 .qty-selector {
     display: flex;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid #ffffff;
     align-items: center;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
+    background-color: #ad95ef;
+    border-radius: 20px;
     width: fit-content;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
 }
 
 .qty-selector button {
     background: none;
     border: none;
-    padding: 0;
     cursor: pointer;
     color: white;
     width: 20px;
-    height: 30px;
-    font-size: 15px;
-    transition: background 0.2s;
+    font-size: 20px;
 }
 
 .qty-selector input {
-    width: 25px;
+    width: 20px;
     font-size: 12px;
     font-family: 'Unbounded';
     padding: 0;
@@ -162,165 +159,196 @@ main {
     margin: 0;
 }
 
-/* --- BOTÓN SEGUIR COMPRANDO --- */
-.btn-seguir-comprando {
+.btn-volver {
     display: inline-block;
     margin-top: 20px;
-    background: #b97cf2;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    color: white;
-    padding: 12px 25px;
-    border-radius: 15px;
+    border-radius: 20px;
     text-decoration: none;
-    font-weight: bold;
-    font-size: 0.8rem;
+    color: #ffffff;
+    padding: 15px 20px;
+    border: 2px solid #ffffff;
+    text-align: center;
+    background-color: #7454d9;
 }
 
-/* --- PANEL LATERAL TOTALES --- */
+.btn-volver p {
+    margin: 0;
+    font-size: 11px;
+}
+
+/*-----------------TOTALES Y DATOS-----------------*/
 .totales-container {
     flex: 1;
-}
-
-.totales-card {
-    background: rgba(255, 255, 255, 0.2);
-    /* Más transparente */
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    /* El "brillo" del borde */
-    padding: 30px;
+    color: #ffffff;
+    background-color: #c1acf7;
+    padding: 20px;
     border-radius: 20px;
-    color: white;
+    border: 2px solid #ffffff;
 }
 
-.totales-card h2 {
-    font-size: 1rem;
-    margin-top: 0;
-    text-align: center;
-}
-
-/* Contenedores generales */
-.pago-section {
-
-    border-bottom: 0;
-    padding-bottom: 15px;
-}
-
-.envio-section {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 15px;
-}
-
-
-.envio-section p,
-.pago-section p {
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-}
-
-/* Tarjeta de Opción (Envío y Pago) */
-.option-card {
+.input-group {
     display: flex;
-    align-items: flex-start;
-    background: rgba(255, 255, 255, 0.08);
-    /* Fondo sutil traslúcido */
-    padding: 12px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    flex-direction: column;
+    gap: 5px;
     margin-bottom: 10px;
 }
 
-.option-card:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
+.input-group label {
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
 }
 
-/* Estilo del Radio Button */
-.option-card input[type="radio"] {
-    margin-top: 4px;
-    margin-right: 12px;
-    accent-color: rgb(140, 93, 185);
-    /* Color lila de tu marca */
-    transform: scale(1.1);
-}
-
-/* Información interna */
-.option-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.option-info strong {
+.input-group input,
+.input-group select,
+textarea {
+    background: white;
+    border: 2px solid transparent;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-family: 'Unbounded', sans-serif;
     font-size: 0.85rem;
+    color: #000000;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.input-group input::placeholder {
+    color: #ad95ef;
+}
+
+textarea {
+    min-height: 80px;
+    resize: none;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+textarea:focus {
+    outline: none;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hr-carrito {
+    border: 1px solid;
+    border-radius: 50px;
+    color: #ffffff;
+    opacity: 0.3;
+}
+
+.option-card p {
+    margin: 0;
+}
+
+.option-card {
+    display: flex;
+    padding: 15px;
+    border-radius: 15px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border: 2px solid #ffffff;
+    background-color: #ad95ef;
+    transition: all 0.3s ease;
+}
+
+.option-card.active {
+    background-color: #a273ec;
+    outline: none;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.option-card input[type="radio"] {
+    display: none;
+}
+
+.help-p {
+    font-size: 11px;
+}
+
+.desglose-box {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 15px;
+    margin-top: 20px;
+    border: 1px dashed #ffffff;
+}
+
+.desglose-linea {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
     color: #fff;
-    margin-bottom: 2px;
 }
 
-.option-info span {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
-    /* Texto secundario más suave */
-    line-height: 1.2;
+.desglose-linea.ahorro {
+    color: #fff;
 }
 
-/* Efecto visual al seleccionar */
-.option-card:has(input:checked) {
-    background: rgb(185, 124, 242);
-    /* Fondo lila suave al marcar */
-    border-color: rgb(255, 255, 255);
+.subtotal-not-ahorro {
+    text-decoration: line-through;
+}
+
+.subtotal-ahorro {
+    font-weight: bold;
 }
 
 .total-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    padding-top: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
 }
 
-.total-price {
-    font-size: 1.4rem;
+.total-row h3,
+.total-row h2 {
+    margin: 10px 0 0 0;
+}
+
+.btn-enviar {
+    padding: 12px 5px;
+    background-color: #65cf72;
+    color: #ffffff;
     font-weight: bold;
-}
-
-.btn-finalizar, .btn-finalizar-carrito-vacio {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+    gap: 5px;
+    font-family: "Unbounded", sans-serif;
     width: 100%;
-    background: #b97cf2;
-    color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 15px;
-    font-family: 'Unbounded';
-    font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-enviar img {
+    width: 22px;
 }
 
 /*----------------RESONSIVE----------------*/
-
-@media (max-width: 900px) {
-
+@media (max-width: 1350px) {
     main {
-        padding-top: 180px;
-        /* Más espacio para el header responsive */
+        margin-top: 160px;
     }
 
     .carrito-wrapper {
         flex-direction: column;
-        /* Apila la tabla y los totales */
         align-items: stretch;
     }
 
     .totales-container {
         width: 100%;
-        margin-top: 20px;
     }
 
-    /* Convertimos la tabla en bloques */
+    .items-container {
+        width: 100%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
     .carrito-tabla,
     .carrito-tabla thead,
     .carrito-tabla tbody,
@@ -331,7 +359,6 @@ main {
         width: 100%;
     }
 
-    /* Ocultamos los encabezados de la tabla (Producto, Precio, etc.) */
     .carrito-tabla thead {
         display: none;
     }
@@ -339,13 +366,10 @@ main {
     .carrito-item {
         display: block;
         position: relative;
-        /* Clave para que la X se posicione respecto a esto */
-        padding: 30px 10px 15px 10px;
-        /* Espacio extra arriba para la X */
+        padding: 15px;
         margin-bottom: 15px;
-        background: rgba(255, 255, 255, 0.05);
-        /* Un fondo sutil para separar productos */
         border-radius: 15px;
+        background-color: #ad95ef;
     }
 
     .carrito-item td {
@@ -354,20 +378,18 @@ main {
         text-align: left;
     }
 
-    /* Ajuste de imagen y textos */
     .prod-detalles {
         flex-direction: row;
         align-items: center;
-        margin-bottom: 10px;
-        padding-right: 30px;
     }
 
     .prod-detalles img {
-        width: 80px;
+        width: 90px;
         height: auto;
+        aspect-ratio: 3/4;
+        object-fit: cover;
     }
 
-    /* Posicionamos la X de eliminar arriba a la derecha */
     .prod-remove {
         position: absolute;
         top: 10px;
@@ -381,7 +403,6 @@ main {
         z-index: 10;
     }
 
-    /* Precios y Cantidad */
     .prod-precio,
     .prod-qty,
     .prod-subtotal {
@@ -391,41 +412,44 @@ main {
         font-size: 0.9rem !important;
     }
 
-    /* Agregamos etiquetas con :before para que el usuario sepa qué es cada número */
     .prod-precio:before {
-        content: "Precio:";
-        opacity: 0.7;
-        font-size: 0.7rem;
+        content: "Precio: ";
+        opacity: 0.8;
+        font-size: 0.8rem;
     }
 
     .prod-qty:before {
         content: "Cantidad:";
-        opacity: 0.7;
-        font-size: 0.7rem;
+        opacity: 0.8;
+        font-size: 0.8rem;
     }
 
     .prod-subtotal:before {
-        content: "Subtotal:";
-        opacity: 0.7;
-        font-size: 0.7rem;
+        content: "Subtotal: ";
+        opacity: 0.8;
+        font-size: 0.8rem;
     }
 
     .qty-selector {
-        margin-left: auto;
-        /* Empuja el selector a la derecha */
+        margin: 5px 0;
     }
 
-    .totales-card {
-        padding: 20px;
+    .btn-volver {
+        margin-top: 0;
+        border-radius: 15px;
+        padding: 12px 15px;
     }
 
-    .total-price {
-        font-size: 1.2rem;
+    .btn-enviar {
+        font-size: 13px;
+    }
+
+    .btn-enviar img {
+        width: 20px;
     }
 }
 
 @media (max-width: 400px) {
-
     .total-price {
         font-size: 1.1rem;
     }

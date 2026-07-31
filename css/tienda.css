@@ -1,46 +1,111 @@
-/* Configuración General del Contenedor */
-.tienda-main {
-    padding: 0 1%;
-    padding-bottom: 80px;
-    /* Reducido un poco para dar aire a las cards */
-    max-width: 1400px;
-    margin: 0 auto;
-    margin: 120px auto 0 auto;
+/*-----------------FILTROS-----------------*/
+.contenedor-busqueda {
+    max-width: 600px;
+    position: relative;
+    margin-bottom: 15px;
 }
 
-/* 1. Header de la tienda: Ahora se pega arriba de todo */
-.tienda-header-sticky {
-    position: sticky;
-    top: 0;
-    z-index: 900;
-    padding: 15px 0;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-    /* Transición suave para el fondo y la sombra */
-    background: transparent;
-    /* Empieza transparente */
-    border-radius: 0 0 50px 50px;
+#buscador-input {
+    font-family: "Unbounded", sans-serif;
+    border: 2px solid #ffffff;
+    border-radius: 20px;
+    font-size: 15px;
+    outline: none;
+    background-color: #7454d9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    /* Padding derecho espacio para botón X (right: 45px) y Lupa (right: 15px) */
+    padding: 10px 80px 10px 20px;
+    box-sizing: border-box;
+    color: white;
 }
 
-.tienda-header-sticky.scrolled {
-    background: rgba(255, 255, 255, 0.95);
-    /* Blanco con un pelín de transparencia */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    /* Sombrita para separarlo de los productos */
-    padding: 10px 0;
-    /* Se hace un poquito más flaco para ganar espacio */
+#buscador-input::placeholder {
+    color: rgba(255, 255, 255, 0.85);
 }
 
-/* 3. Contenedor flexible: Quitamos el margin exagerado para evitar espacios raros */
-.contenedor-flexible {
+/* BOTÓN LIMPIAR BUSQUEDA (X) */
+.limpiar-btn {
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
     display: flex;
-    gap: 30px;
-    align-items: flex-start;
-    margin-top: 10px;
-    /* Reducido para que se vea pegado al header de la tienda */
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
 }
 
-/* Un mensaje simple de carga */
+.limpiar-btn:hover {
+    opacity: 0.7;
+}
+
+.limpiar-btn.hidden {
+    display: none;
+}
+
+/* BOTÓN LUPA */
+.lupa-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.lupa-btn img {
+    width: 20px;
+    height: auto;
+}
+
+.filters-categories p {
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.categories {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    font-family: "Unbounded", sans-serif;
+    padding: 10px 15px;
+    border-radius: 15px;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    background-color: #b591ef;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.category-btn.active {
+    background-color: #ffffff;
+    color: #7454d9;
+    font-weight: bold;
+}
+
+.sin-resultados {
+    color: #ffffff;
+}
+
+/*-----------------PRODCUTOS-----------------*/
 #contenedor-tienda:empty::after {
     content: "Cargando catálogo...";
     display: block;
@@ -50,329 +115,46 @@
     font-size: 1.2rem;
 }
 
-/* Contenedor y Caja de Búsqueda */
-.contenedor-busqueda {
-    max-width: 600px;
-    margin: 10px auto 10px auto;
-    padding: 0 15px;
-}
-
-#buscador-input {
-    font-family: "Unbounded", sans-serif;
-    width: 100%;
-    padding: 10px 17px;
-    border: 1px solid #ddd;
-    border-radius: 30px;
-    font-size: 15px;
-    outline: none;
-    transition: all 0.3s ease;
-    background-color: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-}
-
-/* Efecto focus al hacer clic para escribir */
-#buscador-input:focus {
-    /* Poné acá el color rosa/violeta de tu marca */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* 4. Botones de filtros (Manteniendo tu estilo compacto) */
-.filtros-superiores {
+.grid-productos {
     display: flex;
+    justify-content: start;
     flex-wrap: wrap;
-    /* <--- Esto permite que bajen a la siguiente línea */
     gap: 10px;
-    /* Espacio entre botones */
-    justify-content: center;
-    /* Los mantiene centrados */
-    padding: 10px;
-    overflow-x: visible;
-    /* <--- Eliminamos el scroll lateral */
-}
-
-.filter-btn {
-    padding: 10px 15px;
-    font-size: 0.85rem;
-    border: 1px solid #ddd;
-    border-radius: 30px;
-    background: white;
-    cursor: pointer;
-    transition: 0.3s;
-    font-family: inherit;
-}
-
-.filter-btn.active,
-.filter-btn:hover {
-    background: #ff6b6b;
-    color: white;
-    border-color: #ff6b6b;
-    font-weight: bold;
-}
-
-/* Sidebar Estilo */
-.sidebar-filtros {
-    width: 250px;
-    flex-shrink: 0;
-    background: white;
-    padding: 20px;
-    border-radius: 30px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-
-    /* --- LA MAGIA ESTÁ AQUÍ --- */
-    position: sticky;
-    top: 155px;
-    /* Para que no choque con el header */
-    max-height: calc(100vh - 100px);
-    /* Altura máxima: Pantalla completa menos un margen */
-    overflow-y: auto;
-    /* Si los filtros no entran, aparece scroll interno */
-    display: flex;
-    flex-direction: column;
-}
-
-/* Para que el scroll interno sea elegante y no el feo de Windows */
-.sidebar-filtros::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar-filtros::-webkit-scrollbar-thumb {
-    background: #f0f0f0;
-    border-radius: 10px;
-}
-
-.sidebar-filtros::-webkit-scrollbar-thumb:hover {
-    background: #ff6b6b;
-    /* Se pone coral al pasar el mouse */
-}
-
-.grupo-filtro {
-    margin: 0;
-    font-size: 13px;
-}
-
-.grupo-filtro h4 {
-    font-family: "Unbounded", sans-serif;
-    font-size: 0.8rem;
-    margin: 5px 0 10px 0;
-    color: #333;
-}
-
-.skeleton {
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.skeleton-img,
-.skeleton-text {
-    background: #f0f0f0;
-    background-image: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading-skeleton 1.5s infinite linear;
-}
-
-@keyframes loading-skeleton {
-    0% {
-        background-position: 200% 0;
-    }
-
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-/* Grilla de Productos Fija */
-.grid-productos-fijo {
-    display: flex;
-    flex-wrap: wrap;
-    /* Clave para que el 4to producto baje */
-    gap: 25px;
-    /* Espacio entre cards */
-    justify-content: flex-start;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding: 10px 0;
     width: 100%;
-    flex-grow: 1;
-    /* Ocupa el resto del espacio */
-}
-
-.btn-limpiar {
-    background: #ff6b6b;
-    color: #ffffff;
-    font-weight: bold;
-    border: 0;
-    font-family: "Unbounded", sans-serif;
-    padding: 10px;
-    font-size: 0.7rem;
-    border-radius: 30px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 15px;
-    transition: 0.3s;
-}
-
-.btn-limpiar:hover {
-    background: #ff5e5e;
-    color: rgb(255, 255, 255);
-}
-
-/* Diseño de la Tarjeta (ESTRICTO con tus estilos) */
-.producto-card {
-    background-color: #ffffff;
-    border-radius: 40px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    flex: 1 1 300px;
-    max-width: calc((100% - (25px * 2)) / 3);
-    box-sizing: border-box;
-    /*margin: 0;*/
+    margin-bottom: 40px;
 }
 
 .producto-card img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1/1;
-    /* Mantiene la imagen cuadrada */
-    object-fit: cover;
-    border: 15px solid #ffffff;
-    /* Tu marco blanco */
-    border-radius: 40px;
     box-sizing: border-box;
-}
-
-/* Contenedor de la tarjeta cuando no hay stock */
-.producto-card.sin-stock {
-    opacity: 0.8;
-    position: relative;
-}
-
-/* Base del cartelito (Badge) */
-.badge-sin-stock {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    background: rgba(165, 0, 0, 0.85);
-    color: white;
-    padding: 7px 15px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    border-radius: 10px;
-    z-index: 10;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Color naranja para estados especiales (Últimos Disponibles, etc.) */
-.badge-alerta {
-    background-color: #cf3025 !important;
-}
-
-/* Color lila para el nuevo estado (Próximamente) */
-.badge-proximamente {
-    background-color: #883eff !important;
-    /* El lila de Paz Baires */
-    color: white;
-}
-
-/* Opcional: Si querés que la tarjeta de próximamente no se vea tan opaca como la de sin stock */
-.producto-card.proximamente {
-    opacity: 0.95;
-    position: relative;
-}
-
-.producto-info {
-    padding: 0 20px;
-}
-
-.producto-name {
-    margin: 0;
-}
-
-/* Colores */
-.colors {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    height: 25px;
-    /* Evita que la card salte si no hay colores */
-}
-
-.color {
-    width: 25px;
-    height: 25px;
-    border-radius: 100px;
-}
-
-/* Botón Violeta */
-.btn-ver-mas {
-    background-color: #b591ef;
-    color: #ffffff;
-    font-weight: bold;
-    padding: 8px;
-    border-radius: 20px;
-    border: none;
-    font-family: "Unbounded", sans-serif;
-    margin: 20px 0;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    /* Centra horizontalmente */
-    align-items: center;
-    /* Centra verticalmente (opcional) */
+    aspect-ratio: 3/4;
+    object-fit: cover;
     width: 100%;
-}
-
-.btn-ver-mas a {
-    text-decoration: none;
-    color: #ffffff;
-}
-
-.producto-href {
-    text-decoration: none;
-    color: black;
-}
-
-.lista-check {
-    list-style: none;
-    padding: 0;
-}
-
-.lista-check li {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.8rem;
-    cursor: pointer;
-}
-
-.lista-check input[type="checkbox"] {
-    accent-color: #ff6b6b;
-    /* Color coral para los checks */
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-/* Esto hace que las cards aparezcan con un fundido suave */
-.grid-productos-fijo {
-    transition: opacity 0.3s ease;
+    border: 0;
+    border-radius: 20px;
 }
 
 .producto-card {
-    animation: fadeIn 0.4s ease forwards;
-}
-
-.precio-container {
-    margin-bottom: 10px;
-}
-
-.precio {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    flex: 0 0 calc((100% - 20px) / 3);
+    min-width: calc((100% - 20px) / 3);
     margin: 0;
-    font-size: 17px;
+    display: flex;
+    /* NUEVO: Convierte la card en columna flexible */
+    flex-direction: column;
+    /* NUEVO */
+    animation: fadeInCard 0.4s ease forwards;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInCard {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(15px);
     }
 
     to {
@@ -381,226 +163,215 @@
     }
 }
 
-/* Ocultar elementos de móvil por defecto en PC */
-.btn-flotante-filtros,
-.sidebar-header-mobile,
-.sidebar-footer-mobile,
-.filtros-overlay {
-    display: none;
+.producto-href {
+    text-decoration: none;
+    color: #000000;
 }
 
-/*----------------RESONSIVE----------------*/
+.info-prod {
+    display: flex;
+    /* NUEVO: Distribuye los textos y el botón internamente */
+    flex-direction: column;
+    /* NUEVO */
+    flex-grow: 1;
+    /* NUEVO: Ocupa todo el alto restante de la tarjeta */
+    justify-content: space-between;
+    /* NUEVO: Empuja el botón al fondo de forma limpia */
+    padding: 10px;
+    /* Reemplazamos el margin por padding */
+    margin: 0;
+}
 
-@media (max-width: 1200px) {
+.info-prod p {
+    margin: 5px 0;
+}
 
-    .grid-productos-fijo {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        /* Fundamental para que se pongan uno al lado del otro */
-        gap: 15px !important;
-        /* Espacio entre las 2 columnas */
-        justify-content: center;
-        /* Centra los productos si sobra espacio */
-        width: 100%;
-        padding: 0;
-    }
+.producto-header,
+.precios {
+    margin-bottom: 20px;
+}
 
-    /* 2. AJUSTAR LAS CARDS */
+.opciones {
+    color: #b591ef;
+    font-weight: 800;
+}
+
+.btn-ver-mas {
+    width: 100%;
+    font-family: "Unbounded", sans-serif;
+    color: #ffffff;
+    background-color: #b591ef;
+    font-weight: 800;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Base del cartelito (Badge) */
+.badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #cf3025;
+    color: #ffffff;
+    padding: 8px 15px;
+    font-size: 15px;
+    font-weight: bolder;
+    border-radius: 10px;
+    z-index: 10;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.precio-oferta,
+.precio-mayor,
+.precio-docena,
+.precio-unico {
+    font-size: 18px;
+}
+
+.etiqueta-oferta {
+    background-color: #ff5757;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 2px;
+    width: 70px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.precio-anterior {
+    font-size: 13px;
+    color: #979797;
+    text-decoration: line-through;
+}
+
+.etiqueta-mayor {
+    background-color: #7454d9;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 2px;
+    width: 95px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.etiqueta-docena {
+    background-color: #00bf63;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 2px;
+    width: 75px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.etiqueta-unico {
+    background-color: #0079bf;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 3px;
+    width: 110px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+/*-----------------RESPONSIVE-----------------*/
+@media (max-width: 1100px) {
     .producto-card {
-        /* Restamos el gap para que el cálculo sea exacto */
-        flex: 0 0 calc((100% - 15px) / 2) !important;
-        max-width: calc((100% - 15px) / 2) !important;
-        min-width: 0 !important;
-        /* Resetea el min-width previo si existía */
-        margin: 0;
-    }
-
-    /* 3. AJUSTAR IMÁGENES (Para que no se desborden) */
-    .producto-img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
+        /* Calculamos para que entren 2 productos y 1 gap de 20px */
+        flex: 0 0 calc((100% - 10px) / 2);
+        min-width: calc((100% - 10px) / 2);
     }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
+    main {
+        margin-top: 150px;
+    }
+}
 
-    .contenedor-busqueda {
-        max-width: 90%;
-        margin-top: 8px;
+@media (max-width: 650px) {
+    .category-btn {
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 11px;
     }
 
     #buscador-input {
-        padding: 10px 15px;
-        font-size: 0.9rem;
+        font-size: 13px;
     }
 
-    /* --- TIENDA Y LAYOUT --- */
-    .tienda-main {
-        margin-top: 180px;
+    .badge {
+        padding: 6px;
+        font-size: 10px;
+        border-radius: 8px;
     }
 
-    .tienda-header-sticky {
-        position: sticky;
-        top: 0;
-        /* Se pega al borde superior del navegador al scrollear */
-        z-index: 900;
-        border-radius: 0 0 30px 30px;
-        padding: 5px 10px;
-        margin-bottom: 20px;
+
+
+    .producto-header,
+    .precios {
+        margin-bottom: 15px;
     }
 
-    .filter-btn {
-        flex: 0 1 auto;
-        /* Permite que el botón crezca o se encoja según su texto */
-        font-size: 0.8rem;
-    }
-
-    .contenedor-flexible {
-        flex-direction: column;
-        /* Apilamos en móvil */
-    }
-
-    /* --- GRILLA DE PRODUCTOS (2 COLUMNAS) --- */
-    .grid-productos-fijo {
-        gap: 15px;
+    .btn-ver-mas {
+        padding: 5px;
+        font-size: 12px;
     }
 
     .producto-card {
-        max-width: calc((100% - 15px) / 2);
-        flex: 1 1 calc((100% - 15px) / 2);
-        border-radius: 25px;
+        border-radius: 10px;
     }
 
     .producto-card img {
-        border: 8px solid #ffffff;
-        border-radius: 25px;
+        border-radius: 10px;
     }
 
-    /* --- BOTÓN FLOTANTE Y OVERLAY --- */
-    .btn-flotante-filtros {
-        display: flex;
-        justify-content: center;
-        align-self: flex-end;
-        /* Lo alinea a la derecha dentro del contenedor flexible */
-        margin-bottom: 20px;
-        background: #ff6b6b;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 30px;
-        font-family: 'Unbounded', sans-serif;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    .producto-name {
+        font-size: 12px;
     }
 
-    .filtros-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        /* Negro semi-transparente */
-        backdrop-filter: blur(5px);
-        /* <--- ESTO DESENFOCA EL FONDO */
-        -webkit-backdrop-filter: blur(5px);
-        /* Soporte para Safari */
-        z-index: 2500;
-        display: none;
+    .opciones {
+        font-size: 10px;
     }
 
-    .filtros-overlay.active {
-        display: block;
+    .precio-oferta,
+    .precio-mayor,
+    .precio-docena,
+    .precio-unico {
+        font-size: 15px;
     }
 
-    .sidebar-filtros {
-        position: fixed !important;
-        /* Cambiamos bottom por top para tener control total desde arriba */
-        top: 100% !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 75vh !important;
-        /* No ocupa toda la pantalla para que sepa que puede volver */
-        background: white !important;
-        backdrop-filter: blur(10px) !important;
-        /* Desenfoque interno */
-        -webkit-backdrop-filter: blur(10px);
-        z-index: 3000 !important;
-        border-radius: 30px 30px 0 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        transform: translateY(10px) !important;
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        overflow-y: auto !important;
-        box-shadow: none !important;
-        /* Quitamos sombra inicial para que no "brille" abajo */
+    .etiqueta-oferta {
+        font-size: 10px;
+        width: 65px;
     }
 
-    /* ESTADO ACTIVO: Sube a su posición original */
-    .sidebar-filtros.active {
-        transform: translateY(-75vh) !important;
-        background: white !important;
-        box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.15) !important;
+    .precio-anterior {
+        font-size: 12px;
     }
 
-    /* Cabezal del Panel */
-    .sidebar-header-mobile {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
-        position: relative;
-        z-index: 1005;
+    .etiqueta-mayor {
+        font-size: 10px;
+        width: 90px;
     }
 
-    .btn-cerrar-filtros {
-        background: #f5f5f5;
-        border: none;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        font-weight: bold;
-        cursor: pointer;
-        /* Para que parezca un botón */
-        font-size: 1.2rem;
+    .etiqueta-docena {
+        font-size: 10px;
+        width: 65px;
     }
 
-    /* Footer del Panel */
-    .sidebar-footer-mobile {
-        display: block;
-        padding: 0;
-        margin: 15px 0;
-        /* Empuja el botón abajo de todo */
-    }
-
-    .btn-aplicar-mobile {
-        width: 100%;
-        color: white;
-        border: none;
-        padding: 10px;
-        font-family: 'Unbounded', sans-serif;
-        cursor: pointer;
-        background: #ff6b6b;
-        font-weight: bold;
-        font-size: 0.7rem;
-        border-radius: 30px;
-        /*margin-top: 15px;
-        transition: 0.3s;*/
-    }
-
-    /* Base del cartelito (Badge) */
-    .badge-sin-stock {
-        padding: 5px;
-        font-size: 9px;
-        top: 10px;
-        left: 10px;
-    }
-
-    /* Color naranja para estados especiales (Últimos Disponibles, etc.) */
-    .badge-alerta {
-        padding: 5px;
-        font-size: 9px;
+    .etiqueta-unico {
+        font-size: 10px;
+        width: 100px;
     }
 }

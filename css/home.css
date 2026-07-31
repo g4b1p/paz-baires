@@ -1,229 +1,143 @@
+/*-----------------VIDEO-----------------*/
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    /* Ajusta la altura (80% de la pantalla) */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    z-index: 1;
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.video-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    height: auto;
+    z-index: -1;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    /* Volvemos a cover porque el video ya viene con el formato correcto */
+    /* Cambiamos cover por contain para que se vea TODO el video */
+    background-color: rgb(255, 255, 255);
+    /* Opcional: por si el video no llena todo el alto, que el fondo sea negro */
+    width: 100%;
+    /* Ocupa todo el ancho */
+    display: block;
+}
+
+.video-movil {
+    display: none !important;
+}
+
+.video-pc {
+    display: block !important;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: white;
+    /* MEZCLA: Empieza con negro 40%, y termina con el violeta de tu marca */
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.4) 0%,
+            /* Oscuridad arriba */
+            rgba(0, 0, 0, 0.4) 60%,
+            /* Mantiene la oscuridad hasta el 60% */
+            #7454d9 100%
+            /* Funde hacia tu color al final */
+        );
+}
+
+/* Aplica esto a los textos (h1, h2, p) que estén dentro del video */
+.video-overlay h1 {
+    font-size: 45px;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    /* Ocupa el ancho disponible */
+    max-width: 800px;
+    /* Evita que las líneas sean infinitas en PC */
+}
+
+/*-----------------FEATURES (ENVIO Y PAGO)-----------------*/
 .features {
-    margin: 70px 0;
+    margin: 40px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .feature {
-    border: 4px solid #ffffff;
+    border: 3px solid #ffffff;
     color: #ffffff;
-    border-radius: 50px;
-    padding: 30px;
-    width: 45%;
+    border-radius: 40px;
+    padding: 20px;
+    width: 48%;
     height: auto;
     text-align: center;
     box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
 }
 
 .feature img {
-    width: 120px;
+    width: 110px;
     height: auto;
 }
 
-.section-title {
-    background-color: #ffffff;
-    color: #b591ef;
-    font-size: 30px;
+/*-----------------CARTEL-----------------*/
+.cartel {
     padding: 15px;
-    border-radius: 20px;
+    border-radius: 30px;
     text-align: center;
-    margin: 20px 0;
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    font-weight: 800;
+    font-size: 2.5rem;
+    /* Animación de parpadeo */
+    animation: parpadeo 1s infinite;
 }
 
-.section-title-inverse {
-    background-color: #b591ef;
-    color: #ffffff;
-    font-size: 30px;
-    padding: 15px;
-    border-radius: 20px;
-    text-align: center;
-    margin: 20px 0;
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
-}
+@keyframes parpadeo {
 
-.carrusel-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.grid-productos {
-    display: flex;
-    /* Mantenemos flex para que se pongan en línea */
-    gap: 20px;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    padding: 20px 0;
-    width: 100%;
-}
-
-.producto-card {
-    position: relative;
-    /* <--- ESTO ES LO QUE FALTA */
-    background-color: #ffffff;
-    border-radius: 40px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    flex: 0 0 calc((100% - 40px) / 3);
-    min-width: calc((100% - 40px) / 3);
-    margin: 0;
-}
-
-.producto-card img {
-    box-sizing: border-box;
-    /* Incluye el padding y el borde en el ancho total */
-    aspect-ratio: 1/1;
-    /* Mantiene la imagen cuadrada */
-    object-fit: cover;
-    width: 100%;
-    border: 15px solid #ffffff;
-    border-radius: 40px;
-}
-
-.producto-info {
-    padding: 0 20px;
-}
-
-.producto-name {
-    margin: 0;
-}
-
-.colors {
-    display: flex;
-}
-
-.color-option {
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-}
-
-.color-option input {
-    display: none;
-}
-
-.color {
-    width: 25px;
-    height: 25px;
-    border-radius: 100px;
-}
-
-.btn-ver-mas {
-    background-color: #b591ef;
-    color: #ffffff;
-    font-weight: bold;
-    padding: 8px;
-    border-radius: 20px;
-    border: none;
-    font-family: "Unbounded", sans-serif;
-    margin: 20px 0;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    /* Centra horizontalmente */
-    align-items: center;
-    /* Centra verticalmente (opcional) */
-    width: 100%;
-}
-
-.btn-ver-mas a {
-    text-decoration: none;
-    color: #ffffff;
-}
-
-.producto-href {
-    text-decoration: none;
-    color: black;
-}
-
-.ofertas,
-.ingresos {
-    margin-bottom: 100px;
-}
-
-/* Animación de carga (Skeleton) */
-.skeleton {
-    background: #f0f0f0;
-    border-radius: 8px;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.skeleton-img {
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-}
-
-.skeleton-text {
-    height: 15px;
-    margin: 15px;
-    background: #e0e0e0;
-    border-radius: 4px;
-    animation: loading 1.5s infinite;
-}
-
-.skeleton-text.short {
-    width: 60%;
-}
-
-
-.precio-container {
-    margin-bottom: 10px;
-}
-
-.precio-tachado {
-    display: block;
-    font-size: 12px;
-    color: #818181;
-    text-decoration: line-through;
-    margin-bottom: 5px;
-    /* Para que el precio real quede pegadito */
-}
-
-.precio {
-    margin: 0;
-    font-size: 17px;
-}
-
-
-@keyframes loading {
-    0% {
-        background-position: 200% 0;
-    }
-
+    0%,
     100% {
-        background-position: -200% 0;
+        background-color: white;
+        color: #b591ef;
+        /* Color de letra claro */
+        /* Capas: sombra 1 y sombra 2 */
+        text-shadow: 3px 3px 0px #c6abf1;
+    }
+
+    50% {
+        background-color: #7b68ee;
+        /* Color de fondo oscuro */
+        color: white;
+        /* Color de letra blanco */
+        /* Capas: sombra 1 y sombra 2 */
+        text-shadow: 3px 3px 0px #d8c1ff;
     }
 }
 
-.badge-sin-stock {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    background: #cf3025;
-    color: white;
-    padding: 7px 15px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    border-radius: 10px;
-    z-index: 10;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.producto-card.sin-stock {
-    opacity: 0.7;
-}
-
-
-
+/*-----------------FLECHAS CARRUSEL-----------------*/
 .flecha-carrusel {
-    width: 40px;
+    border-radius: 50px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 5px;
+
+    width: 50px;
     /* Ajusta según el tamaño de tu imagen */
     height: auto;
     cursor: pointer;
@@ -233,7 +147,7 @@
 }
 
 .flecha-carrusel:hover {
-    transform: scale(1.2);
+    transform: scale(1.1);
 }
 
 .prev {
@@ -244,10 +158,159 @@
     right: -50px;
 }
 
-#grid-ofertas,
+/*-----------------CARRUSEL Y PRODUCTO-----------------*/
+.carrusel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.productos,
+.sobre-nosotras {
+    margin: 40px 0;
+}
+
+.grid-productos {
+    display: flex;
+    /* Mantenemos flex para que se pongan en línea */
+    gap: 10px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.producto-card {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    flex: 0 0 calc((100% - 20px) / 3);
+    min-width: calc((100% - 20px) / 3);
+    margin: 0;
+}
+
+.producto-card img {
+    box-sizing: border-box;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    width: 100%;
+    border: 0;
+    border-radius: 20px;
+}
+
+.producto-href {
+    text-decoration: none;
+    color: #000000;
+}
+
+.info-prod {
+    margin: 20px;
+}
+
+.info-prod p {
+    margin: 5px 0;
+}
+
+.producto-header,
+.precios {
+    margin-bottom: 20px;
+}
+
+.opciones {
+    color: #b591ef;
+    font-weight: 800;
+}
+
+.btn-ver-mas {
+    width: 100%;
+    font-family: "Unbounded", sans-serif;
+    color: #ffffff;
+    background-color: #b591ef;
+    font-weight: 800;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.precio-oferta,
+.precio-mayor,
+.precio-docena,
+.precio-unico {
+    font-size: 18px;
+}
+
+.etiqueta-oferta {
+    background-color: #ff5757;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 2px;
+    width: 70px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.precio-anterior {
+    font-size: 13px;
+    color: #979797;
+    text-decoration: line-through;
+}
+
+.etiqueta-mayor {
+    background-color: #7454d9;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 2px;
+    width: 95px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.etiqueta-docena {
+    background-color: #00bf63;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 2px;
+    width: 75px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.etiqueta-unico {
+    background-color: #0079bf;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 3px;
+    width: 110px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #cf3025;
+    color: #ffffff;
+    padding: 8px 15px;
+    font-size: 15px;
+    font-weight: bolder;
+    border-radius: 10px;
+    z-index: 10;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
 #grid-nuevos {
     display: flex !important;
-    gap: 20px;
     overflow-x: auto !important;
     /* Permite el scroll manual */
     scroll-behavior: smooth;
@@ -264,51 +327,51 @@
     display: none !important;
 }
 
-.sobre-nosotras {
-    margin-bottom: 100px;
-
+/*-----------------SOBRE NOSOTRAS-----------------*/
+.not-cartel {
+    padding: 15px;
+    border-radius: 30px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 2.5rem;
+    background-color: white;
+    color: #b591ef;
+    text-shadow: 3px 3px 0px #c6abf1;
 }
 
 .info-sobre-nosotras {
     display: flex;
     justify-content: space-between;
     align-items: start;
+    margin: 20px 0;
 }
 
-/*
-.direccion,
-.horarios {
-    background-color: #ffffff;
-    padding: 20px;
-    width: 45%;
-    text-align: center;
-    border-radius: 40px;
-    margin: 30px 0 0 0;
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
-}*/
+.icon-direccion,
+.icon-horarios {
+    width: 50px;
+    height: auto;
+}
+
+.direccion h2,
+.horarios h2 {
+    margin: 10px;
+}
+
+.direccion p,
+.horarios p {
+    margin: 5px;
+}
 
 .direccion,
 .horarios {
     background-color: #ffffff;
     color: #b591ef;
-    border-radius: 50px;
-    padding: 30px;
-    width: 48%;
-    height: auto;
+    border-radius: 20px;
+    padding: 20px;
+    width: 49%;
+    height: 220px;
     text-align: center;
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
-}
-
-.icon-direccion,
-.icon-horarios {
-    width: 60px;
-    height: auto;
-}
-
-.sobre-nosotras iframe {
-    border-radius: 50px;
-    margin: 30px 0;
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
 }
 
 .semana {
@@ -317,70 +380,46 @@
     text-align: start;
 }
 
-
-
-/*----------------RESONSIVE----------------*/
-
-@media (max-width: 1100px) {
-
-    .video-container {
-        height: 100vh;
-        /* Un poco más bajo en celulares */
-    }
+.sobre-nosotras iframe {
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 900px) {
-
-    .feature img {
-        width: 100px;
-        height: auto;
-    }
-
-    .icon-direccion,
-    .icon-horarios {
-        width: 50px;
-        height: auto;
-    }
-
-    /* CARRUSEL PRODUCTOS */
+/*----------------RESONSIVE----------------*/
+@media (max-width: 1100px) {
     .producto-card {
         /* Calculamos para que entren 2 productos y 1 gap de 20px */
-        flex: 0 0 calc((100% - 20px) / 2);
-        min-width: calc((100% - 20px) / 2);
+        flex: 0 0 calc((100% - 10px) / 2);
+        min-width: calc((100% - 10px) / 2);
     }
 
-    /* Opcional: Si las flechas estorban en móvil, puedes ponerlas sobre el producto */
+    .info-prod {
+        margin: 8px;
+    }
+
+    .producto-header,
+    .precios {
+        margin-bottom: 15px;
+    }
+
     .prev {
-        left: -40px;
+        left: -20px;
     }
 
     .next {
-        right: -40px;
-    }
-
-    .flecha-carrusel {
-        width: 30px;
-        /* Un poco más chicas en móvil */
-    }
-}
-
-@media (max-width: 700px) {
-
-    .section-title,
-    .section-title-inverse {
-        font-size: 20px;
+        right: -20px;
     }
 
     .features {
         flex-direction: column;
         align-items: center;
-        margin: 50px 0;
     }
 
     .feature {
         width: 100%;
         height: auto;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
 
     .info-sobre-nosotras {
@@ -390,32 +429,41 @@
 
     .direccion,
     .horarios {
-        padding: 30px;
-
         width: 100%;
         height: auto;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 900px) {
+
+    /* En celulares, invertimos la visibilidad */
+    .video-pc {
+        display: none !important;
     }
 
+    .video-movil {
+        display: block !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@media (max-width: 650px) {
     .video-overlay h1 {
-        font-size: 24px;
-        /* Achicar la letra evita que se encimen las líneas */
-        line-height: 1.2;
-        /* Da aire entre líneas */
+        font-size: 30px;
     }
 
     .carrusel-wrapper {
-        padding: 0 40px;
+        padding: 0;
         /* Espacio suficiente para las flechas de 30-40px */
         display: flex;
         justify-content: center;
-    }
-
-    .producto-card {
-        flex: 0 0 100%;
-        min-width: 100%;
-        /* Opcional: si lo quieres aún más chico, usa un % menor y margin auto */
-        /* flex: 0 0 90%; min-width: 90%; */
     }
 
     /* 3. Las flechas ahora las ubicamos en el padding que creamos */
@@ -430,10 +478,44 @@
     }
 
     .flecha-carrusel {
-        width: 35px;
+        width: 40px;
+        height: auto;
         position: absolute;
         z-index: 10;
         /* Si quieres que se vean más arriba/abajo, ajusta el top */
         top: 40%;
+    }
+
+    .badge {
+        padding: 6px;
+        font-size: 10px;
+        border-radius: 8px;
+    }
+
+    .producto-card {
+        border-radius: 10px;
+    }
+
+    .producto-card img {
+        border-radius: 10px;
+    }
+
+    .info-prod p {
+        font-size: 12px;
+    }
+
+    .opciones {
+        font-size: 10px;
+    }
+
+    .btn-ver-mas {
+        padding: 8px;
+    }
+
+    .cartel,
+    .not-cartel {
+        font-size: 24px;
+        border-radius: 10px;
+        padding: 12px 5px;
     }
 }

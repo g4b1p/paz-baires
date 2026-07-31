@@ -1,23 +1,10 @@
-/* MATA-AUTO-SCROLL: Esto detiene cualquier movimiento automático residual
-function detenerTodoMovimiento() {
-  console.log("🛑 Deteniendo todos los intervalos automáticos...");
-  for (let i = 1; i < 1000; i++) {
-    window.clearInterval(i);
-    window.clearTimeout(i);
-  }
-}
+/* LISTOS CAMBIOS (V.2) */
 
-// Lo ejecutamos apenas carga y un segundo después por si las dudas
-detenerTodoMovimiento();
-setTimeout(detenerTodoMovimiento, 1000);
-*/
-
-// 1. Al cargar la página, prioridad al Caché
+// Al cargar la página, prioridad al Caché
 document.addEventListener("DOMContentLoaded", () => {
   mostrarEsqueletosHome();
 
   const cache = localStorage.getItem("productos_cache");
-  const contenedorDestacados = document.getElementById("grid-ofertas");
   const contenedorNuevos = document.getElementById("grid-nuevos");
 
   if (cache) {
@@ -28,25 +15,27 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     // Solo si NO hay nada guardado, mostramos los esqueletos
     console.log("🏠 Home: Sin caché, mostrando esqueletos...");
-    mostrarEsqueletos("grid-ofertas");
     mostrarEsqueletos("grid-nuevos");
   }
 });
 
 function mostrarEsqueletosHome() {
-  const contenedores = ["grid-ofertas", "grid-nuevos"];
+  const contenedores = ["grid-nuevos"];
 
   contenedores.forEach((id) => {
     const el = document.getElementById(id);
     if (el) {
       let esqueletosHTML = "";
-      // Ponemos 3 o 4 esqueletos por fila (lo que quepa en tu slider)
       for (let i = 0; i < 4; i++) {
         esqueletosHTML += `
           <div class="producto-card skeleton">
-              <div class="skeleton-img" style="height: 200px; background: #eee; border-radius: 20px; margin-bottom: 15px;"></div>
-              <div class="skeleton-text" style="height: 15px; background: #eee; width: 80%; margin-bottom: 10px;"></div>
-              <div class="skeleton-text" style="height: 15px; background: #eee; width: 40%;"></div>
+              <div class="skeleton-img" style="height: 240px; border-radius: 15px; margin-bottom: 15px;"></div>
+              <div class="info-prod" style="padding: 5px;">
+                <div class="skeleton-text" style="height: 16px; width: 80%; margin-bottom: 10px; border-radius: 6px;"></div>
+                <div class="skeleton-text" style="height: 14px; width: 40%; margin-bottom: 18px; border-radius: 6px;"></div>
+                <div class="skeleton-text" style="height: 22px; width: 55%; margin-bottom: 15px; border-radius: 6px;"></div>
+                <div class="skeleton-text" style="height: 38px; width: 100%; border-radius: 10px;"></div>
+              </div>
           </div>`;
       }
       el.innerHTML = esqueletosHTML;
@@ -54,7 +43,7 @@ function mostrarEsqueletosHome() {
   });
 }
 
-// 2. Escuchamos cuando los productos reales estén listos (de Google Sheets)
+// Escuchamos cuando los productos reales estén listos (de Google Sheets)
 document.addEventListener("productosListos", () => {
   const cacheActual = localStorage.getItem("productos_cache");
   const datosNuevos = JSON.stringify(window.productos);
@@ -83,15 +72,7 @@ function renderizarHome() {
   console.log("✅ Datos cargados, renderizando galerías...");
   const hoy = new Date();
 
-  // --- 1. FILTRO DE OFERTAS ---
-  const ofertas = lista.filter((p) => {
-    if (Array.isArray(p.linea)) {
-      return p.linea.some((l) => l.toUpperCase().trim() === "OFERTAS");
-    }
-    return (p.linea || "").toString().toUpperCase().trim() === "OFERTAS";
-  });
-
-  // --- 2. FILTRO DE NUEVOS INGRESOS ---
+  // --- FILTRO DE NUEVOS INGRESOS ---
   const nuevos = lista.filter((p) => {
     const etiquetaLimpia = (p.etiqueta || "").toString().toLowerCase().trim();
     if (etiquetaLimpia === "nuevo ingreso") return true;
@@ -103,12 +84,8 @@ function renderizarHome() {
     return false;
   });
 
-  inyectarProductos(ofertas, "grid-ofertas");
   inyectarProductos(nuevos, "grid-nuevos");
 }
-
-// Ejecutar al cargar la página
-document.addEventListener("DOMContentLoaded", renderizarHome);
 
 function inyectarProductos(lista, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
@@ -123,8 +100,7 @@ function inyectarProductos(lista, contenedorId) {
   contenedor.innerHTML = "";
 
   lista.forEach((prod) => {
-    // --- MEJORA DE LÓGICA DE IMAGEN ---
-    let imagenPortada = "images/placeholder.jpg"; // Default
+    let imagenPortada = "images/placeholder.jpg";
 
     if (
       prod.imagenes &&
@@ -136,50 +112,43 @@ function inyectarProductos(lista, contenedorId) {
       imagenPortada = prod.imagen;
     }
 
-    // --- 1. LÓGICA DINÁMICA DE BADGES (Igual a Tienda) ---
     let badgeHTML = "";
     let claseExtra = "";
 
     if (prod.estado === "Sin Stock") {
-      badgeHTML = `<span class="badge-sin-stock">SIN STOCK</span>`;
+      badgeHTML = `<span class="badge">SIN STOCK</span>`;
       claseExtra = "sin-stock";
-    } else if (prod.estado === "Próximamente") {
-      badgeHTML = `<span class="badge-sin-stock badge-proximamente">PRÓXIMAMENTE</span>`;
-      claseExtra = "proximamente";
-    } else if (prod.estado && prod.estado !== "Activo") {
-      // Para "Últimas Unidades", "Liquidación", etc.
-      badgeHTML = `<span class="badge-sin-stock badge-alerta">${prod.estado.toUpperCase()}</span>`;
+    } else if (prod.estado === "Últimos Disponibles") {
+      badgeHTML = `<span class="badge">ÚLTIMOS DISPONIBLES</span>`;
+      claseExtra = "ultimos";
     }
 
-    // --- 2. LÓGICA DE PRECIO PSICOLÓGICO (Igual a Tienda) ---
-    const precioReal = prod.precio;
+    // AQUÍ GENERAMOS EL BLOQUE DINÁMICO DE PRECIO
+    const HTMLPrecios = generarHTMLPrecios(prod);
 
-    // --- 3. CONSTRUCCIÓN DE LA CARD ---
     const cardHTML = `
-            <div class="producto-card ${claseExtra}">
-                <a href="info-producto.html?id=${prod.id}" class="producto-href">
-                    ${badgeHTML}
-                    
-                    <img class="producto-img" loading="lazy" decoding="async" src="${imagenPortada}" alt="${prod.nombre}" />
-                    
-                    <div class="producto-info">
-                        <p class="producto-name"><b>${prod.nombre}</b></p>
-                        
-                        ${
-                          prod.variantes && prod.variantes.length > 1
-                            ? `<p class="variantes-tag">+${prod.variantes.length} opciones</p>`
-                            : `<p class="variantes-tag" style="color: #5f5f5f;">Diseño exclusivo</p>`
-                        }
-                        
-                        <div class="precio-container">
-                            <p class="precio"><b>$${precioReal.toLocaleString()}</b></p>
-                        </div>
+      <div class="producto-card ${claseExtra}">
+          <a href="info-producto.html?id=${prod.id}" class="producto-href">
+              ${badgeHTML}
+              <img class="producto-img" loading="lazy" decoding="async" src="${imagenPortada}" alt="${prod.nombre}" />
+              
+              <div class="info-prod">
+                <div class="producto-header">
+                  <p class="producto-name">${prod.nombre}</p>
+                  ${
+                    prod.variantes && prod.variantes.length > 1
+                      ? `<p class="opciones">+${prod.variantes.length} opciones</p>`
+                      : `<p class="opciones">Diseño exclusivo</p>`
+                  }
+                </div>
+                
+                ${HTMLPrecios}
 
-                        <button class="btn-ver-mas">ver más</button>
-                    </div>
-                </a>
-            </div>
-        `;
+                <button class="btn-ver-mas">VER MÁS</button>
+              </div>
+          </a>
+      </div>
+    `;
     contenedor.insertAdjacentHTML("beforeend", cardHTML);
   });
 }
@@ -203,5 +172,3 @@ window.scrollCarrusel = function (direction, idContenedor) {
     contenedor.scrollBy({ left: direction * anchoTarjeta, behavior: "smooth" });
   }
 };
-
-// IMPORTANTE: Asegurate de que no haya NINGÚN "setInterval" o "setTimeout" debajo de esto.

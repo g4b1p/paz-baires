@@ -4,23 +4,57 @@
     box-sizing: border-box;
 }
 
+/* Le avisas al navegador que tu web SOLO está diseñada para modo claro */
+:root {
+    color-scheme: light;
+}
+
+/* Opcional: Si quieres forzarlo a nivel general en la etiqueta HTML */
+html {
+    color-scheme: light only;
+}
+
 body {
+    background-attachment: fixed;
+    /* Evita que el fondo se corte */
+    color-scheme: light;
     -webkit-text-size-adjust: 100%;
     /* Esto evita que iOS y navegadores in-app agranden la letra */
     margin: 0;
     padding: 0;
-    font-size: 15px;
+    min-height: 100vh;
+    font-size: 14px;
     font-family: "Unbounded", sans-serif;
-    background-image: linear-gradient(to bottom, #7454d9, #8d61e1, #a36ee9, #b97cf2, #cd8bfa);
+    background-image: linear-gradient(to bottom, #7454d9, #8e6fe3, #a78bed, #bfa7f6, #d6c3ff);
 }
 
+/*-----------------BARRA DE SCROLL-----------------*/
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #e7e7e7;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #bfa7f6;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a78bed;
+}
+
+/*-----------------TOP BAR-----------------*/
 .top-bar {
     background-color: #8e6fe3;
+    /* Tu color violeta original */
     color: #ffffff;
     height: 30px;
-    /* Altura fija obligatoria */
+    /* Le di 5px más para que respire mejor */
     overflow: hidden;
-    /* Esconde lo que sobra */
     position: relative;
     display: flex;
     align-items: center;
@@ -29,50 +63,62 @@ body {
 .marquee-track {
     display: flex;
     width: max-content;
-    /* IMPORTANTE: obliga a la pista a ser tan larga como el texto */
-    animation: marquee-infinito 10s linear infinite;
-    /* 6s es muy rápido para compu, probá con 15s */
+    animation: marquee-infinito 20s linear infinite;
+    /* Tu velocidad de 10s */
+}
+
+/* MEJORA DE UX: Pausa la animación si el usuario pasa el mouse para leer */
+.top-bar:hover .marquee-track {
+    animation-play-state: paused;
+    cursor: pointer;
 }
 
 .marquee-content {
     display: flex;
+    align-items: center;
     flex-shrink: 0;
-    /* Evita que los bloques se achiquen */
+    gap: 30px;
+    /* Espacio uniforme entre los elementos */
+    padding-right: 30px;
+    /* Mismo espacio al final para conectar perfecto con el clon */
 }
 
-.marquee-track span {
+.marquee-content span {
     font-size: 12px;
-    font-weight: bold;
-    padding-right: 60px;
-    /* Espacio entre repeticiones */
+    font-weight: 600;
     text-transform: uppercase;
-    text-transform: uppercase;
+    letter-spacing: 1px;
+    /* Separa un poco las letras para que sea más elegante */
     white-space: nowrap;
-    ;
+}
+
+.marquee-content .separator {
+    font-size: 14px;
+    opacity: 0.6;
+    /* Hace que el puntito separador sea sutil */
 }
 
 @keyframes marquee-infinito {
-    from {
+    0% {
         transform: translateX(0);
     }
 
-    to {
+    100% {
         transform: translateX(-50%);
     }
-
-    /* Al llegar a -50%, el Bloque 2 está exactamente donde empezó el 1, 
-       haciendo que el salto sea imperceptible */
 }
 
+/*-----------------HEADER-----------------*/
 .header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    /* Tres columnas: izquierda, logo, derecha */
     align-items: center;
-    justify-content: space-between;
-    /* Reparte los 3 bloques */
+    /* Centra verticalmente */
     margin: 0 5%;
-    padding: 10px 20px;
+    padding: 10px 15px;
     background-color: #ffffff;
-    border-radius: 0 0 50px 50px;
+    border-radius: 0 0 20px 20px;
     box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
     position: absolute;
     top: 30px;
@@ -82,40 +128,57 @@ body {
 }
 
 .logo {
-    width: 200px;
+    width: 190px;
     height: auto;
+    justify-self: center;
 }
 
-.nav-links {
-    flex: 1;
-    /* Ocupa 1/3 del espacio */
+.nav-link {
     display: flex;
-    justify-content: flex-end;
-    /* Alinea los iconos a la derecha */
+    align-items: center;
+    gap: 30px;
+    justify-self: start;
 }
 
-.icon-social-header {
-    width: 40px;
-    /* Un poco más estilizados */
+.header a {
+    text-decoration: none;
+    color: #7454d9;
+}
+
+/* Estilo para el enlace activo */
+.header a.active {
+    padding: 7px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    background-color: #7B68EE;
+    /* El color violeta de tu fondo */
+    color: white;
+    /* Texto blanco */
+}
+
+.carrito {
+    text-decoration: none;
+    color: #7454d9;
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    position: relative;
+    /* ¡ESTO ES CLAVE! Mantiene al contador pegado al botón */
+}
+
+.icon {
+    width: 25px;
     height: auto;
-    margin-left: 15px;
-    /* Espacio entre ellos */
+    margin-left: 8px;
     margin-right: 0;
 }
 
-.cart-container {
-    position: relative;
-    display: inline-block;
-}
-
-.cart-badge {
-    position: absolute;
-    top: -5px;
-    right: -8px;
-    background-color: #b97cf2;
-    /* El lila de tu marca */
+/* Estilos para la burbuja del contador */
+.contador-carrito {
+    background-color: #ff9800;
+    /* Color naranja */
     color: white;
-    font-size: 0.7rem;
+    font-size: 11px;
     font-weight: bold;
     border-radius: 50%;
     width: 18px;
@@ -123,353 +186,136 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Si el carrito está vacío, lo ocultamos con JS */
-    display: none;
-}
-
-.menu-btn {
-    flex: 1;
-    /* Ocupa 1/3 del espacio */
-    display: flex;
-    justify-content: flex-start;
-    /* Alinea el icono a la izquierda */
-    color: #623cdd;
-    font-size: 30px;
-    cursor: pointer;
-    margin-right: 0;
-    /* ¡Borramos el 13%! */
-}
-
-.header>a {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.sidebar {
-    position: fixed;
-    /* para que se quede quietita */
-    top: 0;
-    left: -250px;
-    /* oculta al inicio */
-    width: 250px;
-    height: 100vh;
-    background: rgba(116, 84, 217, 0.9) !important;
-    padding-top: 60px;
-    transition: left 0.3s ease;
-    z-index: 2001 !important;
-    /* SIEMPRE 1 punto más que el overlay */
-    /* encima de todo */
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-/* El Overlay para el menú principal */
-.bar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(6px);
-    /* Desenfoque suave al abrir el menú */
-    -webkit-backdrop-filter: blur(6px);
-    z-index: 2000;
-    /* Debe estar por encima del header pero debajo de la sidebar */
-    display: none;
-    /* Se oculta por defecto */
-    pointer-events: none;
-    /* No bloquea clics si está invisible */
-    transition: opacity 0.3s ease;
-}
-
-/* Mostrar overlay cuando el checkbox del menú esté activo */
-#nav-toggle:checked~.bar-overlay {
-    display: block;
-    pointer-events: auto;
-}
-
-/* Bloquear el scroll del body cuando el menú está abierto */
-body:has(#nav-toggle:checked) {
-    overflow: hidden;
-}
-
-.close-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 25px;
-    cursor: pointer;
-    color: white;
+    top: -5px;
+    right: -10px;
+    /* Ajusta este valor si querés moverlo un poco más a la izquierda o derecha */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1010;
+    /* Para asegurar que siempre esté por encima del header */
 }
 
-.sidebar ul {
-    list-style: none;
-    padding: 0.5px;
-}
-
-.sidebar ul li a {
-    display: block;
+/*-----------------ESQUELETOS PRODUCTOS-----------------*/
+.producto-card.skeleton {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
     padding: 15px;
-    color: white;
-    text-decoration: none;
-    transition: background 0.2s;
+    pointer-events: none;
+    box-shadow: none;
 }
 
-.sidebar ul li a:hover {
-    background: #623cdd;
+.skeleton-img,
+.skeleton-text {
+    background: rgba(255, 255, 255, 0.12);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.08) 25%,
+            rgba(255, 255, 255, 0.22) 50%,
+            rgba(255, 255, 255, 0.08) 75%);
+    background-size: 200% 100%;
+    animation: loading-skeleton 1.4s infinite linear;
 }
 
-/* CUANDO EL TOGGLE ESTÁ ACTIVADO */
-#nav-toggle:checked~.sidebar {
-    left: 0;
+@keyframes loading-skeleton {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
 
-.dropdown-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-    text-transform: uppercase;
-}
-
-.arrow {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-right: 10px;
-    margin-left: 10px;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid white;
-    /* flecha apuntando hacia arriba inicialmente */
-    transition: transform 0.3s ease;
-}
-
-.dropdown-menu {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-    background-color: #7454d9;
-}
-
-.dropdown-menu li a {
-    padding: 15px 30px;
-    display: block;
-    color: white;
-    text-decoration: none;
-    font-weight: normal;
-}
-
-.dropdown-menu li a:hover {
-    background: #623cdd;
-}
-
-/* cuando está activado el checkbox, se abre el menú */
-#dropdown-toggle:checked+.dropdown-label+.dropdown-menu {
-    max-height: 500px;
-    /* lo suficiente para mostrar todos los ítems */
-}
-
-/* flecha rotada hacia abajo */
-#dropdown-toggle:checked+.dropdown-label .arrow {
-    transform: rotate(180deg);
-}
-
-/*----------------video----------------*/
-
-.video-container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    /* Ajusta la altura (80% de la pantalla) */
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
-
-    /* Elimina espacios vacíos debajo del video */
-
-    z-index: 1;
-
-    /* ESTO CREA EL DIFUMINADO */
-    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-}
-
-.video-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    height: auto;
-    z-index: -1;
-    /* Lo envía al fondo */
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    /* Volvemos a cover porque el video ya viene con el formato correcto */
-    /* Cambiamos cover por contain para que se vea TODO el video */
-    background-color: rgb(255, 255, 255);
-    /* Opcional: por si el video no llena todo el alto, que el fondo sea negro */
-
-    width: 100%;
-    /* Ocupa todo el ancho */
-    display: block;
-}
-
-.video-movil {
-    display: none !important;
-}
-
-.video-pc {
-    display: block !important;
-}
-
-.video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    color: white;
-
-    /* MEZCLA: Empieza con negro 40%, y termina con el violeta de tu marca */
-    background: linear-gradient(to bottom,
-            rgba(0, 0, 0, 0.4) 0%,
-            /* Oscuridad arriba */
-            rgba(0, 0, 0, 0.4) 60%,
-            /* Mantiene la oscuridad hasta el 60% */
-            #7454d9 100%
-            /* Funde hacia tu color al final */
-        );
-}
-
-
-/* Aplica esto a los textos (h1, h2, p) que estén dentro del video */
-.video-overlay h1,
-.video-overlay p {
-    width: 100%;
-    /* Ocupa el ancho disponible */
-    max-width: 800px;
-    /* Evita que las líneas sean infinitas en PC */
-    margin-bottom: 20px;
-    /* Crea espacio real entre una línea y otra */
-    word-wrap: break-word;
-    /* Rompe palabras si son muy largas */
-
-}
-
-.btn-comprar {
-    padding: 15px 25px;
-    background-color: #7454d9;
-    color: white;
-    text-decoration: none;
-    border-radius: 30px;
-    margin-top: 20px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-
-main {
-    padding: 0 15%;
-}
-
-
-/*----------------footer----------------*/
-.footer {
+/*-----------------FOOTER-----------------*/
+footer {
     background-color: #ffffff;
     margin: 0 5%;
-    padding: 0 30px;
-    border-radius: 50px 50px 0 0;
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 20px 20px 0 0;
+    padding: 30px;
 }
 
-.social-container {
+.container-footer {
     display: flex;
-    justify-content: space-around;
-    padding: 50px 0;
-    color: #7454d9;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0;
 }
 
-.icon-social-footer {
-    width: 50px;
+.social-media-column,
+.contact-column {
+    flex: 1 1 300px;
+}
+
+.icons-data {
+    width: 40px;
     height: auto;
-    margin: 10px 10px 0 0;
+    margin-right: 5px;
 }
 
-.title-footer {
+.titles-footer {
     color: #7454d9;
+    margin: 30px 0;
 }
 
-.social {
-    color: #7454d9;
+.data {
     text-decoration: none;
+    color: #7454d9;
     display: flex;
     align-items: center;
-    margin: 0;
+    margin: 20px 0;
 }
 
-.line-footer {
-    border: none;
-    border-top: 2px solid rgba(116, 84, 217, 0.3);
-}
-
-.copyright {
-    text-align: center;
-    padding: 10px 0;
+.copyright,
+.firma-page {
     color: #7454d9;
 }
 
 .copyright p {
+    margin: 5px;
     text-align: end;
 }
 
-.firma p {
+hr {
+    border: 2px solid;
+    border-radius: 50px;
+    color: #7454d9;
+    opacity: 0.3;
+}
+
+.firma-page {
     text-align: center;
 }
 
-.firma img {
-    width: 10vh;
-    height: auto;
+.firma-page p {
+    margin: 5px;
 }
 
-/*-----------chat-----------*/
-/* Checkbox oculto */
+.firma-icon {
+    width: auto;
+    height: 50px;
+}
+
+/*-----------------FOOTER (whatsapp)-----------------*/
 .chat-toggle {
     display: none;
 }
 
-/* Estilos del botón flotante */
 .chat-button {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #ffffff;
-    border: 3px solid #7454d9;
-    color: #7454d9;
+    background: #65cf72;
+    border: 0;
+    color: #ffffff;
     padding: 10px 20px;
-    border-radius: 20px;
+    border-radius: 15px;
     cursor: pointer;
     font-weight: bold;
     display: flex;
     align-items: center;
     animation: slideInRight 1.5s ease-out;
-    z-index: 5;
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
 }
 
 .chat-button img {
@@ -478,21 +324,16 @@ main {
     margin-right: 10px;
 }
 
-.chat-button:hover {
-    background: #f9f6ff;
-}
-
-/* Contenedor del chat */
 .chat-container {
     width: 360px;
     position: fixed;
     bottom: 80px;
     right: 20px;
-    background: white;
-    border-radius: 15px;
+    background: #d6c3ff;
+    border-radius: 20px;
     display: none;
     flex-direction: column;
-    z-index: 5;
+    z-index: 10;
     box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -501,7 +342,6 @@ main {
     display: flex;
 }
 
-/* Encabezado del chat */
 .chat-header {
     background: #7454d9;
     color: white;
@@ -511,7 +351,7 @@ main {
     /* Alinear verticalmente */
     gap: 8px;
     /* Espacio entre la imagen y el nombre */
-    border-radius: 15px 15px 0 0;
+    border-radius: 20px;
     position: relative;
     /* Necesario para mover la "X" */
 }
@@ -535,17 +375,16 @@ main {
     color: #d6c3ff;
 }
 
-/* Botón de cerrar el chat */
 .close-chat {
     position: absolute;
-    top: 5px;
+    top: 10px;
     /* Mover más arriba */
-    right: 10px;
+    right: 15px;
     /* Ajustar la posición a la derecha */
     background: none;
     border: none;
     color: white;
-    font-size: 22px;
+    font-size: 25px;
     cursor: pointer;
 }
 
@@ -554,10 +393,9 @@ main {
     display: none;
 }
 
-/* Cuerpo del chat */
 .chat-body {
     background: #d6c3ff;
-    padding: 25px 15px;
+    padding: 15px;
 }
 
 .chat-message {
@@ -567,22 +405,23 @@ main {
     font-size: 14px;
 }
 
-/* Pie del chat */
+.chat-message p {
+    line-height: 30px;
+}
+
 .chat-footer {
     display: flex;
     align-items: center;
     padding: 10px;
-    background: #f1f1f1;
-    border-radius: 0 0 15px 15px;
+    background: #ffffff;
+    border-radius: 20px;
 }
 
 .chat-footer input {
     flex: 1;
     border: none;
-    padding: 10px;
-    border-radius: 5px;
-    color: gray;
-    background: #e0e0e0;
+    color: rgb(0, 0, 0);
+    background: #ffffff;
     box-sizing: border-box;
     font-family: "Unbounded", sans-serif;
 }
@@ -595,198 +434,97 @@ main {
     margin-left: 10px;
 }
 
-
-/*----------------RESONSIVE----------------*/
-
-@media (max-width: 1400px) {
-
-    main {
-        padding: 0 10%;
-    }
+main {
+    padding: 0 8%;
+    margin-top: 120px;
 }
 
+/*-----------------RESPONSIVE-----------------*/
 @media (max-width: 1100px) {
-
-    body {
-        font-size: 13px;
-    }
-
-    /* Ajustamos el contenedor principal para que no tenga tanto margen */
     main {
-        padding: 0 8%;
+        padding: 0 4%;
     }
 
-    .video-container {
-        height: 100vh;
-        /* Un poco más bajo en celulares */
-    }
-
-}
-
-@media (max-width: 900px) {
-
-    .icon-social-header {
-        width: 35px;
-        height: auto;
-    }
-
-    .icon-social-footer {
-        width: 40px;
-        height: auto;
-    }
-
-    /* BARRA LATERAL FULL SCREEN */
-    .sidebar {
-        width: 100%;
-        /* Ocupa todo el ancho */
-        left: -100%;
-        /* Se oculta completamente a la izquierda */
-        padding-top: 80px;
-        /* Más espacio para el botón de cerrar */
-    }
-
-    /* Cuando el toggle está activado en móvil */
-    #nav-toggle:checked~.sidebar {
-        left: 0;
-    }
-
-    /* Aumentar el tamaño de los enlaces para que sea fácil tocar con el dedo */
-    .sidebar ul li a {
-        padding: 20px;
-        font-size: 1rem;
-        text-align: center;
-        /* Opcional: centra el texto en el menú móvil */
-    }
-
-    /* En celulares, invertimos la visibilidad */
-    .video-pc {
-        display: none !important;
-    }
-
-    .video-movil {
-        display: block !important;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transform: translate(-50%, -50%);
-    }
-
-    .video-container {
-        height: 80vh;
-        /* Ajustá el alto para que luzca el video vertical */
+    .header,
+    footer {
+        margin: 0 1%;
     }
 }
 
-@media (max-width: 700px) {
-
-    /* Aplica esto a los textos (h1, h2, p) que estén dentro del video */
-    .video-overlay h1 {
-        margin-bottom: 1px;
-        /* Crea espacio real entre una línea y otra */
-    }
-
-    .btn-comprar {
-        padding: 10px 20px;
-        margin-top: 5px;
-    }
-
-    body {
-        font-size: 12px;
-    }
-
+@media (max-width: 1000px) {
     .header {
+        /* Cambiamos el grid por flexbox solo para celular */
+        display: flex;
         flex-wrap: wrap;
-        flex-direction: column;
-        /* Alinea todo en vertical */
+        justify-content: center;
         align-items: center;
-        /* Centra todo horizontalmente */
+        font-size: 9px;
+        /* El primer valor (15px) es la separación vertical entre logo y textos. 
+       El segundo (25px) es la separación horizontal entre los textos. */
+        gap: 10px 10px;
         padding: 15px 10px;
-        position: absolute;
-        /* Asegúrate de que siga siendo absolute */
     }
 
-    .menu-btn {
-        position: absolute;
-        /* Sacamos al botón del flujo normal */
-        left: 20px;
-        /* Lo pegamos a la izquierda */
-        top: 25px;
-        /* Ajusta esto para que quede alineado a la altura del logo */
-        margin: 0;
-        /* Quitamos márgenes viejos */
+    /* 1. Forzamos al logo a ocupar toda la línea superior (100% de ancho) */
+    .logo-container {
+        flex: 0 0 100%;
+        display: flex;
+        justify-content: center;
         order: 1;
+        /* Le decimos que vaya primero */
     }
 
     .logo {
         width: 160px;
-        margin: 0;
+    }
+
+    /* 2. LA MAGIA: Hacemos que el contenedor .nav-link desaparezca visualmente,
+     así sus enlaces ("COMO COMPRAR" y "TIENDA") quedan sueltos al nivel del carrito */
+    .nav-link {
+        display: contents;
+        gap: 10px;
+    }
+
+    /* 3. Acomodamos los textos en la segunda línea */
+    .nav-link a,
+    .carrito {
         order: 2;
-        /* El logo ahora se centrará gracias al justify-content del padre */
+        /* Les decimos que vayan en el segundo bloque */
+        font-size: 11px;
+        /* Achicamos penitas la letra para asegurar que entren en pantallas chicas */
+        margin: 0;
     }
 
-    .nav-links {
-        order: 3;
-        width: 100%;
-        display: flex;
-        /* Aseguramos que sea flex para centrar */
-        justify-content: center;
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px solid #f0f0f0;
+    .icon {
+        width: 18px;
+        height: auto;
+        margin-left: 5px;
     }
 
-    .icon-social-header {
-        width: 35px;
-        margin: 0 10px;
+    .contador-carrito {
+        font-size: 10px;
+        width: 17px;
+        height: 17px;
+        top: -9px;
+        right: -9px;
+    }
+}
+
+@media (max-width: 650px) {
+    .chat-button {
+        bottom: 10px;
+        right: 10px;
+        padding: 8px 10px;
+        border-radius: 10px;
     }
 
-    .header,
-    .footer {
-        margin: 0 1%;
-    }
-
-    main {
-        padding: 0 1%;
-    }
-
-    .video-overlay h1 {
-        font-size: 20px;
-        /* Achicar la letra evita que se encimen las líneas */
-        line-height: 1.2;
-        /* Da aire entre líneas */
-        margin-bottom: 30px;
-    }
-
-    .social-container {
-        flex-direction: column;
-        align-items: start;
-    }
-
-    .redes-sociales {
-        margin-bottom: 25px;
+    .chat-button img {
+        width: 25px;
     }
 
     .chat-container {
         width: 330px;
-    }
-}
-
-@media (max-width: 400px) {
-    .chat-container {
-        width: 300px;
-    }
-
-    .chat-button {
-        padding: 8px 10px;
-        font-size: 11px;
-    }
-
-    .chat-button img {
-        width: 20px;
-        height: auto;
-        margin-right: 5px;
+        bottom: 60px;
+        right: 10px;
     }
 }

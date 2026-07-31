@@ -41,45 +41,34 @@ window.scrollCarrusel = function (direction, idContenedor) {
   }
 };
 
-// Añade esto en tu función configurarEscuchadores() en tienda.js
-const navToggle = document.getElementById("nav-toggle");
-const menuOverlay = document.getElementById("menuOverlay");
-
-if (navToggle && menuOverlay) {
-  navToggle.addEventListener("change", () => {
-    if (navToggle.checked) {
-      menuOverlay.style.display = "block";
-      document.body.style.overflow = "hidden"; // Bloquea scroll
-    } else {
-      menuOverlay.style.display = "none";
-      document.body.style.overflow = "auto";
-    }
-  });
-
-  // Si hacen click en el fondo nublado, se cierra el menú
-  menuOverlay.addEventListener("click", () => {
-    navToggle.checked = false;
-    menuOverlay.style.display = "none";
-    document.body.style.overflow = "auto";
-  });
-}
-
-function actualizarContadorCarrito() {
+// --- FUNCIÓN DEL CONTADOR GLOBAL ---
+window.actualizarContadorCarrito = function () {
   const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-  const badge = document.getElementById("cart-count");
 
-  if (badge) {
-    // Sumamos todas las cantidades de los productos en el carrito
-    const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+  // Sumamos la cantidad de unidades
+  const totalItems = carrito.reduce(
+    (acc, item) => acc + (parseInt(item.cantidad) || 1),
+    0,
+  );
 
-    if (totalItems > 0) {
-      badge.innerText = totalItems;
-      badge.style.display = "flex"; // Lo mostramos si hay items
-    } else {
-      badge.style.display = "none"; // Lo ocultamos si está vacío
+  document.querySelectorAll(".contador-carrito").forEach((badge) => {
+    // Truco de rendimiento: Solo modificamos el HTML si el número es diferente al que ya tiene
+    if (badge.textContent !== totalItems.toString()) {
+      badge.textContent = totalItems;
     }
-  }
-}
 
-// Ejecutar al cargar la página
-document.addEventListener("DOMContentLoaded", actualizarContadorCarrito);
+    // Solo modificamos el display si no está correcto
+    const estadoDisplay = totalItems > 0 ? "flex" : "none";
+    if (badge.style.display !== estadoDisplay) {
+      badge.style.display = estadoDisplay;
+    }
+  });
+};
+
+// 1. Intentamos ejecutarlo apenas carga la página
+document.addEventListener("DOMContentLoaded", window.actualizarContadorCarrito);
+
+// 2. EL VIGÍA SILENCIOSO (La solución al problema)
+// Se ejecuta cada 500 milisegundos (medio segundo). Si componentes.js o la tienda
+// recargan el header y borran nuestro número, esto lo restaura instantáneamente.
+setInterval(window.actualizarContadorCarrito, 500);
