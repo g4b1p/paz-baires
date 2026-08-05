@@ -178,7 +178,9 @@ async function cargarProductosDesdeSheet() {
             : "SI",
           nombre: p.Nombre,
           beneficio: p.Beneficio ? p.Beneficio.trim() : "",
-          etiqueta: p.Etiqueta ? p.Etiqueta.trim() : "Ninguno",
+          etiqueta: p.Etiqueta
+            ? p.Etiqueta.toString().toLowerCase().trim()
+            : "ninguno",
           coleccion: p.Colección ? p.Colección.toLowerCase().trim() : "varios",
           imagenes: p.Imágenes
             ? p.Imágenes.split(",").map((img) => {

@@ -1,10 +1,12 @@
 // 1. VARIABLES DE ESTADO
 let filtrosActivos = {
-  categoria: "todos", // 'todos', 'blanqueria', 'accesorios', etc.
-  tipoPrecioFiltro: "todos", // 'todos', 'oferta', 'docena'
+  categoria: "todos",
+  tipoPrecioFiltro: "todos",
   busqueda: "",
+  etiqueta: "destacado", // NUEVO: Filtro inicial por defecto
 };
 
+let cantidadMostrada = 12; // NUEVO: Límite de paginación visual
 let yaFiltroElUsuario = false;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,20 +16,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // Sincronizar UI por si volvió atrás en el navegador
   sincronizarFiltrosDesdeUI();
 
-  // Tiempo límite de seguridad (8 segundos)
+  // Tiempo límite de seguridad ampliado (12 segundos)
   setTimeout(() => {
     const contenedor = document.getElementById("contenedor-tienda");
     if (contenedor && contenedor.querySelector(".skeleton")) {
       contenedor.innerHTML = `
         <div class="sin-resultados">
-          <p>Parece que la conexión está lenta...</p>
+          <p>El catálogo está tardando un poquito más de lo normal...</p>
           <button onclick="location.reload()" style="background: #ffffff; color: #7454d9; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px;">
-            REINTENTAR CARGAR
+            RECARGAR TIENDA
           </button>
         </div>
       `;
     }
-  }, 8000);
+  }, 12000);
 });
 
 function mostrarEsqueletosTienda() {
@@ -82,7 +84,7 @@ function procesarURLYFiltrar() {
   const catURL = params.get("categoria");
   const linURL = params.get("linea");
 
-  let textoBotonActivo = "todos";
+  let textoBotonActivo = ""; // Ya no hay botón "Todos"
 
   if (
     (linURL && linURL.toLowerCase() === "ofertas") ||
@@ -90,6 +92,7 @@ function procesarURLYFiltrar() {
   ) {
     filtrosActivos.tipoPrecioFiltro = "oferta";
     filtrosActivos.categoria = "todos";
+    filtrosActivos.etiqueta = "todos"; // Mostramos todas las ofertas
     textoBotonActivo = "ofertas";
   } else if (
     (linURL && linURL.toLowerCase() === "docenas") ||
@@ -97,14 +100,18 @@ function procesarURLYFiltrar() {
   ) {
     filtrosActivos.tipoPrecioFiltro = "docena";
     filtrosActivos.categoria = "todos";
+    filtrosActivos.etiqueta = "todos";
     textoBotonActivo = "docenas";
   } else if (catURL) {
     filtrosActivos.categoria = catURL.toLowerCase().trim();
     filtrosActivos.tipoPrecioFiltro = "todos";
+    filtrosActivos.etiqueta = "todos"; // Mostramos toda la categoría
     textoBotonActivo = filtrosActivos.categoria;
   } else {
+    // Si entra a la tienda limpia sin nada, mostramos solo destacados
     filtrosActivos.categoria = "todos";
     filtrosActivos.tipoPrecioFiltro = "todos";
+    filtrosActivos.etiqueta = "destacado";
   }
 
   // Marcar botón activo en la UI
@@ -113,11 +120,12 @@ function procesarURLYFiltrar() {
     btn.classList.toggle("active", texto === textoBotonActivo);
   });
 
+  cantidadMostrada = 12; // Reseteamos la paginación
   aplicarFiltros();
 }
 
 // FUNCIÓN DE RENDERIZADO DE PRODUCTOS
-function renderizarProductos(lista) {
+function renderizarProductos(lista, totalResultados) {
   const contenedor = document.getElementById("contenedor-tienda");
   if (!contenedor) return;
 
@@ -197,6 +205,27 @@ function renderizarProductos(lista) {
     `;
     contenedor.innerHTML += card;
   });
+
+  // SI FALTAN PRODUCTOS POR MOSTRAR, DIBUJAMOS EL BOTÓN "CARGAR MÁS"
+  if (cantidadMostrada < totalResultados) {
+    contenedor.innerHTML += `
+      <div style="width: 100%; display: flex; justify-content: center; margin-top: 30px; margin-bottom: 20px;">
+        <button id="btn-cargar-mas" style="background-color: #ffffff; color: #7454d9; border: 2px solid #7454d9; padding: 12px 30px; border-radius: 15px; font-weight: 800; cursor: pointer; font-family: 'Unbounded', sans-serif; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+          CARGAR MÁS PRODUCTOS
+        </button>
+      </div>`;
+
+    // Le damos vida al botón
+    setTimeout(() => {
+      const btnCargarMas = document.getElementById("btn-cargar-mas");
+      if (btnCargarMas) {
+        btnCargarMas.onclick = () => {
+          cantidadMostrada += 12; // Sumamos 12 más a la vista
+          aplicarFiltros(); // Re-dibujamos
+        };
+      }
+    }, 0);
+  }
 }
 
 // FUNCIÓN DE FILTRADO
@@ -212,36 +241,63 @@ function aplicarFiltros() {
       : "";
 
   const resultado = productos.filter((p) => {
-    // 1. FILTRO DE CATEGORÍA
     const catFiltro = norm(filtrosActivos.categoria);
     const pColeccion = norm(p.coleccion);
     const matchCategoria =
       catFiltro === "todos" || pColeccion.includes(catFiltro);
 
-    // 2. FILTRO POR TIPO DE PRECIO (OFERTAS / DOCENAS)
     let matchTipoPrecio = true;
     const pTipoPrecio = norm(p.tipoPrecio || "");
-
     if (filtrosActivos.tipoPrecioFiltro === "oferta") {
       matchTipoPrecio = pTipoPrecio.includes("oferta");
     } else if (filtrosActivos.tipoPrecioFiltro === "docena") {
       matchTipoPrecio = pTipoPrecio.includes("docena");
     }
 
-    // 3. BUSCADOR POR TEXTO
     const queryBusqueda = norm(filtrosActivos.busqueda || "");
-    const nombreProducto = norm(p.nombre || "");
-    const descProducto = norm(p.descripcion || "");
+    const textoCompleto =
+      norm(p.nombre || "") + " " + norm(p.descripcion || "");
+    const palabrasIgnoradas = [
+      "de",
+      "para",
+      "el",
+      "la",
+      "los",
+      "las",
+      "un",
+      "una",
+      "con",
+      "sin",
+      "y",
+      "o",
+    ];
 
+    let palabrasBuscadas = queryBusqueda
+      .split(" ")
+      .filter(
+        (palabra) => palabra.length > 1 && !palabrasIgnoradas.includes(palabra),
+      );
+    if (palabrasBuscadas.length === 0 && queryBusqueda !== "") {
+      palabrasBuscadas = queryBusqueda.split(" ").filter((p) => p !== "");
+    }
     const matchBusqueda =
-      queryBusqueda === "" ||
-      nombreProducto.includes(queryBusqueda) ||
-      descProducto.includes(queryBusqueda);
+      palabrasBuscadas.length === 0 ||
+      palabrasBuscadas.some((palabra) => textoCompleto.includes(palabra));
 
-    return matchCategoria && matchTipoPrecio && matchBusqueda;
+    // NUEVO: FILTRO POR ETIQUETA MÚLTIPLE
+    const pEtiquetas = norm(p.etiqueta || "");
+    const matchEtiqueta =
+      filtrosActivos.etiqueta === "todos" ||
+      pEtiquetas.includes(filtrosActivos.etiqueta);
+
+    return matchCategoria && matchTipoPrecio && matchBusqueda && matchEtiqueta;
   });
 
-  renderizarProductos(resultado);
+  // CORTAMOS LA LISTA PARA LA PAGINACIÓN
+  const productosPaginados = resultado.slice(0, cantidadMostrada);
+
+  // Enviamos los paginados a dibujar, pero le avisamos cuántos hay en total
+  renderizarProductos(productosPaginados, resultado.length);
 }
 
 // CONFIGURACIÓN DE ESCUCHADORES Y EVENTOS
@@ -271,6 +327,8 @@ function configurarEscuchadores() {
       }
 
       yaFiltroElUsuario = true;
+      filtrosActivos.etiqueta = "todos";
+      cantidadMostrada = 12;
       aplicarFiltros();
     };
   });
@@ -283,7 +341,22 @@ function configurarEscuchadores() {
   const ejecutarBusqueda = () => {
     if (buscadorInput) {
       filtrosActivos.busqueda = buscadorInput.value.trim();
+
+      // NUEVO: Si el usuario escribe algo, quitamos el filtro de categoría para buscar en toda la tienda
+      if (filtrosActivos.busqueda !== "") {
+        filtrosActivos.categoria = "todos";
+        filtrosActivos.tipoPrecioFiltro = "todos";
+
+        // Actualizamos los botones visualmente para que se marque "Todos"
+        document.querySelectorAll(".category-btn").forEach((b) => {
+          const txt = b.innerText.trim().toLowerCase();
+          b.classList.toggle("active", txt === "todos");
+        });
+      }
+
       yaFiltroElUsuario = true;
+      filtrosActivos.etiqueta = "todos";
+      cantidadMostrada = 12;
       aplicarFiltros();
     }
   };

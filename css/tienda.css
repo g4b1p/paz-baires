@@ -1,21 +1,24 @@
 /*-----------------FILTROS-----------------*/
 .contenedor-busqueda {
-    max-width: 600px;
+    max-width: 700px;
     position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    /* Reducimos margen */
 }
 
 #buscador-input {
     font-family: "Unbounded", sans-serif;
     border: 2px solid #ffffff;
-    border-radius: 20px;
-    font-size: 15px;
+    border-radius: 15px;
+    /* Menos curvo para ganar espacio */
+    font-size: 13px;
+    /* Letra más chica */
     outline: none;
     background-color: #7454d9;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
-    /* Padding derecho espacio para botón X (right: 45px) y Lupa (right: 15px) */
-    padding: 10px 80px 10px 20px;
+    padding: 8px 70px 8px 15px;
+    /* Menos padding vertical */
     box-sizing: border-box;
     color: white;
 }
@@ -70,9 +73,12 @@
     height: auto;
 }
 
-.filters-categories p {
-    color: #ffffff;
-    margin-bottom: 10px;
+.filters {
+    position: sticky;
+    top: 0;
+    /* Lo pega al borde superior de la pantalla */
+    z-index: 100;
+    /* Tu color de fondo para que no se superponga el texto de las fotos al hacer scroll */
 }
 
 .categories {
@@ -80,19 +86,27 @@
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 .category-btn {
     font-family: "Unbounded", sans-serif;
-    padding: 10px 15px;
-    border-radius: 15px;
-    border: 2px solid #ffffff;
+    padding: 8px 10px;
+    /* Reducimos el alto y ancho */
+    border-radius: 10px;
+    /* Menos curvos */
+    border: 1.5px solid #ffffff;
     color: #ffffff;
     background-color: #b591ef;
+    font-size: 13px;
+    /* Letra más legible pero compacta */
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease;
+    white-space: nowrap;
+    /* Evita que el texto se parta en dos renglones */
 }
 
 .category-btn.active {
@@ -102,6 +116,63 @@
 }
 
 .sin-resultados {
+    color: #ffffff;
+}
+
+.filters.scrolled {
+    background-color: #ffffff;
+    /* Agregamos una sombra para que flote visualmente sobre el contenido */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    /* Reducimos un poco el padding vertical para ganar espacio de lectura */
+    transition: all 0.3s ease;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.filters.scrolled #buscador-input {
+    background-color: #f8f8f8;
+    /* Fondo gris muy clarito */
+    border: 2px solid #7454d9;
+    /* Borde morado */
+    color: #333333;
+    /* Texto oscuro */
+    box-shadow: none;
+    /* Quitamos la sombra interna para un look más limpio */
+}
+
+.filters.scrolled #buscador-input::placeholder {
+    color: #888888;
+    /* Placeholder gris medio */
+}
+
+.filters.scrolled .limpiar-btn {
+    color: #7454d9;
+    /* Cambiamos la X blanca a morada */
+}
+
+.filters.scrolled .lupa-btn img {
+    /* Convierte la imagen a negra para que contraste */
+    filter: brightness(0);
+}
+
+.filters.scrolled .categories {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.filters.scrolled .category-btn {
+    background-color: #ffffff;
+    color: #7454d9;
+    border: 1.5px solid #7454d9;
+}
+
+.filters.scrolled .category-btn:hover {
+    background-color: #f0ebff;
+    /* Un lila muy suave al pasar el mouse */
+}
+
+.filters.scrolled .category-btn.active {
+    background-color: #7454d9;
     color: #ffffff;
 }
 
@@ -300,14 +371,24 @@
 }
 
 @media (max-width: 650px) {
-    .category-btn {
-        padding: 8px;
+
+    .filters.scrolled {
         border-radius: 10px;
-        font-size: 11px;
+        padding: 5px;
+    }
+
+    .categories {
+        gap: 5px;
+    }
+
+    .category-btn {
+        padding: 8px 5px;
+        border-radius: 8px;
+        font-size: 10px;
     }
 
     #buscador-input {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .badge {
@@ -315,8 +396,6 @@
         font-size: 10px;
         border-radius: 8px;
     }
-
-
 
     .producto-header,
     .precios {
