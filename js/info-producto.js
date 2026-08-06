@@ -54,13 +54,36 @@ function actualizarResumen(producto) {
     contenedor.style.display = "none";
   }
 
-  // Lógica de mensaje mayorista
+  // Lógica de mensaje mayorista y PACKS ESTRÍCTOS
   const tipo = (producto.tipoPrecio || "unico").toLowerCase();
-  if (
+  const esPack = tipo.includes("docena") || tipo.includes("pack");
+  const cantRequerida = producto.cantidadPack || 12;
+
+  if (esPack) {
+    mensajeObj.style.display = "block";
+    if (totalArticulos < cantRequerida) {
+      let faltan = cantRequerida - totalArticulos;
+      mensajeObj.className = "mensaje-mayorista";
+      mensajeObj.style.background = "#fff3cd"; // Vuelve a color normal
+      mensajeObj.style.color = "#856404";
+      mensajeObj.innerHTML = `Te faltan <b>${faltan} unidades</b> para completar tu Pack de ${cantRequerida}.`;
+    } else if (totalArticulos > cantRequerida) {
+      mensajeObj.className = "mensaje-mayorista";
+      mensajeObj.style.background = "#ffebee";
+      mensajeObj.style.color = "#c62828";
+      mensajeObj.innerHTML = `⚠️ Te pasaste. El pack debe ser de <b>exactamente ${cantRequerida} unidades</b>.`;
+    } else {
+      mensajeObj.className = "mensaje-mayorista exito";
+      mensajeObj.style.background = "#d4edda";
+      mensajeObj.style.color = "#155724";
+      mensajeObj.innerHTML = `¡Pack completo de ${cantRequerida} unidades! 👏 Listo para agregar al carrito.`;
+    }
+  } else if (
     tipo.includes("mayor") ||
     tipo.includes("pormayor") ||
     tipo.includes("mayorista")
   ) {
+    mensajeObj.style.display = "block";
     if (totalArticulos < 3) {
       let faltan = 3 - totalArticulos;
       mensajeObj.className = "mensaje-mayorista";
@@ -156,13 +179,20 @@ function cargarProducto() {
       varianteSeleccionada = null;
     }
 
-    const esMayor = (producto.tipoPrecio || "").toLowerCase().includes("mayor");
+    const tipoPrecio = (producto.tipoPrecio || "").toLowerCase();
+    const esMayor = tipoPrecio.includes("mayor");
+    const esPack = tipoPrecio.includes("docena") || tipoPrecio.includes("pack");
+    const esDocenaCerrada =
+      esPack && (!producto.variantes || producto.variantes.length <= 1);
+
     const esModoNumeros =
       producto.variantes &&
       producto.variantes.length > 0 &&
       producto.variantes[0].nombre.length <= 2;
+
     const usaMulti =
-      esMayor && (producto.tipo === "estampado" || producto.tipo === "color");
+      (esMayor || (esPack && !esDocenaCerrada)) &&
+      (producto.tipo === "estampado" || producto.tipo === "color");
     const usaMultiThumbnails =
       usaMulti && !(producto.tipo === "estampado" && esModoNumeros);
 
@@ -539,7 +569,7 @@ function renderizarPrecios(producto) {
         "* El precio por mayor aplica llevando 3 o más artículos.";
       document.getElementById("priceCasoMayorMenor").appendChild(aviso);
     }
-  } else if (tipo.includes("docena")) {
+  } else if (tipo.includes("docena") || tipo.includes("pack")) {
     document.getElementById("priceCasoDocena").style.display = "block";
     document.getElementById("precioDocena").innerText =
       `$ ${pEsp.toLocaleString("es-AR")}`;
@@ -565,9 +595,10 @@ function actualizarGuia() {
       ? productos.find((p) => p.id == productId)
       : null;
   const esDocena = producto
-    ? (producto.tipoPrecio || "").toLowerCase().includes("docena")
+    ? (producto.tipoPrecio || "").toLowerCase().includes("docena") ||
+      (producto.tipoPrecio || "").toLowerCase().includes("pack")
     : false;
-
+  const cantPack = producto ? producto.cantidadPack || 12 : 12;
   let textoTalle = "";
   if (talleSeleccionado) {
     textoTalle = ` (Talle: <strong>${talleSeleccionado}</strong>)`;
@@ -584,10 +615,11 @@ function actualizarGuia() {
 
     if (
       varianteSeleccionada === "Único modelo" ||
-      varianteSeleccionada === "Pack Cerrado (Docena)"
+      varianteSeleccionada === "Pack Cerrado (Docena)" ||
+      varianteSeleccionada === "Pack Cerrado"
     ) {
       if (esDocena) {
-        guia.innerHTML = `Llevás <strong>${cantidad}</strong> docena(s) de <strong>Pack Cerrado</strong>${textoTalle}`;
+        guia.innerHTML = `Llevás <strong>${cantidad}</strong> pack(s) de ${cantPack}u. (<strong>Pack Cerrado</strong>)${textoTalle}`;
       } else {
         guia.innerHTML = `Llevás <strong>${cantidad}</strong> producto(s)${textoTalle}`;
       }
@@ -603,7 +635,7 @@ function actualizarGuia() {
 
     // Texto adaptado si es docena o producto normal
     if (esDocena) {
-      guia.innerHTML = `Seleccionaste <strong>${cantidad}</strong> docena(s) de la <strong>${textoVariante}</strong>${textoTalle}`;
+      guia.innerHTML = `Seleccionaste <strong>${cantidad}</strong> pack(s) de ${cantPack}u. (<strong>${textoVariante}</strong>)${textoTalle}`;
     } else {
       guia.innerHTML = `Seleccionaste <strong>${cantidad}</strong> de ${textoVariante}${textoTalle}`;
     }
@@ -612,8 +644,13 @@ function actualizarGuia() {
 }
 
 function renderSeccionColores(container, prod) {
-  const esMayor = (prod.tipoPrecio || "").toLowerCase().includes("mayor");
-  const usaMulti = esMayor && prod.tipo === "color";
+  const tipoPrecio = (prod.tipoPrecio || "").toLowerCase();
+  const esMayor = tipoPrecio.includes("mayor");
+  const esPack = tipoPrecio.includes("docena") || tipoPrecio.includes("pack");
+  const esDocenaCerrada =
+    esPack && (!prod.variantes || prod.variantes.length <= 1);
+  const usaMulti =
+    (esMayor || (esPack && !esDocenaCerrada)) && prod.tipo === "color";
 
   if (usaMulti) {
     container.innerHTML = `
@@ -752,12 +789,16 @@ function renderSeccionColores(container, prod) {
 }
 
 function renderSeccionEstampados(container, prod) {
-  const esMayor = (prod.tipoPrecio || "").toLowerCase().includes("mayor");
+  const tipoPrecio = (prod.tipoPrecio || "").toLowerCase();
+  const esMayor = tipoPrecio.includes("mayor");
+  const esPack = tipoPrecio.includes("docena") || tipoPrecio.includes("pack");
+  const esDocenaCerrada =
+    esPack && (!prod.variantes || prod.variantes.length <= 1);
   const esModoNumeros =
     prod.variantes &&
     prod.variantes.length > 0 &&
     prod.variantes[0].nombre.length <= 2;
-  const usaMulti = esMayor && esModoNumeros;
+  const usaMulti = (esMayor || (esPack && !esDocenaCerrada)) && esModoNumeros;
 
   const stampedLabelContainer = document.getElementById(
     "stampedLabelContainer",
@@ -1023,35 +1064,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!productoActual) return;
 
-      const esMayor = (productoActual.tipoPrecio || "")
-        .toLowerCase()
-        .includes("mayor");
+      const tipoPrecio = (productoActual.tipoPrecio || "").toLowerCase();
+      const esMayor = tipoPrecio.includes("mayor");
+      const esPack =
+        tipoPrecio.includes("docena") || tipoPrecio.includes("pack");
+      const esDocenaCerrada =
+        esPack &&
+        (!productoActual.variantes || productoActual.variantes.length <= 1);
+
       const usaMulti =
-        esMayor &&
+        (esMayor || (esPack && !esDocenaCerrada)) &&
         (productoActual.tipo === "estampado" ||
           productoActual.tipo === "color");
 
       if (usaMulti) {
         let agregados = 0;
+        let totalUnidades = 0;
+
         for (let key in seleccionesGlobales) {
-          const item = seleccionesGlobales[key];
-          if (item.cantidad > 0) {
-            agregarAlCarrito(
-              productoActual,
-              item.cantidad,
-              item.variante,
-              item.talle,
-              true,
+          totalUnidades += seleccionesGlobales[key].cantidad;
+        }
+
+        // CANDADO ESTRICTO DE CANTIDAD PARA PACKS
+        if (esPack && !esDocenaCerrada) {
+          const cantRequerida = productoActual.cantidadPack || 12;
+          if (totalUnidades !== cantRequerida) {
+            mostrarAlertaPersonalizada(
+              `⚠️ ATENCIÓN: Este producto se vende en packs de exactamente ${cantRequerida} unidades. Actualmente seleccionaste ${totalUnidades}. Por favor, ajustá las cantidades con los botones + y - para agregar el pack perfecto.`,
             );
-            agregados++;
+            return;
           }
         }
 
-        if (agregados === 0) {
+        // ESTA LÍNEA ES LA QUE TE FALTA
+        const selecciones = [];
+
+        for (let key in seleccionesGlobales) {
+          const item = seleccionesGlobales[key];
+          if (item.cantidad > 0) {
+            selecciones.push({
+              variante: item.variante,
+              talle: item.talle,
+              cantidad: item.cantidad,
+            });
+            agregados += item.cantidad;
+          }
+        }
+
+        if (selecciones.length === 0) {
           mostrarAlertaPersonalizada(
             "No seleccionaste ningun estampado/color. Aumentá con los botones + debajo de las fotos.",
           );
           return;
+        }
+
+        // SI ES PACK, guardamos un solo objeto
+        if (esPack) {
+          agregarPackAlCarrito(productoActual, selecciones);
+        } else {
+          // SI ES MAYORISTA, mantenemos la lógica original
+          selecciones.forEach((s) => {
+            agregarAlCarrito(
+              productoActual,
+              s.cantidad,
+              s.variante,
+              s.talle,
+              true,
+            );
+          });
         }
 
         setTimeout(() => {
@@ -1153,7 +1233,8 @@ function agregarAlCarrito(
             : item.precioMinorista;
       } else if (
         item.tipoPrecio.includes("oferta") ||
-        item.tipoPrecio.includes("docena")
+        item.tipoPrecio.includes("docena") ||
+        item.tipoPrecio.includes("pack")
       ) {
         item.precio = item.precioMayorista;
       } else {
@@ -1167,4 +1248,22 @@ function agregarAlCarrito(
   if (!esMasivo) {
     window.location.href = "carrito.html";
   }
+}
+
+function agregarPackAlCarrito(producto, selecciones) {
+  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+  carrito.push({
+    id: producto.id,
+    nombre: producto.nombre,
+    esPack: true,
+    cantidad: 1,
+    cantidadPack: producto.cantidadPack || 12,
+    precioPack: producto.precioEspecial || producto.precioRegular,
+    tipoPrecio: "pack",
+    imagen: producto.imagenes?.[0] || "default.jpg",
+    selecciones: selecciones,
+  });
+
+  localStorage.setItem("carrito", JSON.stringify(carrito));
 }

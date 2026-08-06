@@ -95,10 +95,13 @@ function procesarURLYFiltrar() {
     filtrosActivos.etiqueta = "todos"; // Mostramos todas las ofertas
     textoBotonActivo = "ofertas";
   } else if (
-    (linURL && linURL.toLowerCase() === "docenas") ||
-    (catURL && catURL.toLowerCase() === "docenas")
+    (linURL &&
+      (linURL.toLowerCase() === "docenas" ||
+        linURL.toLowerCase() === "packs")) ||
+    (catURL &&
+      (catURL.toLowerCase() === "docenas" || catURL.toLowerCase() === "packs"))
   ) {
-    filtrosActivos.tipoPrecioFiltro = "docena";
+    filtrosActivos.tipoPrecioFiltro = "pack";
     filtrosActivos.categoria = "todos";
     filtrosActivos.etiqueta = "todos";
     textoBotonActivo = "docenas";
@@ -250,8 +253,9 @@ function aplicarFiltros() {
     const pTipoPrecio = norm(p.tipoPrecio || "");
     if (filtrosActivos.tipoPrecioFiltro === "oferta") {
       matchTipoPrecio = pTipoPrecio.includes("oferta");
-    } else if (filtrosActivos.tipoPrecioFiltro === "docena") {
-      matchTipoPrecio = pTipoPrecio.includes("docena");
+    } else if (filtrosActivos.tipoPrecioFiltro === "pack") {
+      matchTipoPrecio =
+        pTipoPrecio.includes("pack") || pTipoPrecio.includes("docena");
     }
 
     const queryBusqueda = norm(filtrosActivos.busqueda || "");
@@ -317,13 +321,12 @@ function configurarEscuchadores() {
       if (textoBoton === "ofertas") {
         filtrosActivos.tipoPrecioFiltro = "oferta";
         filtrosActivos.categoria = "todos";
-      } else if (textoBoton === "docenas") {
-        filtrosActivos.tipoPrecioFiltro = "docena";
+      } else if (textoBoton === "docenas" || textoBoton === "packs/docenas") {
+        filtrosActivos.tipoPrecioFiltro = "pack";
         filtrosActivos.categoria = "todos";
       } else {
         filtrosActivos.tipoPrecioFiltro = "todos";
-        filtrosActivos.categoria =
-          textoBoton === "todos" ? "todos" : textoBoton;
+        filtrosActivos.categoria = textoBoton;
       }
 
       yaFiltroElUsuario = true;
@@ -425,8 +428,8 @@ function sincronizarFiltrosDesdeUI() {
     if (texto === "ofertas") {
       filtrosActivos.tipoPrecioFiltro = "oferta";
       filtrosActivos.categoria = "todos";
-    } else if (texto === "docenas") {
-      filtrosActivos.tipoPrecioFiltro = "docena";
+    } else if (texto === "docenas" || texto === "packs/docenas") {
+      filtrosActivos.tipoPrecioFiltro = "pack";
       filtrosActivos.categoria = "todos";
     } else {
       filtrosActivos.tipoPrecioFiltro = "todos";

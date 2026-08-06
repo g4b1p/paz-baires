@@ -176,10 +176,24 @@ function renderizarCarrito() {
       precioBaseComparacion = precioAplicado;
     }
 
-    let subtotalFila = precioAplicado * cantidadItem;
+    let subtotalFila;
+
+    if (item.esPack) {
+      subtotalFila = item.precioPack * item.cantidad;
+    } else {
+      subtotalFila = precioAplicado * cantidadItem;
+    }
+
     totalConDescuentos += subtotalFila;
     totalOriginal += precioBaseComparacion * cantidadItem;
     item.precioCobrado = precioAplicado;
+
+    if (item.esPack) {
+      precioAplicado = item.precioPack;
+      precioBaseComparacion = item.precioPack;
+      tipoDescuentoText = `Pack x${item.cantidadPack}`;
+      claseBadge = "badge-docena";
+    }
 
     let precioHtml =
       precioBaseComparacion > precioAplicado
@@ -191,7 +205,31 @@ function renderizarCarrito() {
       prodBD.imagenes && prodBD.imagenes.length > 0
         ? prodBD.imagenes[0]
         : "images/ejemplo-producto.jpg";
-    let htmlVariante = `<p class="variante-tag">Variante: <b>${item.variante || "Única"}</b></p>`;
+
+    let htmlVariante = "";
+
+    const esPackCerrado =
+      !item.esPack &&
+      (tipoPrecioRaw.includes("pack") || tipoPrecioRaw.includes("docena")) &&
+      (!prodBD.variantes || prodBD.variantes.length <= 1);
+
+    if (item.esPack) {
+      htmlVariante = `
+        <p class="variante-tag"><b>Pack surtido x${item.cantidadPack}</b></p>
+        <div class="pack-desglose">
+          ${item.selecciones
+            .map(
+              (s) =>
+                `<div>${s.cantidad}x ${s.variante}${s.talle ? ` - Talle ${s.talle}` : ""}</div>`,
+            )
+            .join("")}
+        </div>
+      `;
+    } else if (esPackCerrado) {
+      htmlVariante = `<p class="variante-tag">Presentación: <b>Pack cerrado x${prodBD.cantidadPack || 12}</b></p>`;
+    } else {
+      htmlVariante = `<p class="variante-tag">Variante: <b>${item.variante || "Única"}</b></p>`;
+    }
 
     if (contenedor) {
       contenedor.innerHTML += `
@@ -208,11 +246,23 @@ function renderizarCarrito() {
                     </td>
                     <td class="prod-precio">${precioHtml}</td>
                     <td class="prod-qty">
-                        <div class="qty-selector">
-                            <button onclick="cambiarCantidad(${index}, -1)">-</button>
-                            <input type="number" value="${cantidadItem}" readonly>
-                            <button onclick="cambiarCantidad(${index}, 1)">+</button>
-                        </div>
+                      ${
+                        item.esPack
+                          ? `
+                          <div class="qty-selector">
+                              <button onclick="cambiarCantidad(${index}, -1)">-</button>
+                              <input type="number" value="${cantidadItem}" readonly>
+                              <button onclick="cambiarCantidad(${index}, 1)">+</button>
+                          </div>
+                        `
+                          : `
+                          <div class="qty-selector">
+                              <button onclick="cambiarCantidad(${index}, -1)">-</button>
+                              <input type="number" value="${cantidadItem}" readonly>
+                              <button onclick="cambiarCantidad(${index}, 1)">+</button>
+                          </div>
+                        `
+                      }
                     </td>
                     <td class="prod-subtotal"><strong>$ ${subtotalFila.toLocaleString("es-AR")}</strong></td>
                     <td class="prod-remove">
@@ -331,16 +381,28 @@ async function procesarCompra() {
     .closest(".option-card")
     .querySelector("p b, strong").innerText;
 
-  // --- MENSAJE ORIGINAL LIMPIO Y SIN EMOJIS ---
+  // --- MENSAJE LIMPIO ---
   let msjWA = `Hola Paz Baires! Mi nombre es *${nombre}*.\n`;
   msjWA += `Acabo de realizar un pedido en la web.\n\n`;
-  msjWA += `*MI PEDIDO:*\n`;
+  msjWA += `*MI PEDIDO*\n\n`;
+
   carrito.forEach((item) => {
-    let sub = (item.precioCobrado || item.precio) * item.cantidad;
-    msjWA += `- ${item.cantidad}x ${item.nombre} (${item.variante || "Única"}) - $${sub.toLocaleString("es-AR")}\n`;
+    if (item.esPack) {
+      msjWA += `• *${item.nombre}* — Pack x${item.cantidadPack} — *$${(item.precioPack * item.cantidad).toLocaleString("es-AR")}*\n`;
+
+      item.selecciones.forEach((s) => {
+        msjWA += `    - ${s.cantidad}x ${s.variante}${s.talle ? ` - Talle ${s.talle}` : ""}\n`;
+      });
+
+      msjWA += `\n`;
+    } else {
+      const sub = (item.precioCobrado || item.precio) * item.cantidad;
+      msjWA += `• *${item.nombre}* (${item.variante || "Única"}) — ${item.cantidad}x — *$${sub.toLocaleString("es-AR")}*\n\n`;
+    }
   });
-  msjWA += `\n*Envío:* ${metodoEnvioTxt}\n`;
-  msjWA += `*Pago:* ${metodoPagoTxt}\n`;
+
+  msjWA += `Envío: *${metodoEnvioTxt}*\n`;
+  msjWA += `Pago: *${metodoPagoTxt}*\n\n`;
   msjWA += `*TOTAL A PAGAR: $${montoTotalFinal.toLocaleString("es-AR")}*\n\n`;
   msjWA += `Quedo a la espera para coordinar. ¡Gracias!`;
 

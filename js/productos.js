@@ -57,7 +57,9 @@ function sincronizarCarritoConProductos() {
     item.precioMayorista = productoReal.precioEspecial || 0;
     item.tipoPrecio = tipoActual;
     item.precio =
-      tipoActual.includes("oferta") || tipoActual.includes("docena")
+      tipoActual.includes("oferta") ||
+      tipoActual.includes("docena") ||
+      tipoActual.includes("pack")
         ? productoReal.precioEspecial > 0
           ? productoReal.precioEspecial
           : productoReal.precioRegular
@@ -165,6 +167,7 @@ async function cargarProductosDesdeSheet() {
           tipo: p.Tipo ? p.Tipo.toLowerCase().trim() : "",
 
           tipoPrecio: tipoPrecioRaw.toString().trim().toLowerCase(),
+          cantidadPack: parseInt(p["Cantidad Pack"]) || 12,
           precioRegular:
             parseFloat(p["Precio Regular"]) || parseFloat(p.Precio) || 0,
           precioEspecial: parseFloat(p["Precio Especial"]) || 0,
@@ -259,12 +262,13 @@ function generarHTMLPrecios(prod) {
       </div>`;
   }
 
-  // 3. Caso DOCENA
-  if (tipo.includes("docena")) {
+  // 3. Caso DOCENA / PACK DINÁMICO
+  if (tipo.includes("docena") || tipo.includes("pack")) {
+    const cantPack = prod.cantidadPack || 12;
     return `
       <div class="precios">
         <div class="caso-docena">
-          <div class="etiqueta-docena">DOCENA</div>
+          <div class="etiqueta-docena">PACK x${cantPack}</div>
           <p class="precio-docena">$ ${espFormatted}</p>
         </div>
       </div>`;
