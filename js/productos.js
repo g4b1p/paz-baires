@@ -1,4 +1,4 @@
-const API_URL = "productos.json";
+const API_URL = "productos.json?v=1.0";
 
 // Variable global para que el resto de tus archivos sigan funcionando
 let productos = [];

@@ -177,6 +177,7 @@
 }
 
 /*-----------------PRODCUTOS-----------------*/
+
 #contenedor-tienda:empty::after {
     content: "Cargando catálogo...";
     display: block;

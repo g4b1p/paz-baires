@@ -69,12 +69,12 @@ function insertarHeader() {
         </div>
 
         <a href="index.html" class="logo-container">
-          <img class="logo" src="images/icons/paz-baires-logotipo.webp" alt="" loading="lazy" decoding="async" />
+          <img class="logo" src="images/icons/paz-baires-logotipo.webp" alt="" fetchpriority="high" loading="eager" />
         </a>
 
         <a href="carrito.html" class="carrito"
           >MI CARRITO
-          <img class="icon" src="images/icons/carrito-icon.webp" alt="" loading="lazy" decoding="async" />
+          <img class="icon" src="images/icons/carrito-icon.webp" alt="" fetchpriority="high" loading="eager" />
           <span id="cart-count" class="contador-carrito" style="display:none;">0</span>
         </a>
       </div>
@@ -117,12 +117,12 @@ function insertarHeader() {
         </div>
 
         <a href="index.html" class="logo-container">
-          <img class="logo" src="images/icons/paz-baires-logotipo.webp" alt="" loading="lazy" decoding="async" />
+          <img class="logo" src="images/icons/paz-baires-logotipo.webp" alt="" fetchpriority="high" loading="eager" />
         </a>
 
         <a href="carrito.html" class="carrito"
           >MI CARRITO
-          <img class="icon" src="images/icons/carrito-icon.webp" alt="" loading="lazy" decoding="async" />
+          <img class="icon" src="images/icons/carrito-icon.webp" alt="" fetchpriority="high" loading="eager" />
           <span id="cart-count" class="contador-carrito" style="display:none;">0</span>
         </a>
       </div>
@@ -137,12 +137,12 @@ function insertarHeader() {
         </div>
 
         <a href="index.html" class="logo-container">
-          <img class="logo" src="images/icons/paz-baires-logotipo.webp" alt="" loading="lazy" decoding="async" />
+          <img class="logo" src="images/icons/paz-baires-logotipo.webp" alt="" fetchpriority="high" loading="eager" />
         </a>
 
         <a href="carrito.html" class="carrito"
           >MI CARRITO
-          <img class="icon" src="images/icons/carrito-icon.webp" alt="" loading="lazy" decoding="async" />
+          <img class="icon" src="images/icons/carrito-icon.webp" alt="" fetchpriority="high" loading="eager" />
           <span id="cart-count" class="contador-carrito" style="display:none;">0</span>
         </a>
       </div>
@@ -157,12 +157,12 @@ function insertarHeader() {
         </div>
 
         <a href="index.html" class="logo-container">
-          <img class="logo" src="images/icons/paz-baires-logotipo.webp" alt="" loading="lazy" decoding="async" />
+          <img class="logo" src="images/icons/paz-baires-logotipo.webp" alt="" fetchpriority="high" loading="eager" />
         </a>
 
         <a href="carrito.html" class="carrito active"
           >MI CARRITO
-          <img class="icon" src="images/icons/carrito-blanco-icon.webp" alt="" loading="lazy" decoding="async" />
+          <img class="icon" src="images/icons/carrito-blanco-icon.webp" alt="" fetchpriority="high" loading="eager" />
           <span id="cart-count" class="contador-carrito" style="display:none;">0</span>
         </a>
       </div>

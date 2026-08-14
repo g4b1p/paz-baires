@@ -28,6 +28,25 @@ body {
     background-image: linear-gradient(to bottom, #7454d9, #8e6fe3, #a78bed, #bfa7f6, #d6c3ff);
 }
 
+/* --- ANIMACIÓN DE ENTRADA SUAVE PARA TODA LA PÁGINA --- */
+@keyframes aparecerPagina {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+        /* Hace un pequeño efecto de elevación sutil */
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Aplicamos la animación al cuerpo (body) o contenedor general */
+body {
+    animation: aparecerPagina 0.5s ease-out forwards;
+}
+
 /*-----------------BARRA DE SCROLL-----------------*/
 ::-webkit-scrollbar {
     width: 12px;
