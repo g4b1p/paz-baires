@@ -1,5 +1,4 @@
-const API_URL =
-  "https://script.google.com/macros/s/AKfycby7NDP6_vUlAxOvigaqaEZs2RdpKhAGxIH5YFaUG4iMzBSJamybsaeMLzqwhBs1bOA1iw/exec";
+const API_URL = "productos.json";
 
 // Variable global para que el resto de tus archivos sigan funcionando
 let productos = [];

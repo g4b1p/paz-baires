@@ -52,16 +52,32 @@ function mostrarEsqueletosTienda() {
   contenedor.innerHTML = esqueletosHTML;
 }
 
-// CARGA DESDE CACHÉ LOCAL INSTANTÁNEO
+// CARGA DESDE CACHÉ LOCAL O ESPERA ACTIVA PARA CLIENTES NUEVOS
 const cache = localStorage.getItem("productos_cache");
 if (cache) {
   productos = JSON.parse(cache);
   window.productos = productos;
   console.log("⚡ Tienda: Cargando desde caché...");
-
   procesarURLYFiltrar();
   configurarEscuchadores();
+} else {
+  console.log(
+    "⏳ Tienda: Cliente nuevo sin caché, esperando a que carguen los productos...",
+  );
+  // Configuramos los botones y buscadores de una vez para que la página no quede muerta
+  configurarEscuchadores();
 }
+
+// ESCUCHADOR CLAVE PARA CUANDO LLEGUEN LOS PRODUCTOS NUEVOS
+document.addEventListener("productosListos", () => {
+  console.log(
+    "✅ Productos listos detectados en tienda.js, procesando vista...",
+  );
+  if (window.productos) {
+    productos = window.productos;
+  }
+  procesarURLYFiltrar();
+});
 
 // INICIALIZACIÓN CUANDO LLEGAN DATOS DE GOOGLE SHEETS (ACTUALIZACIÓN SILENCIOSA)
 document.addEventListener("productosListos", () => {
