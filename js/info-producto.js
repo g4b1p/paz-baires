@@ -256,12 +256,21 @@ function cargarProducto() {
         const esDocenaCerrada =
           esDocena && (!producto.variantes || producto.variantes.length <= 1);
 
-        // Agregamos "!esDocenaCerrada" para que NO pise el texto de Pack Cerrado
-        if (nombreVariante && !esModoNumeros && !esDocenaCerrada) {
-          varianteSeleccionada = nombreVariante;
+        // AQUÍ ESTÁ LA SOLUCIÓN PARA LA PORTADA
+        if (!esModoNumeros && !esDocenaCerrada) {
           const stampedDisplay = document.getElementById("stampedName");
-          if (stampedDisplay) stampedDisplay.innerText = nombreVariante;
+
+          if (producto.esEstampado === "NO" && index === 0) {
+            // Si es la portada, deseleccionamos todo
+            varianteSeleccionada = null;
+            if (stampedDisplay) stampedDisplay.innerText = "No seleccionado";
+          } else if (nombreVariante) {
+            // Si es un estampado real, lo seleccionamos
+            varianteSeleccionada = nombreVariante;
+            if (stampedDisplay) stampedDisplay.innerText = nombreVariante;
+          }
         }
+
         if (typeof actualizarGuia === "function") actualizarGuia();
       };
 

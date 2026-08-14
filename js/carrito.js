@@ -358,12 +358,28 @@ async function procesarCompra() {
   }
 
   const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+  // SALTOS DE LÍNEA Y SANGRÍA PARA EL EXCEL
   const stringProductos = carrito
-    .map(
-      (item) =>
-        `${item.cantidad}x ${item.nombre} - ${item.variante || "Única"} ($${item.precioCobrado || item.precio})`,
-    )
-    .join(" | ");
+    .map((item) => {
+      if (item.esPack) {
+        // Armamos el detalle del pack con un salto de línea por cada variante y espacios de sangría
+        const detallePack = item.selecciones
+          .map(
+            (s) =>
+              `      ↳ ${s.cantidad}x ${s.variante}${s.talle ? ` (T: ${s.talle})` : ""}`,
+          )
+          .join("\n");
+
+        // El nombre del pack va en la primera línea, y abajo sus detalles
+        return `${item.cantidad}x PACK ${item.nombre} ($${item.precioPack}):\n${detallePack}`;
+      } else {
+        // Producto normal (le sumamos la validación del talle por si existe)
+        const textoTalle = item.talle ? ` - Talle ${item.talle}` : "";
+        return `${item.cantidad}x ${item.nombre} - ${item.variante || "Única"}${textoTalle} ($${item.precioCobrado || item.precio})`;
+      }
+    })
+    .join("\n\n"); // \n\n crea una línea en blanco entre producto y producto para mayor claridad
 
   const payload = {
     cliente: nombre,
