@@ -40,6 +40,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    /* AQUÍ ESTÁ LA MAGIA: Forzamos una proporción fija (ej: 4/5 o 3/4). 
+       La caja ya no cambiará de tamaño sin importar la foto que elijan. */
+    aspect-ratio: 4/5; 
+    background-color: #f9f8fc; /* Un fondo suave y elegante por si la foto deja márgenes */
+    border-radius: 10px;
 }
 
 .nav-arrow {
