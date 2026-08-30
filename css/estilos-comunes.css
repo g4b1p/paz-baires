@@ -147,7 +147,7 @@ body {
 }
 
 .logo {
-    width: 190px;
+    width: 150px;
     height: auto;
     justify-self: center;
 }
@@ -494,7 +494,7 @@ main {
     }
 
     .logo {
-        width: 160px;
+        width: 130px;
     }
 
     /* 2. LA MAGIA: Hacemos que el contenedor .nav-link desaparezca visualmente,
