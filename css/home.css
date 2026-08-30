@@ -75,6 +75,17 @@
     /* Evita que las líneas sean infinitas en PC */
 }
 
+.btn-home {
+    padding: 12px 18px;
+    font-size: 18px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+    font-weight: bolder;
+    background-color: #a880e9;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 13px;
+}
+
 /*-----------------FEATURES (ENVIO Y PAGO)-----------------*/
 .features {
     margin: 40px 0;
@@ -451,6 +462,12 @@
         height: 100%;
         object-fit: cover;
         transform: translate(-50%, -50%);
+    }
+
+    .btn-home {
+        padding: 10px 15px;
+        font-size: 16px;
+        border-radius: 10px;
     }
 }
 

@@ -103,6 +103,7 @@ function insertarHeader() {
         </video>
         <div class="video-overlay">
           <h1>Bienvenido a nuestro Catálogo/Tienda Web!</h1>
+          <a class="btn-home" href="tienda.html">Ir al Catálago</a>
         </div>
       </section>
     </header>
