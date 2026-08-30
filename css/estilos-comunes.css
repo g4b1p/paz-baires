@@ -315,6 +315,10 @@ hr {
 }
 
 /*-----------------FOOTER (whatsapp)-----------------*/
+.chat-whatsapp {
+    display: none;
+}
+
 .chat-toggle {
     display: none;
 }
