@@ -177,7 +177,7 @@ function renderizarProductos(lista, totalResultados) {
   }
 
   // DIBUJAR CARDS
-  lista.forEach((prod) => {
+  lista.forEach((prod, index) => {
     const imagenPortada =
       prod.imagenes && prod.imagenes.length > 0
         ? prod.imagenes[0]
@@ -199,12 +199,23 @@ function renderizarProductos(lista, totalResultados) {
         ? generarHTMLPrecios(prod)
         : `<div class="precios"><p class="precio-unico">$ ${prod.precioRegular || 0}</p></div>`;
 
+    const imagenPrioritaria = index < 3;
+    const atributosImagen = imagenPrioritaria
+      ? 'loading="eager" fetchpriority="high"'
+      : 'loading="lazy"';
+
     const card = `
     <div class="producto-card ${claseExtra}">
         <a href="info-producto.html?id=${prod.id}" class="producto-href"> 
             ${badgeHTML}
-            <img class="producto-img" loading="lazy" decoding="async" src="${imagenPortada}" alt="${prod.nombre}" />
-
+            <img 
+              class="producto-img"
+              ${atributosImagen}
+              decoding="async"
+              src="${imagenPortada}"
+              alt="${prod.nombre}" 
+            />
+            
             <div class="info-prod">
               <div class="producto-header">
                 <p class="producto-name">${prod.nombre}</p>
