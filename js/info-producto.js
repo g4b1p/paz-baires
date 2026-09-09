@@ -7,17 +7,34 @@ let seleccionesGlobales = {};
 let productoYaRenderizado = false; // EL ESCUDO DEFENSIVO: Evita que la pantalla parpadee o se resetee a los 3 segundos
 
 function mostrarAlertaPersonalizada(mensaje) {
-  const modal = document.createElement("div");
+  const modal = document.createElement("dialog");
+
+  // Generamos un ID único para no afectar otros elementos
+  const modalId = "alerta-" + Date.now();
+  modal.id = modalId;
+
+  // Quitamos los estilos por defecto del dialog nativo
   modal.style.cssText =
-    "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;";
+    "padding:0; border:none; background:transparent; max-width:350px; width:90%; outline:none;";
+
   modal.innerHTML = `
-        <div style="background:#fff;color:#333;padding:25px;border-radius:12px;max-width:350px;width:90%;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+        <style>
+            /* El ::backdrop es el fondo oscuro nativo del dialog */
+            #${modalId}::backdrop {
+                background: rgba(0, 0, 0, 0.6);
+            }
+        </style>
+        <div style="background:#fff;color:#333;padding:25px;border-radius:12px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
             <h3 style="margin-top:0;color:#ff9800;font-size:22px;">⚠️ Advertencia</h3>
             <p style="margin-bottom:20px;font-size:16px;line-height:1.5;">${mensaje}</p>
-            <button onclick="this.parentElement.parentElement.remove()" style="background:#222;color:#fff;border:none;padding:12px 25px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:16px;width:100%;">Aceptar</button>
+            <button onclick="const d = this.closest('dialog'); d.close(); d.remove();" style="background:#222;color:#fff;border:none;padding:12px 25px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:16px;width:100%;">Aceptar</button>
         </div>
     `;
+
   document.body.appendChild(modal);
+
+  // showModal() es la magia: bloquea el fondo y siempre lo centra en la pantalla actual
+  modal.showModal();
 }
 
 function actualizarResumen(producto) {
