@@ -361,7 +361,7 @@
   },
   {
     "ID": 19,
-    "Orden": "",
+    "Orden": "7",
     "Tipo": "color",
     "EsEstampado": "",
     "Nombre": "Toalla Secado Rapido Grande",
@@ -374,7 +374,7 @@
     "Variantes": "Verde|#9cb957,\nCeleste Fuerte|#7a9bd2,\nRojo|#cb153e,\nBordo|#7f0e1d,\nLila|#945fa2,\nVerde Cian|#acd3d6,\nGris|#aeacbb,\nNegro|#231f2d,\nLila Claro|#a7a4cf,\nTurquesa Bajo|#84b1ad,\nVerde Bajo|#afaa9e,\nCeleste|#5382b2,\nAzul|#2b49a5,\nFucsia|#d23d82",
     "Detalles Técnicos": "Material: 100% Microfibra (85% Poliéster y 15% Poliamida),\nTamaño: 80x130cm, \nMarcas: City Blanco y Terrenal",
     "Estado": "Activo",
-    "Etiqueta": "Ninguno",
+    "Etiqueta": "Destacado",
     "Beneficio": "",
     "Responsable": "Mary",
     "Notas": ""
@@ -554,7 +554,7 @@
     "Variantes": "Lila Claro|#ddd4f3,\nVioleta|#9e62ba,\nLila Oscuro|#4f558b,\nVerde Bajo|#919289,\nRosa|#e684cd,\nRojo|#e31944,\nGris|#c3b9c1,\nVerde Oscuro|#679e7f,\nVerde Cian|#9fdccd,\nCeleste|#96bde8,\nAzul|#135eb8",
     "Detalles Técnicos": "Material: 100% Microfibra, \nTamaño: 50x35cm, \nMarca: Terrenal",
     "Estado": "Activo",
-    "Etiqueta": "Destacado",
+    "Etiqueta": "Ninguno",
     "Beneficio": "",
     "Responsable": "Mary",
     "Notas": ""
