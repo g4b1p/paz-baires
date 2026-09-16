@@ -172,7 +172,7 @@ function cargarProducto() {
         <div style="line-height: 1.3;">
             <strong style="font-size: 0.95rem; color: #fff;">${producto.beneficio}</strong>
             <p style="margin: 5px 0 0 0; font-size: 0.75rem; font-weight: normal; opacity: 0.9;">
-                Válido para este producto.
+                Ahorrá un 15% en tu compra pagando en efectivo y retirando por nuestro local.
             </p>
         </div>
     `;

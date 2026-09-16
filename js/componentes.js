@@ -27,35 +27,35 @@ function insertarHeader() {
         
         <!-- BLOQUE 1 (Con más contenido para cubrir pantallas grandes) -->
         <div class="marquee-content">
-          <span>ENVÍOS A TODO EL PAÍS</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
-          <span>COMPRA MÍNIMA PARA ENVÍOS A PARTIR DE $70.000</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
-          <span>PRECIOS POR MAYOR A PARTIR DE 3 O MÁS ARTÍCULOS</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
           <!-- Repetimos las frases una vez más para alargar el bloque -->
-          <span>ENVÍOS A TODO EL PAÍS</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
-          <span>COMPRA MÍNIMA PARA ENVÍOS A PARTIR DE $70.000</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
-          <span>PRECIOS POR MAYOR A PARTIR DE 3 O MÁS ARTÍCULOS</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
         </div>
 
         <!-- BLOQUE 2 CLONADO (Debe ser siempre una copia exacta del Bloque 1) -->
-        <div class="marquee-content" aria-hidden="true">
-          <span>ENVÍOS A TODO EL PAÍS</span>
+        <div class="marquee-content">
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
-          <span>COMPRA MÍNIMA PARA ENVÍOS A PARTIR DE $70.000</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
-          <span>PRECIOS POR MAYOR A PARTIR DE 3 O MÁS ARTÍCULOS</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
           <!-- Repetimos las frases una vez más para alargar el bloque -->
-          <span>ENVÍOS A TODO EL PAÍS</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
-          <span>COMPRA MÍNIMA PARA ENVÍOS A PARTIR DE $70.000</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
-          <span>PRECIOS POR MAYOR A PARTIR DE 3 O MÁS ARTÍCULOS</span>
+          <span>ENVÍO GRATIS A TODO EL PAÍS A PARTIR DE $50.000</span>
           <span class="separator">&bull;</span>
         </div>
 
@@ -85,28 +85,13 @@ function insertarHeader() {
   if (esHome) {
     // EL VIDEO SOLO PARA EL INICIO
     headerHTML += `
-      <section class="video-container">
-        <!-- Video para PC -->
-        <video autoplay muted loop playsinline class="video-bg video-pc">
-          <source
-            src="https://res.cloudinary.com/duoya2obs/video/upload/q_auto/f_auto/v1778288479/intro-pb-pc_l2ec3g.mp4"
-            type="video/mp4"
-          />
-        </video>
-
-        <!-- Video para Celu -->
-        <video autoplay muted loop playsinline class="video-bg video-movil">
-          <source
-            src="https://res.cloudinary.com/duoya2obs/video/upload/q_auto/f_auto/v1778288474/intro-pb-celu_ehioaz.mp4"
-            type="video/mp4"
-          />
-        </video>
-        <div class="video-overlay">
-          <h1>Bienvenido a nuestro Catálogo/Tienda Web!</h1>
-          <a class="btn-home" href="tienda.html">Ir al Catálago</a>
-        </div>
-      </section>
-    </header>
+        <section class="video-container">         
+          <div class="video-overlay">
+            <h1>Bienvenido a nuestro Catálogo/Tienda Web!</h1>
+            <a class="btn-home" href="tienda.html">Ir al Catálago</a>
+          </div>
+        </section>
+      </header>
     `;
   }
   if (esComoComprar) {
@@ -181,7 +166,7 @@ function insertarFooter() {
       <div class="container-footer">
         <div class="social-media-column">
           <h2 class="titles-footer">Seguinos</h2>
-          <a class="data" target="_blank" href=""
+          <a class="data" target="_blank" href="https://www.instagram.com/pazbaires/"
             ><img
               class="icons-data"
               src="images/icons/instagram-icon.webp"
@@ -189,7 +174,7 @@ function insertarFooter() {
               loading="lazy" decoding="async"
             />@pazbaires</a
           >
-          <a class="data" target="_blank" href=""
+          <a class="data" target="_blank" href="https://www.facebook.com/pazbaires?locale=es_LA"
             ><img
               class="icons-data"
               src="images/icons/facebook-icon.webp"
@@ -197,7 +182,7 @@ function insertarFooter() {
               loading="lazy" decoding="async"
             />Paz Baires</a
           >
-          <a class="data" target="_blank" href=""
+          <a class="data" target="_blank" href="https://www.tiktok.com/@paz.baires?is_from_webapp=1&sender_device=pc"
             ><img
               class="icons-data"
               src="images/icons/tiktok-icon.webp"
@@ -275,3 +260,34 @@ function insertarFooter() {
   // Esto lo mete al final del <body>
   document.body.insertAdjacentHTML("beforeend", footerHTML);
 }
+
+
+
+
+  // if (esHome) {
+  //   // EL VIDEO SOLO PARA EL INICIO
+  //   headerHTML += `
+  //       <section class="video-container">
+  //         <!-- Video para PC -->
+  //         <video autoplay muted loop playsinline class="video-bg video-pc">
+  //           <source
+  //             src="https://res.cloudinary.com/duoya2obs/video/upload/q_auto/f_auto/v1778288479/intro-pb-pc_l2ec3g.mp4"
+  //             type="video/mp4"
+  //           />
+  //         </video>
+
+  //         <!-- Video para Celu -->
+  //         <video autoplay muted loop playsinline class="video-bg video-movil">
+  //           <source
+  //             src="https://res.cloudinary.com/duoya2obs/video/upload/q_auto/f_auto/v1778288474/intro-pb-celu_ehioaz.mp4"
+  //             type="video/mp4"
+  //           />
+  //         </video>
+  //         <div class="video-overlay">
+  //           <h1>Bienvenido a nuestro Catálogo/Tienda Web!</h1>
+  //           <a class="btn-home" href="tienda.html">Ir al Catálago</a>
+  //         </div>
+  //       </section>
+  //     </header>
+  //   `;
+  // }

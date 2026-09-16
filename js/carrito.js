@@ -3,6 +3,7 @@ const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycby7NDP6_vUlAxOvigaqaEZs2RdpKhAGxIH5YFaUG4iMzBSJamybsaeMLzqwhBs1bOA1iw/exec";
 
 let montoTotalFinal = 0;
+let subtotalBaseProductos = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   renderizarCarrito();
@@ -31,6 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (this.checked) {
         this.closest(".option-card").classList.add("active");
       }
+      // MAGIA: Cada vez que tocan una opción, recalculamos los totales en vivo
+      calcularTotalesCarrito();
     });
   });
 });
@@ -49,17 +52,34 @@ window.addEventListener("pageshow", (event) => {
 });
 
 function mostrarAlertaPersonalizada(mensaje) {
-  const modal = document.createElement("div");
+  const modal = document.createElement("dialog");
+
+  // Generamos un ID único para no afectar otros elementos
+  const modalId = "alerta-" + Date.now();
+  modal.id = modalId;
+
+  // Quitamos los estilos por defecto del dialog nativo
   modal.style.cssText =
-    "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;";
+    "padding:0; border:none; background:transparent; max-width:350px; width:90%; outline:none;";
+
   modal.innerHTML = `
-        <div style="background:#fff;color:#333;padding:25px;border-radius:12px;max-width:350px;width:90%;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+        <style>
+            /* El ::backdrop es el fondo oscuro nativo del dialog */
+            #${modalId}::backdrop {
+                background: rgba(0, 0, 0, 0.6);
+            }
+        </style>
+        <div style="background:#fff;color:#333;padding:25px;border-radius:12px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
             <h3 style="margin-top:0;color:#ff9800;font-size:22px;">⚠️ Advertencia</h3>
             <p style="margin-bottom:20px;font-size:16px;line-height:1.5;">${mensaje}</p>
-            <button onclick="this.parentElement.parentElement.remove()" style="background:#222;color:#fff;border:none;padding:12px 25px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:16px;width:100%;">Aceptar</button>
+            <button onclick="const d = this.closest('dialog'); d.close(); d.remove();" style="background:#222;color:#fff;border:none;padding:12px 25px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:16px;width:100%;">Aceptar</button>
         </div>
     `;
+
   document.body.appendChild(modal);
+
+  // showModal() es la magia: bloquea el fondo y siempre lo centra en la pantalla actual
+  modal.showModal();
 }
 
 function parsearPrecio(valor) {
@@ -273,32 +293,9 @@ function renderizarCarrito() {
     }
   });
 
-  montoTotalFinal = totalConDescuentos;
-  const ahorroTotal = totalOriginal - totalConDescuentos;
-
-  const desgloseBox = document.getElementById("desglose-box");
-  if (desgloseBox) {
-    if (ahorroTotal > 0) {
-      desgloseBox.style.display = "block";
-      desgloseBox.innerHTML = `
-                <div class="desglose-linea">
-                    <span>Subtotal (Sin desc.):</span>
-                    <span>$ ${totalOriginal.toLocaleString("es-AR")}</span>
-                </div>
-                <div class="desglose-linea ahorro">
-                    <span>¡Ahorrás en esta compra!:</span>
-                    <span>- $ ${ahorroTotal.toLocaleString("es-AR")}</span>
-                </div>
-            `;
-    } else {
-      desgloseBox.style.display = "none";
-    }
-  }
-
-  const elemTotalGeneral = document.getElementById("total-general");
-  if (elemTotalGeneral) {
-    elemTotalGeneral.textContent = `$ ${montoTotalFinal.toLocaleString("es-AR")}`;
-  }
+  // Guardamos el subtotal limpio de los productos y llamamos al nuevo cerebro de cálculos
+  subtotalBaseProductos = totalConDescuentos;
+  calcularTotalesCarrito();
 }
 
 function cambiarCantidad(index, cambio) {
@@ -340,13 +337,6 @@ async function procesarCompra() {
   if (!envio || !pago) {
     mostrarAlertaPersonalizada(
       "Por favor, seleccioná un método de envío y de pago para continuar.",
-    );
-    return;
-  }
-
-  if (envio.value === "expreso" && montoTotalFinal < 70000) {
-    mostrarAlertaPersonalizada(
-      `Para seleccionar el envío por "Transporte o expreso", la compra mínima es de <b>$70.000</b>.<br><br>Tu total actual es de $${montoTotalFinal.toLocaleString("es-AR")}.`,
     );
     return;
   }
@@ -417,9 +407,24 @@ async function procesarCompra() {
     }
   });
 
+  const UMBRAL_ENVIO = 50000;
+  let descuento15WP = (envio.value === "local" && pago.value === "efectivo") ? (subtotalBaseProductos * 0.15) : 0;
+  let envioTextWP = (envio.value === "moto" || envio.value === "expreso") 
+      ? (pago.value === "transferencia" && subtotalBaseProductos >= UMBRAL_ENVIO ? "GRATIS!" : "A consultar") 
+      : "";
+
   msjWA += `Envío: *${metodoEnvioTxt}*\n`;
   msjWA += `Pago: *${metodoPagoTxt}*\n\n`;
-  msjWA += `*TOTAL A PAGAR: $${montoTotalFinal.toLocaleString("es-AR")}*\n\n`;
+  msjWA += `Subtotal: *$${subtotalBaseProductos.toLocaleString("es-AR")}*\n`;
+  
+  if (descuento15WP > 0) {
+      msjWA += `Descuento 15% (Efectivo): *-$${descuento15WP.toLocaleString("es-AR")}*\n`;
+  }
+  if (envioTextWP) {
+      msjWA += `Costo de envío: *${envioTextWP}*\n`;
+  }
+  
+  msjWA += `\n*TOTAL A PAGAR: $${montoTotalFinal.toLocaleString("es-AR")}*\n\n`;
   msjWA += `Quedo a la espera para coordinar. ¡Gracias!`;
 
   localStorage.removeItem("carrito");
@@ -458,6 +463,100 @@ function actualizarContadorCarrito() {
     badge.textContent = totalItems;
     badge.style.display = totalItems > 0 ? "flex" : "none"; // Lo oculta si está en 0
   });
+}
+
+// --- NUEVO CEREBRO CALCULADOR DE TOTALES ---
+function calcularTotalesCarrito() {
+  const envioNode = document.querySelector('input[name="envio"]:checked');
+  const pagoNode = document.querySelector('input[name="pago"]:checked');
+
+  const envio = envioNode ? envioNode.value : null;
+  const pago = pagoNode ? pagoNode.value : null;
+
+  const desgloseBox = document.getElementById("desglose-box");
+  const elemTotalGeneral = document.getElementById("total-general");
+  const alertaDinamica = document.getElementById("alerta-dinamica");
+
+  if (subtotalBaseProductos === 0) {
+      if(desgloseBox) desgloseBox.style.display = "none";
+      if(alertaDinamica) alertaDinamica.style.display = "none";
+      montoTotalFinal = 0;
+      if (elemTotalGeneral) elemTotalGeneral.textContent = "$ 0";
+      return;
+  }
+
+  let descuento15 = 0;
+  let envioText = "";
+  const UMBRAL_ENVIO = 50000;
+
+  // 1. Calcular Descuento: Solo Retiro Local + Efectivo
+  if (envio === "local" && pago === "efectivo") {
+      descuento15 = subtotalBaseProductos * 0.15;
+  }
+
+  // 2. Calcular Envío Gratis: Moto/Expreso + Transferencia + Superar umbral
+  if (envio === "moto" || envio === "expreso") {
+      if (pago === "transferencia" && subtotalBaseProductos >= UMBRAL_ENVIO) {
+          envioText = "GRATIS";
+      } else {
+          envioText = "Consultar según dirección";
+      }
+  }
+
+  // 3. Generar Alerta Dinámica Visual
+  if (alertaDinamica) {
+      alertaDinamica.style.display = "block";
+      alertaDinamica.style.padding = "12px";
+      alertaDinamica.style.borderRadius = "8px";
+      alertaDinamica.style.fontSize = "13px";
+      
+      let faltaParaEnvio = UMBRAL_ENVIO - subtotalBaseProductos;
+
+      if (subtotalBaseProductos >= UMBRAL_ENVIO) {
+          alertaDinamica.style.backgroundColor = "#e8f5e9";
+          alertaDinamica.style.color = "#2e7d32";
+          alertaDinamica.style.border = "1px solid #c8e6c9";
+          alertaDinamica.innerHTML = "🚚 <b>Tu compra supero los $50.000</b> ¡Tenes Envío GRATIS pagando por transferencia!";
+      } else {
+          alertaDinamica.style.backgroundColor = "#fff3e0";
+          alertaDinamica.style.color = "#e65100";
+          alertaDinamica.style.border = "1px solid #ffe0b2";
+          alertaDinamica.innerHTML = `🚚 Te faltan <b>$${faltaParaEnvio.toLocaleString("es-AR")}</b> para obtener envío GRATIS pagando por transferencia.`;
+      }
+  }
+
+  // 4. Actualizar Totales Finales
+  montoTotalFinal = subtotalBaseProductos - descuento15;
+
+  // 5. Dibujar el desglose perfecto
+  if (desgloseBox) {
+      desgloseBox.style.display = "block";
+      let html = `<div class="desglose-linea">
+                      <span>Subtotal:</span>
+                      <span>$ ${subtotalBaseProductos.toLocaleString("es-AR")}</span>
+                  </div>`;
+
+      if (descuento15 > 0) {
+          html += `<div class="desglose-linea ahorro" style="color:#d32f2f;">
+                      <span>Descuento 15% (Efectivo):</span>
+                      <span>- $ ${descuento15.toLocaleString("es-AR")}</span>
+                  </div>`;
+      }
+
+      if (envio === "moto" || envio === "expreso") {
+          const colorEnvio = envioText === "GRATIS" ? "color:#2e7d32; font-weight:bold;" : "";
+          html += `<div class="desglose-linea">
+                      <span>Envío:</span>
+                      <span style="${colorEnvio}">${envioText}</span>
+                  </div>`;
+      }
+
+      desgloseBox.innerHTML = html;
+  }
+
+  if (elemTotalGeneral) {
+      elemTotalGeneral.textContent = `$ ${montoTotalFinal.toLocaleString("es-AR")}`;
+  }
 }
 
 // Ejecutar al cargar la página dándole un respiro a componentes.js

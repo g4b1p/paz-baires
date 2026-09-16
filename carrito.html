@@ -14,8 +14,8 @@
     <link rel="preconnect" href="https://script.googleusercontent.com" />
 
     <link rel="icon" href="images/icons/pb-logo-blanco.webp" />
-    <link rel="stylesheet" href="css/estilos-comunes.css?v=2.1" />
-    <link rel="stylesheet" href="css/carrito.css?v=2.1" />
+    <link rel="stylesheet" href="css/estilos-comunes.css?v=2.2" />
+    <link rel="stylesheet" href="css/carrito.css?v=2.2" />
     <title>Paz Baires | Carrito</title>
 
     <script type="text/javascript">
@@ -110,29 +110,27 @@
 
           <hr class="hr-carrito" />
 
-          <p>Seleccioné <b>método de envío:</b></p>
+          <p><b>¿Cómo querés recibir tu pedido?</b></p>
           <div class="envio-options">
             <label class="option-card">
               <input type="radio" name="envio" value="expreso" checked />
               <div class="option-info">
-                <p><b>Transporte o expreso</b></p>
-                <p class="help-p">Puedes elegir el transporte que prefieras.</p>
+                <p><b>Envío por transporte o expreso</b></p>
+                <p class="help-p">Hacemos envío a todo el pais por cualquier medio.</p>
               </div>
             </label>
             <label class="option-card">
               <input type="radio" name="envio" value="moto" />
               <div class="option-info">
                 <p><b>Envío en moto</b></p>
-                <p class="help-p">Consulta el precio según la dirección.</p>
+                <p class="help-p">Envío gratis desde $50.000 pagando por transferencia.</p>
               </div>
             </label>
             <label class="option-card">
               <input type="radio" name="envio" value="local" />
               <div class="option-info">
                 <p><b>Retiro en el local</b></p>
-                <p class="help-p">
-                  Sin costo. Te esperamos en nuestra sucursal.
-                </p>
+                <p class="help-p">Sin costo. Retirá tu pedido por nuestro local. <br> Con 15% DESCUENTO pagando en efectivo.</p>
               </div>
             </label>
           </div>
@@ -140,26 +138,29 @@
           <hr class="hr-carrito" />
 
           <div class="pago-section">
-            <p>Seleccioné <b>método de pago:</b></p>
+            <p><b>¿Cómo querés pagar?</b></p>
             <div class="pago-options">
               <label class="option-card">
                 <input type="radio" name="pago" value="transferencia" checked />
                 <div class="option-info">
                   <p><b>Transferencia (MP)</b></p>
-                  <p class="help-p">Te enviaremos el CVU/Alias</p>
+                  <p class="help-p">Te enviaremos el CVU/Alias.</p>
                 </div>
               </label>
               <label class="option-card">
                 <input type="radio" name="pago" value="efectivo" />
                 <div class="option-info">
                   <p><b>Efectivo</b></p>
-                  <p class="help-p">Abonás al retirar tu pedido</p>
+                  <p class="help-p">15% de descuento retirando en el local.</p>
                 </div>
               </label>
             </div>
           </div>
 
           <hr class="hr-carrito" />
+
+          <!-- ALERTA DINÁMICA DE ENVÍO -->
+          <div id="alerta-dinamica" style="display:none; margin-bottom: 15px;"></div>
 
           <!-- AQUI SE INYECTARÁ EL DESGLOSE DE DESCUENTOS -->
           <div id="desglose-box" class="desglose-box"></div>
@@ -181,8 +182,8 @@
         </div>
       </div>
     </main>
-    <script src="js/componentes.js?v=2.2"></script>
-    <script src="js/carrito.js?v=2.2"></script>
-    <script src="js/main.js?v=2.2"></script>
+    <script src="js/componentes.js?v=2.3"></script>
+    <script src="js/carrito.js?v=2.3"></script>
+    <script src="js/main.js?v=2.3"></script>
   </body>
 </html>

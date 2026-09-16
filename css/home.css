@@ -13,9 +13,10 @@
     z-index: 1;
     -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    background-color: transparent;
 }
 
-.video-bg {
+/* .video-bg {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -25,12 +26,8 @@
     z-index: -1;
     transform: translate(-50%, -50%);
     object-fit: cover;
-    /* Volvemos a cover porque el video ya viene con el formato correcto */
-    /* Cambiamos cover por contain para que se vea TODO el video */
     background-color: rgb(255, 255, 255);
-    /* Opcional: por si el video no llena todo el alto, que el fondo sea negro */
     width: 100%;
-    /* Ocupa todo el ancho */
     display: block;
 }
 
@@ -40,7 +37,7 @@
 
 .video-pc {
     display: block !important;
-}
+} */
 
 .video-overlay {
     position: absolute;
@@ -54,25 +51,18 @@
     align-items: center;
     padding: 20px;
     color: white;
-    /* MEZCLA: Empieza con negro 40%, y termina con el violeta de tu marca */
     background: linear-gradient(to bottom,
             rgba(0, 0, 0, 0.4) 0%,
-            /* Oscuridad arriba */
             rgba(0, 0, 0, 0.4) 60%,
-            /* Mantiene la oscuridad hasta el 60% */
             #7454d9 100%
-            /* Funde hacia tu color al final */
         );
 }
 
-/* Aplica esto a los textos (h1, h2, p) que estén dentro del video */
-.video-overlay h1 {
+.video-container h1 {
     font-size: 45px;
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
     width: 100%;
-    /* Ocupa el ancho disponible */
     max-width: 800px;
-    /* Evita que las líneas sean infinitas en PC */
 }
 
 .btn-home {
@@ -80,7 +70,7 @@
     font-size: 18px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
     font-weight: bolder;
-    background-color: #a880e9;
+    background-color: #8e6fe3;
     color: #ffffff;
     text-decoration: none;
     border-radius: 13px;
