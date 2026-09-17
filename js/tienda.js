@@ -258,7 +258,7 @@ function renderizarProductos(lista, totalResultados) {
   }
 }
 
-// FUNCIÓN DE FILTRADO
+// FUNCIÓN DE FILTRADO Y REORDENAMIENTO POR RELEVANCIA
 function aplicarFiltros() {
   const norm = (t) =>
     t
@@ -270,6 +270,9 @@ function aplicarFiltros() {
           .trim()
       : "";
 
+  const queryBusqueda = norm(filtrosActivos.busqueda || "");
+
+  // 1. FILTRAR PRODUCTOS
   const resultado = productos.filter((p) => {
     const catFiltro = norm(filtrosActivos.categoria);
     const pColeccion = norm(p.coleccion);
@@ -285,7 +288,6 @@ function aplicarFiltros() {
         pTipoPrecio.includes("pack") || pTipoPrecio.includes("docena");
     }
 
-    const queryBusqueda = norm(filtrosActivos.busqueda || "");
     const textoCompleto =
       norm(p.nombre || "") + " " + norm(p.descripcion || "");
     const palabrasIgnoradas = [
@@ -315,7 +317,6 @@ function aplicarFiltros() {
       palabrasBuscadas.length === 0 ||
       palabrasBuscadas.some((palabra) => textoCompleto.includes(palabra));
 
-    // NUEVO: FILTRO POR ETIQUETA MÚLTIPLE
     const pEtiquetas = norm(p.etiqueta || "");
     const matchEtiqueta =
       filtrosActivos.etiqueta === "todos" ||
@@ -324,10 +325,61 @@ function aplicarFiltros() {
     return matchCategoria && matchTipoPrecio && matchBusqueda && matchEtiqueta;
   });
 
-  // CORTAMOS LA LISTA PARA LA PAGINACIÓN
-  const productosPaginados = resultado.slice(0, cantidadMostrada);
+  // 2. ORDENAR POR RELEVANCIA SI HAY UNA BÚSQUEDA ACTIVA
+  if (queryBusqueda !== "") {
+    const palabrasIgnoradas = [
+      "de",
+      "para",
+      "el",
+      "la",
+      "los",
+      "las",
+      "un",
+      "una",
+      "con",
+      "sin",
+      "y",
+      "o",
+    ];
+    let palabrasClave = queryBusqueda
+      .split(" ")
+      .filter((p) => p.length > 1 && !palabrasIgnoradas.includes(p));
 
-  // Enviamos los paginados a dibujar, pero le avisamos cuántos hay en total
+    if (palabrasClave.length === 0) {
+      palabrasClave = queryBusqueda.split(" ").filter((p) => p !== "");
+    }
+
+    resultado.sort((a, b) => {
+      const nombreA = norm(a.nombre || "");
+      const nombreB = norm(b.nombre || "");
+      const descA = norm(a.descripcion || "");
+      const descB = norm(b.descripcion || "");
+
+      let puntajeA = 0;
+      let puntajeB = 0;
+
+      // Coincidencia exacta de la frase completa en el nombre (Máxima prioridad)
+      if (nombreA.includes(queryBusqueda)) puntajeA += 100;
+      if (nombreB.includes(queryBusqueda)) puntajeB += 100;
+
+      // Coincidencia exacta completa
+      if (nombreA === queryBusqueda) puntajeA += 50;
+      if (nombreB === queryBusqueda) puntajeB += 50;
+
+      // Puntos por cada palabra individual en el nombre
+      palabrasClave.forEach((palabra) => {
+        if (nombreA.includes(palabra)) puntajeA += 10;
+        if (nombreB.includes(palabra)) puntajeB += 10;
+        if (descA.includes(palabra)) puntajeA += 1;
+        if (descB.includes(palabra)) puntajeB += 1;
+      });
+
+      return puntajeB - puntajeA; // Ordenar de mayor a menor puntaje
+    });
+  }
+
+  // 3. CORTAR LA LISTA PARA LA PAGINACIÓN Y RENDERIZAR
+  const productosPaginados = resultado.slice(0, cantidadMostrada);
   renderizarProductos(productosPaginados, resultado.length);
 }
 

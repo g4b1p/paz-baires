@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <meta
@@ -15,7 +15,7 @@
 
     <link rel="icon" href="images/icons/pb-logo-blanco.webp" />
     <link rel="stylesheet" href="css/estilos-comunes.css?v=2.1" />
-    <link rel="stylesheet" href="css/info-producto.css?v=2.1" />
+    <link rel="stylesheet" href="css/info-producto.css?v=2.4" />
     <title>Paz Baires | Tienda Mayorista y Minorista</title>
 
     <script type="text/javascript">
@@ -197,10 +197,30 @@
           </div>
         </div>
       </div>
+      <!-- ========================================== -->
+      <!-- VISOR DE ZOOM (TOP LAYER / SIN CORTES) -->
+      <!-- ========================================== -->
+      <dialog id="zoomModal" class="zoom-modal" aria-label="Imagen ampliada">
+        <button
+          type="button"
+          class="close-zoom"
+          id="closeZoomBtn"
+          aria-label="Cerrar imagen ampliada"
+        >&times;</button>
+        <div class="zoom-scroll" id="zoomScroll">
+            <div class="zoom-image-container">
+                <img
+                    class="zoom-modal-content"
+                    id="imgZoomed"
+                    alt="Producto ampliado"
+                />
+            </div>
+        </div>
+      </dialog>
     </main>
     <script src="js/componentes.js?v=2.3"></script>
     <script src="js/productos.js?v=2.3"></script>
-    <script src="js/info-producto.js?v=2.3"></script>
+    <script src="js/info-producto.js?v=2.4"></script>
     <script src="js/main.js?v=2.3"></script>
   </body>
 </html>

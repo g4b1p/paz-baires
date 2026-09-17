@@ -84,6 +84,140 @@
     aspect-ratio: 3/4;
 }
 
+/* ========================================== */
+/* VISOR DE ZOOM - TOP LAYER SIN RECORTES    */
+/* ========================================== */
+.zoom-modal {
+    /* <dialog> cerrado no ocupa espacio en la página */
+    display: none;
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: transparent;
+    z-index: 999999;
+}
+
+/* Cuando showModal() lo abre, el navegador lo lleva a la TOP LAYER.
+   Esto evita que se recorte por main, body, scroll o cualquier contenedor. */
+.zoom-modal[open] {
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+.zoom-modal::backdrop {
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(5px);
+}
+
+.zoom-scroll {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y pinch-zoom;
+}
+
+/* Si la imagen ampliada es más alta que la pantalla,
+   la dejamos comenzar arriba para que el scroll llegue al inicio real. */
+.zoom-modal.is-zoomed .zoom-scroll.is-tall {
+    display: block;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.zoom-modal.is-zoomed .zoom-scroll.is-tall .zoom-modal-content {
+    display: block;
+    margin: 0 auto;
+}
+
+.zoom-image-container {
+    min-width: 100%;
+    min-height: 100%;
+    width: max-content;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.zoom-modal-content {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 10px;
+    margin: 0;
+    user-select: none;
+    -webkit-user-drag: none;
+    touch-action: pan-x pan-y pinch-zoom;
+}
+
+/* X fuera del área que hace scroll: queda SIEMPRE visible. */
+.close-zoom {
+    position: absolute;
+    top: max(16px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    margin: 0;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    touch-action: manipulation;
+}
+
+.close-zoom:hover {
+    background: #ad95ef;
+    transform: scale(1.05);
+}
+
+/* ZOOM SOLO EN PC: 250% del ancho del viewport y scroll independiente. */
+@media (pointer: fine) {
+    #mainImg {
+        cursor: zoom-in;
+    }
+
+    .zoom-modal-content {
+        cursor: zoom-in;
+    }
+
+    .zoom-modal-content.zoomed {
+        width: max(75vw, 700px);
+        max-width: none;
+        max-height: none;
+        height: auto;
+        cursor: zoom-out;
+    }
+}
+
 .thumbnails {
     display: flex;
     align-items: flex-start;

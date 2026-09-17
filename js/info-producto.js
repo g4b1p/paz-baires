@@ -1293,3 +1293,152 @@ function agregarPackAlCarrito(producto, selecciones) {
 
   localStorage.setItem("carrito", JSON.stringify(carrito));
 }
+
+// =========================================================
+// LÓGICA DE ZOOM LIGHTBOX - TOP LAYER SIN CORTES
+// =========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const mainImg = document.getElementById("mainImg");
+  const zoomModal = document.getElementById("zoomModal");
+  const imgZoomed = document.getElementById("imgZoomed");
+  const closeZoomBtn = document.getElementById("closeZoomBtn");
+  const zoomScroll = document.getElementById("zoomScroll");
+
+  if (!mainImg || !zoomModal || !imgZoomed || !closeZoomBtn || !zoomScroll) return;
+
+  // Guardamos los valores originales para no alterar permanentemente la página.
+  let bodyOverflowOriginal = "";
+  let htmlOverflowOriginal = "";
+
+  const bloquearScrollPagina = () => {
+    bodyOverflowOriginal = document.body.style.overflow;
+    htmlOverflowOriginal = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+  };
+
+  const restaurarScrollPagina = () => {
+    document.documentElement.style.overflow = htmlOverflowOriginal;
+    document.body.style.overflow = bodyOverflowOriginal;
+  };
+
+  // 1. ABRIR MODAL
+  mainImg.addEventListener("click", () => {
+    imgZoomed.src = mainImg.src;
+    imgZoomed.classList.remove("zoomed");
+    zoomModal.classList.remove("is-zoomed");
+    zoomScroll.classList.remove("is-tall");
+    zoomScroll.scrollLeft = 0;
+    zoomScroll.scrollTop = 0;
+
+    // showModal() coloca el dialog en la TOP LAYER del navegador.
+    // Por eso ya no importa si la página está arriba, a mitad o al final.
+    if (!zoomModal.open) {
+      zoomModal.showModal();
+    }
+
+    bloquearScrollPagina();
+  });
+
+  // 2. CERRAR MODAL
+  const cerrarModal = () => {
+    imgZoomed.classList.remove("zoomed");
+    zoomModal.classList.remove("is-zoomed");
+    zoomScroll.scrollLeft = 0;
+    zoomScroll.scrollTop = 0;
+
+    if (zoomModal.open) {
+      zoomModal.close();
+    }
+
+    restaurarScrollPagina();
+  };
+
+  closeZoomBtn.addEventListener("click", cerrarModal);
+
+  // Clic fuera de la imagen = cerrar. La imagen está dentro de zoomScroll,
+  // por lo que un clic sobre ella nunca confunde el fondo con la foto.
+  zoomModal.addEventListener("click", (e) => {
+    if (e.target === zoomModal) cerrarModal();
+  });
+
+  // ESC también cierra el diálogo nativo.
+  zoomModal.addEventListener("close", restaurarScrollPagina);
+
+  // 3. ZOOM SOLO EN PC (mouse/puntero fino)
+  imgZoomed.addEventListener("click", (e) => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    const rect = imgZoomed.getBoundingClientRect();
+    const xClickRatio = rect.width ? (e.clientX - rect.left) / rect.width : 0.5;
+    const yClickRatio = rect.height ? (e.clientY - rect.top) / rect.height : 0.5;
+
+    const estabaZoomed = imgZoomed.classList.contains("zoomed");
+
+    if (estabaZoomed) {
+      imgZoomed.classList.remove("zoomed");
+      zoomModal.classList.remove("is-zoomed");
+      requestAnimationFrame(() => {
+        zoomScroll.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      });
+      return;
+    }
+
+    imgZoomed.classList.add("zoomed");
+    zoomModal.classList.add("is-zoomed");
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+
+            // Detectamos si la imagen supera la altura disponible.
+            const esAlta =
+                imgZoomed.getBoundingClientRect().height >
+                zoomScroll.clientHeight;
+
+            // Si es alta, dejamos el scroll comenzar realmente desde arriba.
+            zoomScroll.classList.toggle("is-tall", esAlta);
+
+            // Intentamos mantener visible la zona donde hizo clic.
+            const targetX =
+                xClickRatio * imgZoomed.offsetWidth -
+                zoomScroll.clientWidth / 2;
+
+            const targetY =
+                yClickRatio * imgZoomed.offsetHeight -
+                zoomScroll.clientHeight / 2;
+
+            // Calculamos el máximo real permitido.
+            const maxScrollX = Math.max(
+                0,
+                zoomScroll.scrollWidth - zoomScroll.clientWidth
+            );
+
+            const maxScrollY = Math.max(
+                0,
+                zoomScroll.scrollHeight - zoomScroll.clientHeight
+            );
+
+            zoomScroll.scrollTo({
+                left: Math.min(maxScrollX, Math.max(0, targetX)),
+                top: Math.min(maxScrollY, Math.max(0, targetY)),
+                behavior: "instant"
+            });
+        });
+    });
+
+    // Esperamos a que el navegador calcule el nuevo tamaño antes de ubicar
+    // la zona exacta donde hizo clic el usuario.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const targetX = xClickRatio * imgZoomed.offsetWidth - zoomScroll.clientWidth / 2;
+        const targetY = yClickRatio * imgZoomed.offsetHeight - zoomScroll.clientHeight / 2;
+
+        zoomScroll.scrollTo({
+          left: Math.max(0, targetX),
+          top: Math.max(0, targetY),
+          behavior: "instant",
+        });
+      });
+    });
+  });
+});
